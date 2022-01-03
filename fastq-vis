@@ -1,0 +1,65 @@
+#!/bin/sh -e
+
+##########################################################################
+#   Synopsis:
+#       fastq-vis file.fastq[.xz|.bz2|.gz]
+#
+#   Description:
+#       .B fastq-vis
+#       scans a FASTQ file for known adapters and poly-A tails of length
+#       8 or more, showing matching sequences with the adapters or tails
+#       in color.  This helps the user determine optimal parameters for
+#       use with fastq-trim.
+#
+#   Arguments:
+#       file    FASTQ file, optinally compressed with xz, bzip2, or gzip
+#       
+#   Returns:
+#       0 on success, non-zero error code otherwise
+#
+#   Examples:
+#       fastq-vis file.fastq.xz
+#
+#   See also:
+#       fastq-trim
+#       
+#   History:
+#   Date        Name        Modification
+#   2022-01-03  Jason Bacon Begin
+##########################################################################
+
+usage()
+{
+    printf "Usage: $0 file.fastq[.xz|.bz2|.gz]\n"
+    exit 1
+}
+
+
+##########################################################################
+#   Main
+##########################################################################
+
+if [ $# != 1 ]; then
+    usage
+fi
+file="$1"
+
+ext=${file##*.}
+case $ext in
+xz)
+    co=xzcat
+    ;;
+bz2)
+    co=bzcat
+    ;;
+gz)
+    co=bzcat
+    ;;
+*)
+    printf "Unsupported compression: $ext\n"
+    exit 1
+esac
+
+# Adapter sequences from FASTQ dist
+$co $file | egrep --color \
+    'AGATCGGAAGAG|TGGAATTCTCGG|GATCGTCGGACT|CTGTCTCTTATA|CGCCTTGGCCGT|AAAAAAAA+$'

@@ -49,7 +49,6 @@
 # Installed targets
 
 BIN     = fastq-trim
-MAN     = fastq-trim.1
 
 ############################################################################
 # List object files that comprise BIN.
@@ -167,8 +166,9 @@ realclean: clean
 
 install: all
 	${MKDIR} -p ${DESTDIR}${PREFIX}/bin ${DESTDIR}${MANDIR}/man1
-	${INSTALL} -s -m 0555 ${BIN} ${DESTDIR}${PREFIX}/bin
-	${INSTALL} -m 0444 ${MAN} ${DESTDIR}${MANDIR}/man1
+	${INSTALL} -s -m 0755 ${BIN} ${DESTDIR}${PREFIX}/bin
+	${INSTALL} -m 0755 fastq-vis ${DESTDIR}${PREFIX}/bin
+	${INSTALL} -m 0644 Man/*.1 ${DESTDIR}${MANDIR}/man1
 
 install-strip: install
 	${STRIP} ${DESTDIR}${PREFIX}/bin/${BIN}

@@ -28,7 +28,9 @@
 #define DEFAULT_ADAPTER         ILLUMINA_UNIVERSAL
 
 void    usage(char *argv[]);
-size_t  bl_find_3p_adapter(const bl_fastq_t *read, const char *adapter, size_t min_match);
+size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter, size_t min_match);
+size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual, unsigned phred_base);
+size_t  bl_fastq_3p_trim(bl_fastq_t *read, size_t new_len);
 
 int     main(int argc,char *argv[])
 
@@ -76,6 +78,8 @@ int     main(int argc,char *argv[])
 	    if ( *end != '\0' )
 		usage(argv);
 	}
+	else
+	    usage(argv);
     }
     
     if ( arg < argc )
@@ -107,13 +111,25 @@ int     main(int argc,char *argv[])
     records = adapters = too_short = low_qual = 0;
     while ( bl_fastq_read(instream, &fastq_rec) == BL_READ_OK )
     {
-	index = bl_find_3p_adapter(&fastq_rec, adapter, min_match);
+	index = bl_fastq_find_3p_adapter(&fastq_rec, adapter, min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
 	{
 	    ++adapters;
-	    //bl_fastq_read_trim(&fastq_rec, index);
+	    //fprintf(stderr, "%zu %s\n", BL_FASTQ_SEQ_LEN(&fastq_rec), BL_FASTQ_SEQ(&fastq_rec) + index);
+	    bl_fastq_3p_trim(&fastq_rec, index);
+	    //fprintf(stderr, "%zu %s\n", BL_FASTQ_SEQ_LEN(&fastq_rec), BL_FASTQ_SEQ(&fastq_rec) + index);
+	    //getchar();
 	}
 	
+	// FIXME: Support other PHRED bases
+	index = bl_fastq_find_3p_qual(&fastq_rec, min_qual, 33);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
+	{
+	    ++low_qual;
+	    bl_fastq_3p_trim(&fastq_rec, index);
+	}
+	
+	//fprintf(stderr, "%zu\n", BL_FASTQ_SEQ_LEN(&fastq_rec));
 	if ( BL_FASTQ_SEQ_LEN(&fastq_rec) >= min_length )
 	    bl_fastq_write(outstream, &fastq_rec, BL_FASTQ_SEQ_LEN(&fastq_rec));
 	else
@@ -122,11 +138,14 @@ int     main(int argc,char *argv[])
 	++records;
 	if ( records % 100000 == 0 )
 	{
-	    printf("Reads: %lu  Adapters: %lu\r", records, adapters);
-	    fflush(stdout);
+	    fprintf(stderr,
+		    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\r",
+		    records, adapters, min_qual, low_qual, min_length, too_short);
 	}
     }
-    printf("Reads: %lu  Adapters: %lu\n", records, adapters);
+    fprintf(stderr,
+	    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\n",
+	    records, adapters, min_qual, low_qual, min_length, too_short);
 
     bl_fastq_free(&fastq_rec);
     xt_fclose(outstream);
@@ -135,11 +154,47 @@ int     main(int argc,char *argv[])
 }
 
 
-void    usage(char *argv[])
+/***************************************************************************
+ *  Use auto-c2man to generate a man page from this comment
+ *
+ *  Library:
+ *      #include <biolibc/fastq.h>
+ *      -lbiolibc -lxtend
+ *
+ *  Description:
+ *      Locate start of a low-quality 3' end in a FASTQ read.
+ *  
+ *  Arguments:
+ *      read        FASTQ read to be searched
+ *      min_qual    Minimum quality of bases to keep
+ *
+ *  Returns:
+ *      Index of first low-quality base at the 3' end if found,
+ *      index of NULL terminator otherwise
+ *
+ *  Examples:
+ *
+ *  See also:
+ *
+ *  History: 
+ *  Date        Name        Modification
+ *  2022-01-02  Jason Bacon Begin
+ ***************************************************************************/
+
+size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
+			unsigned phred_base)
 
 {
-    fprintf(stderr, "Usage: %s\n", argv[0]);
-    exit(EX_USAGE);
+    const char  *p;
+    size_t      index = read->qual_len;
+    
+    for (p = read->qual + read->qual_len - 1;
+	 (p >= read->qual) && (toupper(*p) - phred_base <= min_qual); --p)
+    {
+	index = p - read->qual;
+	// fprintf(stderr, "%c %u\n", read->seq[index], read->qual[index] - phred_base);
+    }
+    return index;
 }
 
 
@@ -147,7 +202,7 @@ void    usage(char *argv[])
  *  Use auto-c2man to generate a man page from this comment
  *
  *  Library:
- *      #include <biolibc/string.h>
+ *      #include <biolibc/fastq.h>
  *      -lbiolibc -lxtend
  *
  *  Description:
@@ -171,7 +226,7 @@ void    usage(char *argv[])
  *  2022-01-02  Jason Bacon Begin
  ***************************************************************************/
 
-size_t  bl_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
+size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
 			 size_t min_match)
 
 {
@@ -186,3 +241,60 @@ size_t  bl_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
     }
     return read->seq_len;   // Location of '\0' terminator
 }
+
+
+/***************************************************************************
+ *  Use auto-c2man to generate a man page from this comment
+ *
+ *  Library:
+ *      #include <biolibc/fastq.h>
+ *      -lbiolibc -lxtend
+ *
+ *  Description:
+ *      Trim the 3' end of a FASTQ read.
+ *  
+ *  Arguments:
+ *      read        FASTQ read to be searched
+ *      new_len     New length and location of the null terminators
+ *
+ *  Returns:
+ *      BL_DATA_OK if new_len is between 0 and original length,
+ *      BL_DATA_INVALID otherwise.
+ *
+ *  Examples:
+ *
+ *  See also:
+ *
+ *  History: 
+ *  Date        Name        Modification
+ *  2022-01-02  Jason Bacon Begin
+ ***************************************************************************/
+
+size_t  bl_fastq_3p_trim(bl_fastq_t *read, size_t new_len)
+
+{
+    if ( (new_len >= 0) && (new_len <= read->seq_len) )
+    {
+	read->seq_len = read->qual_len = new_len;
+	read->seq[new_len] = read->qual[new_len] = '\0';
+	// FIXME: realloc?
+	return BL_DATA_OK;
+    }
+    else
+	return BL_DATA_INVALID;
+}
+
+
+void    usage(char *argv[])
+
+{
+    fprintf(stderr,
+	    "Usage:\n\n"
+	    "%s --help\n"
+	    "%s\n"
+	    "    [--3p-adapter seq] [--min-qual N] [--min-length N]\n"
+	    "    [infile.fastq[.xz|.bz2|.gz]] [outfile.fastq[.xz|.bz2|.gz]]\n\n",
+	    argv[0], argv[0]);
+    exit(EX_USAGE);
+}
+
