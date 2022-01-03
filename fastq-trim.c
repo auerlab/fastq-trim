@@ -15,76 +15,119 @@
 #include <sysexits.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <ctype.h>
 #include <string.h>
 #include <xtend/file.h>
 #include <biolibc/fastq.h>
 
+#define ILLUMINA_UNIVERSAL      "AGATCGGAAGAG"
+#define ILLUMINA_SMALL_RNA_3P   "TGGAATTCTCGG"
+#define ILLUMINA_SMALL_RNA_5P   "GATCGTCGGACT"
+#define NEXTERA                 "CTGTCTCTTATA"
+#define SOLID                   "CGCCTTGGCCGT"
+#define DEFAULT_ADAPTER         ILLUMINA_UNIVERSAL
+
 void    usage(char *argv[]);
-char    *bl_find_adapter(const char *read, const char *adapter, size_t min_match);
+size_t  bl_find_3p_adapter(const bl_fastq_t *read, const char *adapter, size_t min_match);
 
 int     main(int argc,char *argv[])
 
 {
     unsigned long   records,
-		    adapters;
-    char    *infile,
-	    *outfile,
-	    *adapter,
-	    *p;
-    FILE    *instream,
-	    *outstream;
-    bl_fastq_t  fastq_rec;
+		    adapters,
+		    too_short,
+		    low_qual;
+    char            *infile = NULL,
+		    *outfile = NULL,
+		    *adapter = DEFAULT_ADAPTER,
+		    *end;
+    size_t          index,
+		    min_length = 30,
+		    min_match = 3;
+    unsigned        min_qual = 20;
+    int             arg;
+    FILE            *instream = stdin,
+		    *outstream = stdout;
+    bl_fastq_t      fastq_rec;
 
-    // FIXME: Use CLI similar to cutadapt
-    switch(argc)
+    if ( (argc == 2) && (strcmp(argv[1], "--help") == 0) )
+	usage(argv);
+    for (arg = 1; (arg < argc) && (*argv[arg] == '-'); ++arg)
     {
-	case 4:
-	    adapter = argv[1];
-	    infile = argv[2];
-	    outfile = argv[3];
-	    break;
-	
-	default:
-	    usage(argv);
+	if ( strcmp(argv[arg], "--3p-adapter") == 0 )
+	{
+	    adapter = argv[++arg];
+	}
+	else if ( strcmp(argv[arg], "--min-match") == 0 )
+	{
+	    min_match = strtoul(argv[++arg], &end, 10);
+	    if ( *end != '\0' )
+		usage(argv);
+	}
+	else if ( strcmp(argv[arg], "--min-qual") == 0 )
+	{
+	    min_qual = strtoul(argv[++arg], &end, 10);
+	    if ( *end != '\0' )
+		usage(argv);
+	}
+	else if ( strcmp(argv[arg], "--min-length") == 0 )
+	{
+	    min_length = strtoul(argv[++arg], &end, 10);
+	    if ( *end != '\0' )
+		usage(argv);
+	}
     }
-
+    
+    if ( arg < argc )
+	infile = argv[arg++];
+    if ( arg < argc )
+	outfile = argv[arg];
+    
     // Adapter used in our test file
     // FIXME: tolower() this ahead of time and tolower() the read bases
     // adapter="AGATCGGAAGAGCACAC";
     
-    if ( (instream = xt_fopen(infile, "r")) == NULL )
-    {
-	fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0], infile,
-		strerror(errno));
-	return EX_NOINPUT;
-    }
-    
-    if ( (outstream = xt_fopen(outfile, "w")) == NULL )
-    {
-	fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0], infile,
-		strerror(errno));
-	return EX_CANTCREAT;
-    }
+    if ( infile != NULL )
+	if ( (instream = xt_fopen(infile, "r")) == NULL )
+	{
+	    fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0], infile,
+		    strerror(errno));
+	    return EX_NOINPUT;
+	}
+
+    if ( outfile != NULL )
+	if ( (outstream = xt_fopen(outfile, "w")) == NULL )
+	{
+	    fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0], infile,
+		    strerror(errno));
+	    return EX_CANTCREAT;
+	}
     
     bl_fastq_init(&fastq_rec);
-    records = adapters = 0;
+    records = adapters = too_short = low_qual = 0;
     while ( bl_fastq_read(instream, &fastq_rec) == BL_READ_OK )
     {
-	if ( (p = bl_find_adapter(BL_FASTQ_SEQ(&fastq_rec), adapter, 6)) != NULL )
+	index = bl_find_3p_adapter(&fastq_rec, adapter, min_match);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
 	{
 	    ++adapters;
-	    *p = '\0';  // Trim adapter and everything after it
+	    //bl_fastq_read_trim(&fastq_rec, index);
 	}
+	
+	if ( BL_FASTQ_SEQ_LEN(&fastq_rec) >= min_length )
+	    bl_fastq_write(outstream, &fastq_rec, BL_FASTQ_SEQ_LEN(&fastq_rec));
+	else
+	    ++too_short;
+
 	++records;
-	bl_fastq_write(outstream, &fastq_rec, BL_FASTQ_SEQ_LEN(&fastq_rec));
 	if ( records % 100000 == 0 )
 	{
 	    printf("Reads: %lu  Adapters: %lu\r", records, adapters);
 	    fflush(stdout);
 	}
     }
+    printf("Reads: %lu  Adapters: %lu\n", records, adapters);
 
-    printf("\nTotal reads processed = %lu\n", records);
     bl_fastq_free(&fastq_rec);
     xt_fclose(outstream);
     xt_fclose(instream);
@@ -105,18 +148,19 @@ void    usage(char *argv[])
  *
  *  Library:
  *      #include <biolibc/string.h>
- *      -lbiolibc
+ *      -lbiolibc -lxtend
  *
  *  Description:
- *      Locate adapter (or a portion thereof if at the end) in string.
- *      Functions similarly to strstr(3).
+ *      Locate adapter (or a portion thereof if at the end) starting at the
+ *      3' end of the read.
  *  
  *  Arguments:
- *      read    Read sequence to be searched
- *      adapter Adapter sequence to be located
+ *      read        FASTQ read to be searched
+ *      adapter     Adapter sequence to be located
+ *      min_match   Minimum number of characters to match in adapter
  *
  *  Returns:
- *      Pointer to located adapter sequence or NULL if not found
+ *      Index of adapter sequence if found, index of NULL terminator otherwise
  *
  *  Examples:
  *
@@ -127,17 +171,18 @@ void    usage(char *argv[])
  *  2022-01-02  Jason Bacon Begin
  ***************************************************************************/
 
-char *bl_find_adapter(const char *read, const char *adapter, size_t min_match)
+size_t  bl_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
+			 size_t min_match)
 
 {
     const char *start, *pr, *pa;
     
-    for (start = read; *start != '\0'; ++start)
+    for (start = read->seq + read->seq_len - 1; start >= read->seq; --start)
     {
-	for (pr = start, pa = adapter; *pr == *pa; ++pr, ++pa)
+	for (pr = start, pa = adapter; toupper(*pr) == *pa; ++pr, ++pa)
 	    ;
 	if ( ((*pr == '\0') && (pr - start >= min_match)) || (*pa == '\0') )
-	    return (char *)start;
+	    return start - read->seq;
     }
-    return NULL;
+    return read->seq_len;   // Location of '\0' terminator
 }
