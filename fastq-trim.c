@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 #include <xtend/file.h>
 #include <biolibc/fastq.h>
 
@@ -51,12 +52,15 @@ int     main(int argc,char *argv[])
     FILE            *instream = stdin,
 		    *outstream = stdout;
     bl_fastq_t      fastq_rec;
+    bool            verbose = false;
 
     if ( (argc == 2) && (strcmp(argv[1], "--help") == 0) )
 	usage(argv);
     for (arg = 1; (arg < argc) && (*argv[arg] == '-'); ++arg)
     {
-	if ( strcmp(argv[arg], "--3p-adapter") == 0 )
+	if ( strcmp(argv[arg], "--verbose") == 0 )
+	    verbose = true;
+	else if ( strcmp(argv[arg], "--3p-adapter") == 0 )
 	{
 	    adapter = argv[++arg];
 	}
@@ -115,10 +119,10 @@ int     main(int argc,char *argv[])
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
 	{
 	    ++adapters;
-	    //fprintf(stderr, "%zu %s\n", BL_FASTQ_SEQ_LEN(&fastq_rec), BL_FASTQ_SEQ(&fastq_rec) + index);
+	    if ( verbose )
+		fprintf(stderr, "Adapter  %s\n",
+			BL_FASTQ_SEQ(&fastq_rec) + index);
 	    bl_fastq_3p_trim(&fastq_rec, index);
-	    //fprintf(stderr, "%zu %s\n", BL_FASTQ_SEQ_LEN(&fastq_rec), BL_FASTQ_SEQ(&fastq_rec) + index);
-	    //getchar();
 	}
 	
 	// FIXME: Support other PHRED bases
@@ -126,6 +130,9 @@ int     main(int argc,char *argv[])
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
 	{
 	    ++low_qual;
+	    if ( verbose )
+		fprintf(stderr, "Low qual %s\n",
+			BL_FASTQ_SEQ(&fastq_rec) + index);
 	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
 	
@@ -133,10 +140,16 @@ int     main(int argc,char *argv[])
 	if ( BL_FASTQ_SEQ_LEN(&fastq_rec) >= min_length )
 	    bl_fastq_write(outstream, &fastq_rec, BL_FASTQ_SEQ_LEN(&fastq_rec));
 	else
+	{
+	    if ( verbose )
+		fprintf(stderr, "Short    %zu %s\n",
+			BL_FASTQ_SEQ_LEN(&fastq_rec),
+			BL_FASTQ_SEQ(&fastq_rec));
 	    ++too_short;
-
+	}
+	
 	++records;
-	if ( records % 100000 == 0 )
+	if ( ! verbose && (records % 100000 == 0) )
 	{
 	    fprintf(stderr,
 		    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\r",

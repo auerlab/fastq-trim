@@ -20,6 +20,6 @@
 make clean all
 export XZ_OPT=-1
 export GZIP=-1
-time ./fastq-trim --3p-adapter AGATCGGAAGAGCACAC \
+time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
     chondro-sample1-rep1-time1-R1.fastq.xz \
     chondro-sample1-rep1-time1-R1-trimmed.fastq.gz

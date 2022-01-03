@@ -10,22 +10,37 @@ fastq-trim - Trim adapters and low-quality bases from FASTQ files
 .PP
 .nf 
 .na 
-fastq-trim file.fastq[.gz|.bz2|.xz]
+fastq-trim [--help]
+fastq-trim
+    [--3p-adapter seq] [--min-qual N] [--min-length N]
+    [file.fastq[.gz|.bz2|.xz]] [file.fastq[.gz|.bz2|.xz]]
 .ad
 .fi
 
 .SH OPTIONS
 .TP
-\fB\-\-\flagfR[=\fIparameter\fR]
-description
+\fB\-\-\3p-adapterfR[=\fIseq\fR]
+Specify the 3' adapter to look for.  Default is the Illumina universal
+adapter, AGATCGGAAGAG.  Use fastq-vis(1) to identify other standard adapters
+in the input.
+
+.TP
+\fB\-\-\min-qualfR[=\fIN\fR]
+Minimum quality of bases to keep for end-trimming.  Default is 20.
+
+.TP
+\fB\-\-\min-lengthfR[=\fIN\fR]
+Miniumum length of reads to keep after trimming.  Default is 30.
 
 .SH "DESCRIPTION"
 
 .B Fastq-trim
-removes adapters and low-quality bases from a FASTQ file.
+removes adapters and low-quality bases from the ends of each read in a
+FASTQ file.  Reads with a length less than the specified or default
+minimum are not output.
 
 .SH "SEE ALSO"
-biolibc(3)
+fastq-vis(1), biolibc(3)
 
 .SH BUGS
 Please report bugs to the author and send patches in unified diff format.
