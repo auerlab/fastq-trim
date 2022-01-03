@@ -34,7 +34,8 @@ int     main(int argc,char *argv[])
     FILE    *instream,
 	    *outstream;
     bl_fastq_t  fastq_rec;
-    
+
+    // FIXME: Use CLI similar to cutadapt
     switch(argc)
     {
 	case 4:
@@ -118,10 +119,6 @@ void    usage(char *argv[])
  *      Pointer to located adapter sequence or NULL if not found
  *
  *  Examples:
- *
- *  Files:
- *
- *  Environment
  *
  *  See also:
  *
