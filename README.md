@@ -11,7 +11,7 @@ There is no sense of urgency since there are multiple highly-evolved trimmers
 available that are fast enough for most purposes.
 
 However, basic testing revealed that adapters can be removed from an
-xz-compressed FASTQ file with ~32 million reads in a few minutes on a
+xz-compressed FASTQ file with ~32 million reads in about two minutes on a
 ThinkPad with a spinning disk and a 2.6 GHz i5.
 This suggests that it might be possible to perform basic trimming as is done
 prior to an RNA-Seq analysis in much less time than current tools allow.
