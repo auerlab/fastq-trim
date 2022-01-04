@@ -109,16 +109,7 @@ int     trim_single_reads(trim_t *tp)
     record_count = adapter_count = short_count = low_qual_count = 0;
     while ( bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK )
     {
-	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
-	{
-	    ++adapter_count;
-	    if ( tp->verbose )
-		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
-	}
-	
+	// Trim low-quality bases before adapters
 	// FIXME: Support other PHRED bases
 	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, 33);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
@@ -126,6 +117,16 @@ int     trim_single_reads(trim_t *tp)
 	    ++low_qual_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Low qual %s\n",
+			BL_FASTQ_SEQ(&fastq_rec1) + index);
+	    bl_fastq_3p_trim(&fastq_rec1, index);
+	}
+
+	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	{
+	    ++adapter_count;
+	    if ( tp->verbose )
+		fprintf(stderr, "Adapter  %s\n",
 			BL_FASTQ_SEQ(&fastq_rec1) + index);
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
@@ -203,17 +204,8 @@ int     trim_paired_reads(trim_t *tp)
 	/*
 	 *  Trim read from R1
 	 */
-	
-	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
-	{
-	    ++adapter_count;
-	    if ( tp->verbose )
-		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
-	}
-	
+
+	// Trim low quality bases before adapters
 	// FIXME: Support other PHRED bases
 	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, 33);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
@@ -225,11 +217,7 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	/*
-	 *  Trim read from R2
-	 */
-	
-	index = bl_fastq_find_3p_adapter(&fastq_rec2, tp->adapter, tp->min_match);
+	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -239,6 +227,11 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 	
+	/*
+	 *  Trim read from R2
+	 */
+
+	// Trim low quality bases before adapters
 	// FIXME: Support other PHRED bases
 	index = bl_fastq_find_3p_qual(&fastq_rec2, tp->min_qual, 33);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
@@ -246,6 +239,16 @@ int     trim_paired_reads(trim_t *tp)
 	    ++low_qual_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Low qual %s\n",
+			BL_FASTQ_SEQ(&fastq_rec1) + index);
+	    bl_fastq_3p_trim(&fastq_rec1, index);
+	}
+	
+	index = bl_fastq_find_3p_adapter(&fastq_rec2, tp->adapter, tp->min_match);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	{
+	    ++adapter_count;
+	    if ( tp->verbose )
+		fprintf(stderr, "Adapter  %s\n",
 			BL_FASTQ_SEQ(&fastq_rec1) + index);
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
@@ -416,16 +419,43 @@ size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
 			unsigned phred_base)
 
 {
-    const char  *p;
-    size_t      index = read->qual_len;
+    ssize_t      c,
+		cut_pos;
+    long        sum,
+		min_sum;
     
-    for (p = read->qual + read->qual_len - 1;
-	 (p >= read->qual) && (toupper(*p) - phred_base <= min_qual); --p)
+    /*
+     *  Use same algorithm as BWA/cutadapt
+     *  https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
+     *  score-minimum will be negative for bases we want to remove
+     *  Sum score-minimum for each base starting at end until sum > 0
+     *  Use the position of the minimum sum as the trim point
+     */
+
+    if ( read->seq_len != read->qual_len )
     {
-	index = p - read->qual;
-	// fprintf(stderr, "%c %u\n", read->seq[index], read->qual[index] - phred_base);
+	fprintf(stderr, "bl_fastq_find_3p_qual(): qual_len != seq_len.\n");
+	exit(EX_DATAERR);
     }
-    return index;
+    
+    sum = min_sum = 0;
+    c = read->qual_len - 1;
+    cut_pos = read->seq_len;
+    while ( (c >= 0) && (sum <= 0) )
+    {
+	// Revert promotions to unsigned
+	sum = (long)sum + read->qual[c] - phred_base - min_qual;
+	// fprintf(stderr, "sum = %ld\n", sum);
+	if ( sum < min_sum )
+	{
+	    min_sum = sum;
+	    cut_pos = c;
+	}
+	--c;
+    }
+    if ( c < 0 )
+	cut_pos = 0;
+    return cut_pos;
 }
 
 
@@ -463,7 +493,13 @@ size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
 {
     const char *start, *pr, *pa;
     
-    for (start = read->seq + read->seq_len - 1; start >= read->seq; --start)
+    // Start at 5' end assuming 5' adapters already removed
+    // Cutadapt uses a semiglobal alignment algorithm to find adapters.
+    // Not sure what the benefit of this is over exact matching. I would
+    // assume that errors in adapter sequences are extremely rare.
+    // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
+
+    for (start = read->seq; start < read->seq + read->seq_len; ++start)
     {
 	for (pr = start, pa = adapter; toupper(*pr) == *pa; ++pr, ++pa)
 	    ;
