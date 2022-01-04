@@ -217,7 +217,8 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
+	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter,
+					 tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -234,23 +235,24 @@ int     trim_paired_reads(trim_t *tp)
 	// Trim low quality bases before adapters
 	// FIXME: Support other PHRED bases
 	index = bl_fastq_find_3p_qual(&fastq_rec2, tp->min_qual, 33);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
 	{
 	    ++low_qual_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Low qual %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
+			BL_FASTQ_SEQ(&fastq_rec2) + index);
+	    bl_fastq_3p_trim(&fastq_rec2, index);
 	}
 	
-	index = bl_fastq_find_3p_adapter(&fastq_rec2, tp->adapter, tp->min_match);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	index = bl_fastq_find_3p_adapter(&fastq_rec2, tp->adapter,
+					 tp->min_match);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
 	{
 	    ++adapter_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
+			BL_FASTQ_SEQ(&fastq_rec2) + index);
+	    bl_fastq_3p_trim(&fastq_rec2, index);
 	}
 	
 	//fprintf(stderr, "%zu\n", BL_FASTQ_SEQ_LEN(&fastq_rec1));
