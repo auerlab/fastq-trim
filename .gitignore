@@ -1,3 +1,4 @@
 .*.bak
 *.o
 fastq-trim
+*-trimmed.fastq.gz
