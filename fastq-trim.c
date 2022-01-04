@@ -33,6 +33,7 @@ void    trim_init(trim_t *tp);
 int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[]);
 size_t  bl_fastq_name_cmp(bl_fastq_t *read1, bl_fastq_t *read2);
 void    trim_close_files(trim_t *tp);
+void    strupper(char *string);
 
 
 int     main(int argc,char *argv[])
@@ -51,11 +52,7 @@ int     main(int argc,char *argv[])
 	if ( strcmp(argv[arg], "--verbose") == 0 )
 	    trim_set_verbose(&tp, true);
 	else if ( strcmp(argv[arg], "--3p-adapter") == 0 )
-	{
-	    // FIXME: tolower() adapter ahead of time and tolower() the read
-	    // bases in bl_fastq_find_3p_adapter()
 	    trim_set_adapter(&tp, argv[++arg]);
-	}
 	else if ( strcmp(argv[arg], "--min-match") == 0 )
 	{
 	    trim_set_min_match(&tp, strtoul(argv[++arg], &end, 10));
@@ -74,9 +71,16 @@ int     main(int argc,char *argv[])
 	    if ( *end != '\0' )
 		usage(argv);
 	}
+	else if ( strcmp(argv[arg], "--phred-base") == 0 )
+	{
+	    trim_set_phred_base(&tp, strtoul(argv[++arg], &end, 10));
+	    if ( *end != '\0' )
+		usage(argv);
+	}
 	else
 	    usage(argv);
     }
+    strupper(TRIM_ADAPTER(&tp));
     
     if ( trim_open_files(&tp, arg, argc, argv) == EX_OK )
     {
@@ -111,8 +115,7 @@ int     trim_single_reads(trim_t *tp)
     while ( bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK )
     {
 	// Trim low-quality bases before adapters
-	// FIXME: Support other PHRED bases
-	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, 33);
+	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, tp->phred_base);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++low_qual_count;
@@ -190,6 +193,8 @@ int     trim_paired_reads(trim_t *tp)
     // Read from both files every iteration and break on error
     while ( true )
     {
+	// FIXME: Explore using 2 threads here
+	
 	s1 = bl_fastq_read(tp->instream1, &fastq_rec1);
 	s2 = bl_fastq_read(tp->instream2, &fastq_rec2);
 	if ( (s1 != BL_READ_OK) || (s2 != BL_READ_OK) )
@@ -208,8 +213,7 @@ int     trim_paired_reads(trim_t *tp)
 	 */
 
 	// Trim low quality bases before adapters
-	// FIXME: Support other PHRED bases
-	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, 33);
+	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, tp->phred_base);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++low_qual_count;
@@ -235,8 +239,7 @@ int     trim_paired_reads(trim_t *tp)
 	 */
 
 	// Trim low quality bases before adapters
-	// FIXME: Support other PHRED bases
-	index = bl_fastq_find_3p_qual(&fastq_rec2, tp->min_qual, 33);
+	index = bl_fastq_find_3p_qual(&fastq_rec2, tp->min_qual, tp->phred_base);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
 	{
 	    ++low_qual_count;
@@ -376,6 +379,7 @@ void    trim_close_files(trim_t *tp)
 void    trim_init(trim_t *tp)
 
 {
+    tp->verbose = false;
     tp->infile1 = NULL;
     tp->outfile1 = NULL;
     tp->infile2 = NULL;
@@ -388,7 +392,7 @@ void    trim_init(trim_t *tp)
     tp->min_length = 30;
     tp->min_match = 3;
     tp->min_qual = 20;
-    tp->verbose = false;
+    tp->phred_base = 33;
 }
 
 
@@ -605,6 +609,45 @@ size_t  bl_fastq_name_cmp(bl_fastq_t *read1, bl_fastq_t *read2)
 }
 
 
+/***************************************************************************
+ *  Use auto-c2man to generate a man page from this comment
+ *
+ *  Library:
+ *      #include <xtend/string.h>
+ *      -lxtend
+ *
+ *  Description:
+ *      Convert all lower case characters in string to upper case.
+ *  
+ *  Arguments:
+ *      sp  Pointer to null-terminated string to be converted
+ *
+ *  Returns:
+ *
+ *  Examples:
+ *
+ *  Files:
+ *
+ *  Environment
+ *
+ *  See also:
+ *
+ *  History: 
+ *  Date        Name        Modification
+ *  2022-01-04  Jason Bacon Begin
+ ***************************************************************************/
+
+void    strupper(char *sp)
+
+{
+    while ( *sp != '\0' )
+    {
+	*sp = toupper(*sp);
+	++sp;
+    }
+}
+
+
 void    usage(char *argv[])
 
 {
@@ -612,7 +655,8 @@ void    usage(char *argv[])
 	    "Usage:\n\n"
 	    "%s --help\n"
 	    "%s\n"
-	    "    [--3p-adapter seq] [--min-qual N] [--min-length N]\n"
+	    "    [--verbose] [--3p-adapter seq] [--min-qual N] [--min-length N]\n"
+	    "    [--phred-base N]\n"
 	    "    [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
 	    "    [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",
 	    argv[0], argv[0]);

@@ -9,6 +9,7 @@
  *  as needed before adding to your code.
  */
 
+#define TRIM_VERBOSE(ptr)               ((ptr)->verbose)
 #define TRIM_INFILE1(ptr)               ((ptr)->infile1)
 #define TRIM_INFILE1_AE(ptr,c)          ((ptr)->infile1[c])
 #define TRIM_OUTFILE1(ptr)              ((ptr)->outfile1)
@@ -30,4 +31,4 @@
 #define TRIM_MIN_LENGTH(ptr)            ((ptr)->min_length)
 #define TRIM_MIN_MATCH(ptr)             ((ptr)->min_match)
 #define TRIM_MIN_QUAL(ptr)              ((ptr)->min_qual)
-#define TRIM_VERBOSE(ptr)               ((ptr)->verbose)
+#define TRIM_PHRED_BASE(ptr)            ((ptr)->phred_base)

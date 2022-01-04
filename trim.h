@@ -7,6 +7,7 @@
 
 typedef struct
 {
+    bool        verbose;
     char        *infile1;
     char        *outfile1;
     char        *infile2;
@@ -19,7 +20,7 @@ typedef struct
     size_t      min_length;
     size_t      min_match;
     unsigned    min_qual;
-    bool        verbose;
+    unsigned    phred_base;
 }   trim_t;
 
 #include "trim-rvs.h"
