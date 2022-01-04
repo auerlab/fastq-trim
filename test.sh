@@ -20,5 +20,11 @@
 make clean all
 export XZ_OPT=-1
 export GZIP=-1
+
 time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
-    250k.fastq.xz 250k-trimmed.fastq.gz
+    250k-R1.fastq.xz 250k-R1-trimmed.fastq.gz
+
+time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
+    250k-R2.fastq.xz 250k-R2-trimmed.fastq.gz
+
+printf "Paired mode...\n"
