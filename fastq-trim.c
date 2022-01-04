@@ -18,6 +18,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>         // isatty()
 #include <xtend/file.h>
 #include <biolibc/fastq.h>
 #include "trim.h"
@@ -146,7 +147,8 @@ int     trim_single_reads(trim_t *tp)
 	}
 	
 	++record_count;
-	if ( ! tp->verbose && (record_count % 100000 == 0) )
+	if ( ! tp->verbose && (record_count % 100000 == 0) &&
+	     isatty(fileno(stderr)) )
 	{
 	    fprintf(stderr,
 		    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\r",
