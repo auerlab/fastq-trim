@@ -75,8 +75,10 @@ int     main(int argc,char *argv[])
     
     if ( trim_open_files(&tp, arg, argc, argv) == EX_OK )
     {
-	// FIXME: Support paired reads
-	trim_single_reads(&tp);
+	if ( TRIM_INFILE2(&tp) == NULL )
+	    trim_single_reads(&tp);
+	else
+	    trim_paired_reads(&tp);
     }
     
     // FIXME: trim_close_files()
@@ -255,12 +257,21 @@ int     trim_paired_reads(trim_t *tp)
 		    short_count,
 		    low_qual_count;
     size_t          index;
-    bl_fastq_t      fastq_rec1;
+    bl_fastq_t      fastq_rec1,
+		    fastq_rec2;
     
     bl_fastq_init(&fastq_rec1);
+    bl_fastq_init(&fastq_rec2);
     record_count = adapter_count = short_count = low_qual_count = 0;
-    while ( bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK )
+    while ( (bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK) &&
+	    (bl_fastq_read(tp->instream2, &fastq_rec2) == BL_READ_OK) )
     {
+	// Compare read names just for sanity checking
+	
+	/*
+	 *  Trim read from R1
+	 */
+	
 	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
@@ -281,18 +292,48 @@ int     trim_paired_reads(trim_t *tp)
 			BL_FASTQ_SEQ(&fastq_rec1) + index);
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
+
+	/*
+	 *  Trim read from R2
+	 */
+	
+	index = bl_fastq_find_3p_adapter(&fastq_rec2, tp->adapter, tp->min_match);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	{
+	    ++adapter_count;
+	    if ( tp->verbose )
+		fprintf(stderr, "Adapter  %s\n",
+			BL_FASTQ_SEQ(&fastq_rec1) + index);
+	    bl_fastq_3p_trim(&fastq_rec1, index);
+	}
+	
+	// FIXME: Support other PHRED bases
+	index = bl_fastq_find_3p_qual(&fastq_rec2, tp->min_qual, 33);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	{
+	    ++low_qual_count;
+	    if ( tp->verbose )
+		fprintf(stderr, "Low qual %s\n",
+			BL_FASTQ_SEQ(&fastq_rec1) + index);
+	    bl_fastq_3p_trim(&fastq_rec1, index);
+	}
 	
 	//fprintf(stderr, "%zu\n", BL_FASTQ_SEQ_LEN(&fastq_rec1));
-	if ( BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length )
+	if ( (BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length) &&
+	     (BL_FASTQ_SEQ_LEN(&fastq_rec2) >= tp->min_length) )
 	{
 	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_SEQ_LEN(&fastq_rec1));
+	    bl_fastq_write(tp->outstream2, &fastq_rec2, BL_FASTQ_SEQ_LEN(&fastq_rec2));
 	}
 	else
 	{
 	    if ( tp->verbose )
-		fprintf(stderr, "Short    %zu %s\n",
+		fprintf(stderr, "Short    %zu %s\n"
+				"         %zu %s\n",
 			BL_FASTQ_SEQ_LEN(&fastq_rec1),
-			BL_FASTQ_SEQ(&fastq_rec1));
+			BL_FASTQ_SEQ(&fastq_rec1),
+			BL_FASTQ_SEQ_LEN(&fastq_rec2),
+			BL_FASTQ_SEQ(&fastq_rec2));
 	    ++short_count;
 	}
 	
@@ -310,6 +351,7 @@ int     trim_paired_reads(trim_t *tp)
 	    record_count, adapter_count, tp->min_qual, low_qual_count,
 	    tp->min_length, short_count);
     bl_fastq_free(&fastq_rec1);
+    bl_fastq_free(&fastq_rec2);
     return EX_OK;
 }
 
