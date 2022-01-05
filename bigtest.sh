@@ -26,4 +26,4 @@ time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
 
 printf "Checking results...\n"
 gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz \
-    | fgrep --color --3p-adapter AGATCGGAAGAGCACAC
+    | fgrep --color AGATCGGAAGAGCACAC

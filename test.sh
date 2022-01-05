@@ -18,7 +18,6 @@
 # 82.94% fastq-tr
 
 make clean all
-export XZ_OPT=-1
 export GZIP=-1
 
 time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
@@ -29,5 +28,11 @@ time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
 
 printf "Paired mode...\n"
 time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
-    250k-R1.fastq.xz 250k-R1-trimmed-ft.fastq.gz \
-    250k-R2.fastq.xz 250k-R2-trimmed-ft.fastq.gz
+    250k-R1.fastq.xz 250k-R1-paired-trimmed-ft.fastq.gz \
+    250k-R2.fastq.xz 250k-R2-paired-trimmed-ft.fastq.gz
+
+printf "Smart adapter matching...\n"
+time ./fastq-trim "$@" --adapter-smart-match --3p-adapter AGATCGGAAGAGCACAC \
+    250k-R1.fastq.xz 250k-R1-smart-trimmed-ft.fastq.gz
+
+gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep --color AGATCGGAAGAGC

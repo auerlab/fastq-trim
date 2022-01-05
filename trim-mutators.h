@@ -44,6 +44,6 @@ int trim_set_adapter(trim_t *trim_ptr, char *new_adapter);
 int trim_set_adapter_ae(trim_t *trim_ptr, size_t c, char new_adapter_element);
 int trim_set_adapter_cpy(trim_t *trim_ptr, char *new_adapter, size_t array_size);
 int trim_set_min_length(trim_t *trim_ptr, size_t new_min_length);
-int trim_set_min_overlap(trim_t *trim_ptr, size_t new_min_overlap);
+int trim_set_min_match(trim_t *trim_ptr, size_t new_min_overlap);
 int trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual);
 int trim_set_phred_base(trim_t *trim_ptr, unsigned new_phred_base);

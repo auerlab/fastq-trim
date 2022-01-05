@@ -19,12 +19,13 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>         // isatty()
+#include <sys/param.h>      // MIN()
 #include <xtend/file.h>
 #include <biolibc/fastq.h>
 #include "trim.h"
 
 void    usage(char *argv[]);
-size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter, size_t min_overlap);
+size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter, size_t min_match);
 size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
 			 size_t min_match);
 size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual, unsigned phred_base);
@@ -61,7 +62,7 @@ int     main(int argc,char *argv[])
 	}
 	else if ( strcmp(argv[arg], "--min-match") == 0 )
 	{
-	    trim_set_min_overlap(&tp, strtoul(argv[++arg], &end, 10));
+	    trim_set_min_match(&tp, strtoul(argv[++arg], &end, 10));
 	    if ( *end != '\0' )
 		usage(argv);
 	}
@@ -131,7 +132,7 @@ int     trim_single_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	index = tp->adapter_match_function(&fastq_rec1, tp->adapter, tp->min_overlap);
+	index = tp->adapter_match_function(&fastq_rec1, tp->adapter, tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -227,7 +228,7 @@ int     trim_paired_reads(trim_t *tp)
 	}
 
 	index = tp->adapter_match_function(&fastq_rec1, tp->adapter,
-					 tp->min_overlap);
+					 tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -253,7 +254,7 @@ int     trim_paired_reads(trim_t *tp)
 	}
 	
 	index = tp->adapter_match_function(&fastq_rec2, tp->adapter,
-					 tp->min_overlap);
+					 tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -394,7 +395,7 @@ void    trim_init(trim_t *tp)
     tp->outstream2 = NULL;
     tp->adapter = strdup(ILLUMINA_UNIVERSAL);
     tp->min_length = 30;
-    tp->min_overlap = 3;
+    tp->min_match = 3;
     tp->min_qual = 20;
     tp->phred_base = 33;
 }
@@ -489,7 +490,7 @@ size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
  *  Arguments:
  *      read        FASTQ read to be searched
  *      adapter     Adapter sequence to be located
- *      min_overlap   Minimum number of characters to match in adapter
+ *      min_match   Minimum number of characters to match in adapter
  *
  *  Returns:
  *      Index of adapter sequence if found, index of NULL terminator otherwise
@@ -503,13 +504,13 @@ size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
  *  2022-01-02  Jason Bacon Begin
  ***************************************************************************/
 
-size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter,
-			 size_t min_overlap)
+size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
+		const char *adapter, size_t min_match)
 
 {
-    const char  *start, *pr, *pa;
-    size_t      mismatch, max_mismatch;
-    double      mismatch_proportion;
+    size_t      match, mismatch, max_mismatch,
+		adapter_len = strlen(adapter),
+		start, rc, ac;
     
     // Start at 5' end assuming 5' adapters already removed
     // Cutadapt uses a semiglobal alignment algorithm to find adapters.
@@ -517,20 +518,25 @@ size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapt
     // assume that errors in adapter sequences are extremely rare.
     // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
 
-    max_mismatch = strlen(adapter) * 0.2;
-    for (start = read->seq; start < read->seq + read->seq_len; ++start)
+    for (start = 0; start < read->seq_len; ++start)
     {
-	mismatch = 0;
-	for (pr = start, pa = adapter;
-	     (mismatch < max_mismatch) && (*pa != '\0') && (*pr != '\0');
-	     ++pr, ++pa)
+	// FIXME: Allow error rate other than 1/10
+	max_mismatch = MIN((read->seq_len - start) / 10, adapter_len / 10);
+	for (rc = start, ac = 0, match = mismatch = 0;
+	     (mismatch <= max_mismatch) &&
+	     (adapter[ac] != '\0') && (read->seq[rc] != '\0');
+	     ++rc, ++ac)
 	{
-	    if ( toupper(*pr) != *pa )
+	    if ( toupper(read->seq[rc]) != adapter[ac] )
 		++mismatch;
+	    else
+		++match;
 	}
-	mismatch_proportion = (double)mismatch / (pr - start);
-	if ( (pr - start >= min_overlap) && (mismatch_proportion < 0.2) )
-	    return start - read->seq;
+	if ( (mismatch <= max_mismatch) && (match >= min_match) )
+	{
+	    //printf("%zu %s\n", max_mismatch, start);
+	    return start;
+	}
     }
     return read->seq_len;   // Location of '\0' terminator
 }
@@ -540,7 +546,7 @@ size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
 			 size_t min_match)
 
 {
-    const char *start, *pr, *pa;
+    size_t  start, rc, ac;
     
     // Start at 5' end assuming 5' adapters already removed
     // Cutadapt uses a semiglobal alignment algorithm to find adapters.
@@ -548,13 +554,14 @@ size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
     // assume that errors in adapter sequences are extremely rare.
     // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
 
-    for (start = read->seq; start < read->seq + read->seq_len; ++start)
+    for (start = 0; start < read->seq_len; ++start)
     {
-	for (pr = start, pa = adapter;
-	    (*pa != '\0') && (toupper(*pr) == *pa); ++pr, ++pa)
+	for (rc = start, ac = 0;
+	    (adapter[ac] != '\0') &&
+	    (toupper(read->seq[rc]) == adapter[ac]); ++rc, ++ac)
 	    ;
-	if ( ((*pr == '\0') && (pr - start >= min_match)) || (*pa == '\0') )
-	    return start - read->seq;
+	if ( ((read->seq[rc] == '\0') && (rc - start >= min_match)) || (adapter[ac] == '\0') )
+	    return start;
     }
     return read->seq_len;   // Location of '\0' terminator
 }

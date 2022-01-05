@@ -1743,23 +1743,23 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *      -ltrim
  *
  *  Description:
- *      Mutator for min_overlap member in a trim_t structure.
- *      Use this function to set min_overlap in a trim_t variable
+ *      Mutator for min_match member in a trim_t structure.
+ *      Use this function to set min_match in a trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
- *      min_overlap is a pointer, data previously pointed to should
+ *      min_match is a pointer, data previously pointed to should
  *      generally be freed before calling this function to avoid memory
  *      leaks.
  *
  *      Note that there is an equivalent macro (), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
- *      of new_min_overlap is guaranteed by other means.
+ *      of new_min_match is guaranteed by other means.
  *      
  *
  *  Arguments:
  *      trim_ptr        Pointer to the structure to set
- *      new_min_overlap The new value for min_overlap
+ *      new_min_match The new value for min_match
  *
  *  Returns:
  *      TRIM_DATA_OK if the new value is acceptable and assigned
@@ -1767,9 +1767,9 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *
  *  Examples:
  *      trim_t          trim;
- *      size_t          new_min_overlap;
+ *      size_t          new_min_match;
  *
- *      if ( trim_set_min_overlap(&trim, new_min_overlap) == TRIM_DATA_OK )
+ *      if ( trim_set_min_match(&trim, new_min_match) == TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1781,7 +1781,7 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
-int     trim_set_min_overlap(trim_t *trim_ptr, size_t new_min_overlap)
+int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
 
 {
     /* FIXME: Replace this with a proper sanity check */
@@ -1789,7 +1789,7 @@ int     trim_set_min_overlap(trim_t *trim_ptr, size_t new_min_overlap)
 	return TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->min_overlap = new_min_overlap;
+	trim_ptr->min_match = new_min_match;
 	return TRIM_DATA_OK;
     }
 }

@@ -12,7 +12,7 @@
 
 // Must typedef this to avoid confusing auto-gen-get-set in the structure
 typedef size_t (* trim_afp_t)(const bl_fastq_t *read,
-	    const char *adapter, size_t min_overlap);
+	    const char *adapter, size_t min_match);
 
 typedef struct
 {
@@ -28,7 +28,7 @@ typedef struct
     FILE        *outstream2;
     char        *adapter;
     size_t      min_length;
-    size_t      min_overlap;
+    size_t      min_match;
     unsigned    min_qual;
     unsigned    phred_base;
 }   trim_t;
