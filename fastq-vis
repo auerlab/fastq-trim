@@ -53,7 +53,7 @@ bz2)
     co=bzcat
     ;;
 gz)
-    co=bzcat
+    co=gzcat
     ;;
 *)
     printf "Unsupported compression: $ext\n"
