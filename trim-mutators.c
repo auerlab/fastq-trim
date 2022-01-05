@@ -54,7 +54,7 @@
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_verbose(trim_t *trim_ptr, bool new_verbose)
@@ -66,6 +66,64 @@ int     trim_set_verbose(trim_t *trim_ptr, bool new_verbose)
     else
     {
 	trim_ptr->verbose = new_verbose;
+	return TRIM_DATA_OK;
+    }
+}
+
+
+/***************************************************************************
+ *  Library:
+ *      #include <trim.h>
+ *      -ltrim
+ *
+ *  Description:
+ *      Mutator for adapter_match_function member in a trim_t structure.
+ *      Use this function to set adapter_match_function in a trim_t variable
+ *      from non-member functions.  This function performs a direct
+ *      assignment for scalar or pointer structure members.  If
+ *      adapter_match_function is a pointer, data previously pointed to should
+ *      generally be freed before calling this function to avoid memory
+ *      leaks.
+ *
+ *      Note that there is an equivalent macro (), which performs
+ *      this function with no data verification or function call overhead.
+ *      Use the macro version to maximize performance where the validity
+ *      of new_adapter_match_function is guaranteed by other means.
+ *      
+ *
+ *  Arguments:
+ *      trim_ptr        Pointer to the structure to set
+ *      new_adapter_match_function The new value for adapter_match_function
+ *
+ *  Returns:
+ *      TRIM_DATA_OK if the new value is acceptable and assigned
+ *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *
+ *  Examples:
+ *      trim_t          trim;
+ *      trim_afp_t      new_adapter_match_function;
+ *
+ *      if ( trim_set_adapter_match_function(&trim, new_adapter_match_function) == TRIM_DATA_OK )
+ *      {
+ *      }
+ *
+ *  See also:
+ *      (3)
+ *
+ *  History: 
+ *  Date        Name        Modification
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
+ ***************************************************************************/
+
+int     trim_set_adapter_match_function(trim_t *trim_ptr, trim_afp_t new_adapter_match_function)
+
+{
+    /* FIXME: Replace this with a proper sanity check */
+    if ( 0 )
+	return TRIM_DATA_OUT_OF_RANGE;
+    else
+    {
+	trim_ptr->adapter_match_function = new_adapter_match_function;
 	return TRIM_DATA_OK;
     }
 }
@@ -112,7 +170,7 @@ int     trim_set_verbose(trim_t *trim_ptr, bool new_verbose)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_infile1(trim_t *trim_ptr, char * new_infile1)
@@ -167,7 +225,7 @@ int     trim_set_infile1(trim_t *trim_ptr, char * new_infile1)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_infile1_ae(trim_t *trim_ptr, size_t c, char  new_infile1_element)
@@ -223,7 +281,7 @@ int     trim_set_infile1_ae(trim_t *trim_ptr, size_t c, char  new_infile1_elemen
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_infile1_cpy(trim_t *trim_ptr, char * new_infile1, size_t array_size)
@@ -282,7 +340,7 @@ int     trim_set_infile1_cpy(trim_t *trim_ptr, char * new_infile1, size_t array_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outfile1(trim_t *trim_ptr, char * new_outfile1)
@@ -337,7 +395,7 @@ int     trim_set_outfile1(trim_t *trim_ptr, char * new_outfile1)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outfile1_ae(trim_t *trim_ptr, size_t c, char  new_outfile1_element)
@@ -393,7 +451,7 @@ int     trim_set_outfile1_ae(trim_t *trim_ptr, size_t c, char  new_outfile1_elem
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outfile1_cpy(trim_t *trim_ptr, char * new_outfile1, size_t array_size)
@@ -452,7 +510,7 @@ int     trim_set_outfile1_cpy(trim_t *trim_ptr, char * new_outfile1, size_t arra
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_infile2(trim_t *trim_ptr, char * new_infile2)
@@ -507,7 +565,7 @@ int     trim_set_infile2(trim_t *trim_ptr, char * new_infile2)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_infile2_ae(trim_t *trim_ptr, size_t c, char  new_infile2_element)
@@ -563,7 +621,7 @@ int     trim_set_infile2_ae(trim_t *trim_ptr, size_t c, char  new_infile2_elemen
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_infile2_cpy(trim_t *trim_ptr, char * new_infile2, size_t array_size)
@@ -622,7 +680,7 @@ int     trim_set_infile2_cpy(trim_t *trim_ptr, char * new_infile2, size_t array_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outfile2(trim_t *trim_ptr, char * new_outfile2)
@@ -677,7 +735,7 @@ int     trim_set_outfile2(trim_t *trim_ptr, char * new_outfile2)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outfile2_ae(trim_t *trim_ptr, size_t c, char  new_outfile2_element)
@@ -733,7 +791,7 @@ int     trim_set_outfile2_ae(trim_t *trim_ptr, size_t c, char  new_outfile2_elem
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outfile2_cpy(trim_t *trim_ptr, char * new_outfile2, size_t array_size)
@@ -792,7 +850,7 @@ int     trim_set_outfile2_cpy(trim_t *trim_ptr, char * new_outfile2, size_t arra
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_instream1(trim_t *trim_ptr, FILE * new_instream1)
@@ -847,7 +905,7 @@ int     trim_set_instream1(trim_t *trim_ptr, FILE * new_instream1)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_instream1_ae(trim_t *trim_ptr, size_t c, FILE  new_instream1_element)
@@ -903,7 +961,7 @@ int     trim_set_instream1_ae(trim_t *trim_ptr, size_t c, FILE  new_instream1_el
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_instream1_cpy(trim_t *trim_ptr, FILE * new_instream1, size_t array_size)
@@ -967,7 +1025,7 @@ int     trim_set_instream1_cpy(trim_t *trim_ptr, FILE * new_instream1, size_t ar
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outstream1(trim_t *trim_ptr, FILE * new_outstream1)
@@ -1022,7 +1080,7 @@ int     trim_set_outstream1(trim_t *trim_ptr, FILE * new_outstream1)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outstream1_ae(trim_t *trim_ptr, size_t c, FILE  new_outstream1_element)
@@ -1078,7 +1136,7 @@ int     trim_set_outstream1_ae(trim_t *trim_ptr, size_t c, FILE  new_outstream1_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outstream1_cpy(trim_t *trim_ptr, FILE * new_outstream1, size_t array_size)
@@ -1142,7 +1200,7 @@ int     trim_set_outstream1_cpy(trim_t *trim_ptr, FILE * new_outstream1, size_t 
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_instream2(trim_t *trim_ptr, FILE * new_instream2)
@@ -1197,7 +1255,7 @@ int     trim_set_instream2(trim_t *trim_ptr, FILE * new_instream2)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_instream2_ae(trim_t *trim_ptr, size_t c, FILE  new_instream2_element)
@@ -1253,7 +1311,7 @@ int     trim_set_instream2_ae(trim_t *trim_ptr, size_t c, FILE  new_instream2_el
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_instream2_cpy(trim_t *trim_ptr, FILE * new_instream2, size_t array_size)
@@ -1317,7 +1375,7 @@ int     trim_set_instream2_cpy(trim_t *trim_ptr, FILE * new_instream2, size_t ar
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outstream2(trim_t *trim_ptr, FILE * new_outstream2)
@@ -1372,7 +1430,7 @@ int     trim_set_outstream2(trim_t *trim_ptr, FILE * new_outstream2)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outstream2_ae(trim_t *trim_ptr, size_t c, FILE  new_outstream2_element)
@@ -1428,7 +1486,7 @@ int     trim_set_outstream2_ae(trim_t *trim_ptr, size_t c, FILE  new_outstream2_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_outstream2_cpy(trim_t *trim_ptr, FILE * new_outstream2, size_t array_size)
@@ -1492,7 +1550,7 @@ int     trim_set_outstream2_cpy(trim_t *trim_ptr, FILE * new_outstream2, size_t 
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_adapter(trim_t *trim_ptr, char * new_adapter)
@@ -1547,7 +1605,7 @@ int     trim_set_adapter(trim_t *trim_ptr, char * new_adapter)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_adapter_ae(trim_t *trim_ptr, size_t c, char  new_adapter_element)
@@ -1603,7 +1661,7 @@ int     trim_set_adapter_ae(trim_t *trim_ptr, size_t c, char  new_adapter_elemen
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_adapter_cpy(trim_t *trim_ptr, char * new_adapter, size_t array_size)
@@ -1662,7 +1720,7 @@ int     trim_set_adapter_cpy(trim_t *trim_ptr, char * new_adapter, size_t array_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
@@ -1685,23 +1743,23 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *      -ltrim
  *
  *  Description:
- *      Mutator for min_match member in a trim_t structure.
- *      Use this function to set min_match in a trim_t variable
+ *      Mutator for min_overlap member in a trim_t structure.
+ *      Use this function to set min_overlap in a trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
- *      min_match is a pointer, data previously pointed to should
+ *      min_overlap is a pointer, data previously pointed to should
  *      generally be freed before calling this function to avoid memory
  *      leaks.
  *
  *      Note that there is an equivalent macro (), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
- *      of new_min_match is guaranteed by other means.
+ *      of new_min_overlap is guaranteed by other means.
  *      
  *
  *  Arguments:
  *      trim_ptr        Pointer to the structure to set
- *      new_min_match   The new value for min_match
+ *      new_min_overlap The new value for min_overlap
  *
  *  Returns:
  *      TRIM_DATA_OK if the new value is acceptable and assigned
@@ -1709,9 +1767,9 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *
  *  Examples:
  *      trim_t          trim;
- *      size_t          new_min_match;
+ *      size_t          new_min_overlap;
  *
- *      if ( trim_set_min_match(&trim, new_min_match) == TRIM_DATA_OK )
+ *      if ( trim_set_min_overlap(&trim, new_min_overlap) == TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1720,10 +1778,10 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
-int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
+int     trim_set_min_overlap(trim_t *trim_ptr, size_t new_min_overlap)
 
 {
     /* FIXME: Replace this with a proper sanity check */
@@ -1731,7 +1789,7 @@ int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
 	return TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->min_match = new_min_match;
+	trim_ptr->min_overlap = new_min_overlap;
 	return TRIM_DATA_OK;
     }
 }
@@ -1778,7 +1836,7 @@ int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual)
@@ -1836,7 +1894,7 @@ int     trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-04  gen-get-set Auto-generated from trim.h
+ *  2022-01-05  gen-get-set Auto-generated from trim.h
  ***************************************************************************/
 
 int     trim_set_phred_base(trim_t *trim_ptr, unsigned new_phred_base)

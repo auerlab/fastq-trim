@@ -1,3 +1,4 @@
+
 #define ILLUMINA_UNIVERSAL      "AGATCGGAAGAG"
 #define ILLUMINA_SMALL_RNA_3P   "TGGAATTCTCGG"
 #define ILLUMINA_SMALL_RNA_5P   "GATCGTCGGACT"
@@ -5,9 +6,18 @@
 #define SOLID                   "CGCCTTGGCCGT"
 #define DEFAULT_ADAPTER         ILLUMINA_UNIVERSAL
 
+#ifndef _BIOLIBC_FASTQ_H_
+#include <biolibc/fastq.h>
+#endif
+
+// Must typedef this to avoid confusing auto-gen-get-set in the structure
+typedef size_t (* trim_afp_t)(const bl_fastq_t *read,
+	    const char *adapter, size_t min_overlap);
+
 typedef struct
 {
     bool        verbose;
+    trim_afp_t  adapter_match_function;
     char        *infile1;
     char        *outfile1;
     char        *infile2;
@@ -18,7 +28,7 @@ typedef struct
     FILE        *outstream2;
     char        *adapter;
     size_t      min_length;
-    size_t      min_match;
+    size_t      min_overlap;
     unsigned    min_qual;
     unsigned    phred_base;
 }   trim_t;

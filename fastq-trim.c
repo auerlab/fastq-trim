@@ -24,7 +24,9 @@
 #include "trim.h"
 
 void    usage(char *argv[]);
-size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter, size_t min_match);
+size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter, size_t min_overlap);
+size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
+			 size_t min_match);
 size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual, unsigned phred_base);
 size_t  bl_fastq_3p_trim(bl_fastq_t *read, size_t new_len);
 int     trim_single_reads(trim_t *tp);
@@ -34,7 +36,6 @@ int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[]);
 size_t  bl_fastq_name_cmp(bl_fastq_t *read1, bl_fastq_t *read2);
 void    trim_close_files(trim_t *tp);
 void    strupper(char *string);
-
 
 int     main(int argc,char *argv[])
 
@@ -51,11 +52,16 @@ int     main(int argc,char *argv[])
     {
 	if ( strcmp(argv[arg], "--verbose") == 0 )
 	    trim_set_verbose(&tp, true);
+	if ( strcmp(argv[arg], "--adapter-smart-match") == 0 )
+	    trim_set_adapter_match_function(&tp, bl_fastq_find_3p_adapter_smart);
 	else if ( strcmp(argv[arg], "--3p-adapter") == 0 )
+	{
+	    free(TRIM_ADAPTER(&tp));
 	    trim_set_adapter(&tp, argv[++arg]);
+	}
 	else if ( strcmp(argv[arg], "--min-match") == 0 )
 	{
-	    trim_set_min_match(&tp, strtoul(argv[++arg], &end, 10));
+	    trim_set_min_overlap(&tp, strtoul(argv[++arg], &end, 10));
 	    if ( *end != '\0' )
 		usage(argv);
 	}
@@ -125,7 +131,7 @@ int     trim_single_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter, tp->min_match);
+	index = tp->adapter_match_function(&fastq_rec1, tp->adapter, tp->min_overlap);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -135,11 +141,8 @@ int     trim_single_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 	
-	//fprintf(stderr, "%zu\n", BL_FASTQ_SEQ_LEN(&fastq_rec1));
 	if ( BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length )
-	{
-	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_SEQ_LEN(&fastq_rec1));
-	}
+	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_LINE_UNLIMITED);
 	else
 	{
 	    if ( tp->verbose )
@@ -223,8 +226,8 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	index = bl_fastq_find_3p_adapter(&fastq_rec1, tp->adapter,
-					 tp->min_match);
+	index = tp->adapter_match_function(&fastq_rec1, tp->adapter,
+					 tp->min_overlap);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -249,8 +252,8 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec2, index);
 	}
 	
-	index = bl_fastq_find_3p_adapter(&fastq_rec2, tp->adapter,
-					 tp->min_match);
+	index = tp->adapter_match_function(&fastq_rec2, tp->adapter,
+					 tp->min_overlap);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -264,8 +267,8 @@ int     trim_paired_reads(trim_t *tp)
 	if ( (BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length) &&
 	     (BL_FASTQ_SEQ_LEN(&fastq_rec2) >= tp->min_length) )
 	{
-	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_SEQ_LEN(&fastq_rec1));
-	    bl_fastq_write(tp->outstream2, &fastq_rec2, BL_FASTQ_SEQ_LEN(&fastq_rec2));
+	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_LINE_UNLIMITED);
+	    bl_fastq_write(tp->outstream2, &fastq_rec2, BL_FASTQ_LINE_UNLIMITED);
 	}
 	else
 	{
@@ -380,6 +383,7 @@ void    trim_init(trim_t *tp)
 
 {
     tp->verbose = false;
+    tp->adapter_match_function = bl_fastq_find_3p_adapter;
     tp->infile1 = NULL;
     tp->outfile1 = NULL;
     tp->infile2 = NULL;
@@ -388,9 +392,9 @@ void    trim_init(trim_t *tp)
     tp->outstream1 = stdout;
     tp->instream2 = NULL;
     tp->outstream2 = NULL;
-    tp->adapter = NULL;
+    tp->adapter = strdup(ILLUMINA_UNIVERSAL);
     tp->min_length = 30;
-    tp->min_match = 3;
+    tp->min_overlap = 3;
     tp->min_qual = 20;
     tp->phred_base = 33;
 }
@@ -477,11 +481,15 @@ size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
  *  Description:
  *      Locate adapter (or a portion thereof if at the end) starting at the
  *      3' end of the read.
- *  
+ *
+ *      The content of adapter is assumed to be all upper case.  This
+ *      improves speed by avoiding millions of redundant toupper()
+ *      conversions on the same string.
+ *
  *  Arguments:
  *      read        FASTQ read to be searched
  *      adapter     Adapter sequence to be located
- *      min_match   Minimum number of characters to match in adapter
+ *      min_overlap   Minimum number of characters to match in adapter
  *
  *  Returns:
  *      Index of adapter sequence if found, index of NULL terminator otherwise
@@ -494,6 +502,39 @@ size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
  *  Date        Name        Modification
  *  2022-01-02  Jason Bacon Begin
  ***************************************************************************/
+
+size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter,
+			 size_t min_overlap)
+
+{
+    const char  *start, *pr, *pa;
+    size_t      mismatch, max_mismatch;
+    double      mismatch_proportion;
+    
+    // Start at 5' end assuming 5' adapters already removed
+    // Cutadapt uses a semiglobal alignment algorithm to find adapters.
+    // Not sure what the benefit of this is over exact matching. I would
+    // assume that errors in adapter sequences are extremely rare.
+    // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
+
+    max_mismatch = strlen(adapter) * 0.2;
+    for (start = read->seq; start < read->seq + read->seq_len; ++start)
+    {
+	mismatch = 0;
+	for (pr = start, pa = adapter;
+	     (mismatch < max_mismatch) && (*pa != '\0') && (*pr != '\0');
+	     ++pr, ++pa)
+	{
+	    if ( toupper(*pr) != *pa )
+		++mismatch;
+	}
+	mismatch_proportion = (double)mismatch / (pr - start);
+	if ( (pr - start >= min_overlap) && (mismatch_proportion < 0.2) )
+	    return start - read->seq;
+    }
+    return read->seq_len;   // Location of '\0' terminator
+}
+
 
 size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
 			 size_t min_match)
@@ -509,7 +550,8 @@ size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
 
     for (start = read->seq; start < read->seq + read->seq_len; ++start)
     {
-	for (pr = start, pa = adapter; toupper(*pr) == *pa; ++pr, ++pa)
+	for (pr = start, pa = adapter;
+	    (*pa != '\0') && (toupper(*pr) == *pa); ++pr, ++pa)
 	    ;
 	if ( ((*pr == '\0') && (pr - start >= min_match)) || (*pa == '\0') )
 	    return start - read->seq;
@@ -655,8 +697,8 @@ void    usage(char *argv[])
 	    "Usage:\n\n"
 	    "%s --help\n"
 	    "%s\n"
-	    "    [--verbose] [--3p-adapter seq] [--min-qual N] [--min-length N]\n"
-	    "    [--phred-base N]\n"
+	    "    [--verbose] [--adapter-smart-match]\n"
+	    "    [--3p-adapter seq] [--min-qual N] [--min-length N] [--phred-base N]\n"
 	    "    [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
 	    "    [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",
 	    argv[0], argv[0]);

@@ -21,7 +21,7 @@ make clean all
 export XZ_OPT=-1
 export GZIP=-1
 
-time ./fastq-trim --min-qual 20 --min-length 30 --3p-adapter AGATCGGAAGAGCACAC \
+time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
     250k-R1.fastq.xz 250k-R1-trimmed-ft.fastq.gz
 
 time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \

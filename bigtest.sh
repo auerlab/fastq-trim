@@ -23,3 +23,7 @@ export GZIP=-1
 time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
     chondro-sample1-rep1-time1-R1.fastq.xz \
     chondro-sample1-rep1-time1-R1-trimmed.fastq.gz
+
+printf "Checking results...\n"
+gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz \
+    | fgrep --color --3p-adapter AGATCGGAAGAGCACAC
