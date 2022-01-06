@@ -9,6 +9,7 @@ printf "Smart matching...\n"
 time ./fastq-trim --adapter-smart-match \
     250k-R1.fastq.xz 250k-R1-trimmed-ft-smart.fastq
 
+# 3 or 4 cores make very little difference
 printf "cutadapt...\n"
 time cutadapt --cores=2 --quality-cutoff=20 --minimum-length=30 -a AGATCGGAAGAGCACAC \
      -o 250k-R1-trimmed-ca.fastq 250k-R1.fastq.xz | fgrep adapters
