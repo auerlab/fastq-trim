@@ -9,9 +9,10 @@ time ./fastq-trim 250k-R1.fastq.xz 250k-R1-trimmed-ft-smart.fastq
 # Use parameters to match defaults for fastq-trim
 # 3 or 4 cores make very little difference
 printf "cutadapt...\n"
-time cutadapt \
+time cutadapt --report=minimal \
     --cores=2 --quality-cutoff=20 --minimum-length=30 -a AGATCGGAAGAG \
-    -o 250k-R1-trimmed-ca.fastq 250k-R1.fastq.xz | fgrep adapters
+    -o 250k-R1-trimmed-ca.fastq 250k-R1.fastq.xz > ca-out.txt 2>&1
+more ca-out.txt
 
 printf "Taking first 25k reads...\n"
 head -100000 250k-R1-trimmed-ca.fastq > ca-short.fastq

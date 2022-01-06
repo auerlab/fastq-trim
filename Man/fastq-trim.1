@@ -27,7 +27,7 @@ Print a summary of usage and exit.
 Print some intermediate results during trimming for debugging purposes.
 
 .TP
-\fB\-\-\--exact-matchfR[=\fIN\fR]
+\fB\-\-exact-match\fR \fIN\fR
 Use exact matching to find adapters.  Adapters will be matched if a segment
 matches the entire adapter sequence, or a portion of it at the end of the
 read matches to a minimum of min_match (default=3, controlled by
@@ -35,34 +35,39 @@ read matches to a minimum of min_match (default=3, controlled by
 --exact-match is not specified is described below.
 
 .TP
-\fB\-\-\3p-adapter1fR[=\fIseq\fR]
+\fB\-\-3p-adapter1\fR \fIseq\fR
 Specify the 3' adapter for single-end mode and read1 in paired-end mode.
 Default is the Illumina universal
 adapter, AGATCGGAAGAG.  Use fastq-vis(1) to identify other standard adapters
 in the input.
 
 .TP
-\fB\-\-\3p-adapter1fR[=\fIseq\fR]
+\fB\-\-3p-adapter1\fR \fIseq\fR
 Specify the 3' adapter for read2 in paired-end mode.
 Default is the Illumina universal
 adapter, AGATCGGAAGAG.  Use fastq-vis(1) to identify other standard adapters
 in the input.
 
 .TP
-\fB\-\-\min-matchfR[=\fIN\fR]
+\fB\-\-min-match\fR \fIN\fR
 Minimum number of bases in the read that must match the adapter in order
-to report a hit.  This applies to both exact matching and smart matching.
+to report a match.  This applies to both exact matching and smart matching.
 
 .TP
-\fB\-\-\min-qualfR[=\fIN\fR]
+\fB\-\-max-mismatch-percent\fR \fIN\fR
+Maximum percentage of bases in the read can differ from the adapter and
+still consider it a match.  This applies only to smart matching.
+
+.TP
+\fB\-\-min-qual\fR \fIN\fR
 Minimum quality of bases to keep for end-trimming.  Default is 20.
 
 .TP
-\fB\-\-\min-lengthfR[=\fIN\fR]
+\fB\-\-min-length\fR \fIN\fR
 Minimum length of reads to keep after trimming.  Default is 30.
 
 .TP
-\fB\-\-\phred-basefR[=\fIN\fR]
+\fB\-\-phred-base\fR \fIN\fR
 Offset used for characters in quality string.  Default is 33, which should
 be the correct value for virtually all modern sequence data.
 

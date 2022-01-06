@@ -4,6 +4,11 @@ make clean all
 export GZIP=-1  # Speed up output compression
 
 time ./fastq-trim "$@" \
+    --exact-match \
+    --3p-adapter1 AGATCGGAAGAGCACAC \
+    250k-R1.fastq.xz 250k-R1-smart-trimmed-ft.fastq.gz
+
+time ./fastq-trim "$@" \
     --3p-adapter1 AGATCGGAAGAGCACAC \
     250k-R1.fastq.xz 250k-R1-trimmed-ft.fastq.gz
 
@@ -11,16 +16,9 @@ time ./fastq-trim "$@" \
     --3p-adapter1 AGATCGGAAGAGCGTCG \
     250k-R2.fastq.xz 250k-R2-trimmed-ft.fastq.gz
 
-printf "Smart adapter matching...\n"
 time ./fastq-trim "$@" \
-    --adapter-smart-match \
     --3p-adapter1 AGATCGGAAGAGCACAC \
-    250k-R1.fastq.xz 250k-R1-smart-trimmed-ft.fastq.gz
-
-printf "Paired mode...\n"
-time ./fastq-trim "$@" \
-    --3p-adapter1 AGATCGGAAGAGC \
-    --3p-adapter2 AGATCGGAAGAGC \
+    --3p-adapter2 AGATCGGAAGAGCGTCG \
     250k-R1.fastq.xz 250k-R1-paired-trimmed-ft.fastq.gz \
     250k-R2.fastq.xz 250k-R2-paired-trimmed-ft.fastq.gz
 

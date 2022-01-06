@@ -25,9 +25,10 @@
 #include "trim.h"
 
 void    usage(char *argv[]);
-size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter, size_t min_match);
-size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read, const char *adapter,
-			 size_t min_match);
+size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
+	    const char *adapter, size_t min_match, unsigned max_mismatch_percent);
+size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read,
+	    const char *adapter, size_t min_match, unsigned max_mismatch_percent);
 size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual, unsigned phred_base);
 size_t  bl_fastq_3p_trim(bl_fastq_t *read, size_t new_len);
 int     trim_single_reads(trim_t *tp);
@@ -71,6 +72,12 @@ int     main(int argc,char *argv[])
 	    if ( *end != '\0' )
 		usage(argv);
 	}
+	else if ( strcmp(argv[arg], "--max-mismatch-percent") == 0 )
+	{
+	    trim_set_max_mismatch_percent(&tp, strtoul(argv[++arg], &end, 10));
+	    if ( *end != '\0' )
+		usage(argv);
+	}
 	else if ( strcmp(argv[arg], "--min-qual") == 0 )
 	{
 	    trim_set_min_qual(&tp, strtoul(argv[++arg], &end, 10));
@@ -93,8 +100,9 @@ int     main(int argc,char *argv[])
 	    usage(argv);
     }
     strupper(TRIM_ADAPTER1(&tp));
-    fprintf(stderr, "\n*** FASTQ TRIM ***\n\n"
-		    "  Minimum match:     %zu\n"
+    
+    fprintf(stderr, "\n*** FASTQ TRIM ***\n\n");
+    fprintf(stderr, "  Minimum match:     %zu\n"
 		    "  Minimum quality:   %u\n"
 		    "  Minimum length:    %zu\n"
 		    "  Phred base:        %u\n",
@@ -107,7 +115,13 @@ int     main(int argc,char *argv[])
 	fprintf(stderr, "  Adapter matching:  Exact\n");
     else
 	fprintf(stderr, "  Adapter matching:  Smart\n"
-			"  Maximum mismatch:  10%%\n");
+			"  Maximum mismatch:  %u%%\n", TRIM_MAX_MISMATCH_PERCENT(&tp));
+    if ( arg == argc )
+	fprintf(stderr, "  Filename:          Standard input");
+    else
+	fprintf(stderr, "  Filename:          %s\n", argv[arg]);
+    if ( arg + 2 < argc )
+	fprintf(stderr, "  Filename:          %s\n", argv[arg+2]);
 
     if ( trim_open_files(&tp, arg, argc, argv) == EX_OK )
     {
@@ -135,44 +149,45 @@ int     trim_single_reads(trim_t *tp)
 		    short_count,
 		    low_qual_count;
     size_t          index;
-    bl_fastq_t      fastq_rec1;
+    bl_fastq_t      fastq_rec;
     
     fputs("  Mode:              Single\n", stderr);
     fprintf(stderr,
 	  "  Adapter:           %s\n\n", TRIM_ADAPTER1(tp));
-    bl_fastq_init(&fastq_rec1);
+    bl_fastq_init(&fastq_rec);
     record_count = adapter_count = short_count = low_qual_count = 0;
-    while ( bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK )
+    while ( bl_fastq_read(tp->instream1, &fastq_rec) == BL_READ_OK )
     {
 	// Trim low-quality bases before adapters
-	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, tp->phred_base);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	index = bl_fastq_find_3p_qual(&fastq_rec, tp->min_qual, tp->phred_base);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
 	{
 	    ++low_qual_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Low qual %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
+			BL_FASTQ_SEQ(&fastq_rec) + index);
+	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
 
-	index = tp->adapter_match_function(&fastq_rec1, tp->adapter1, tp->min_match);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	index = tp->adapter_match_function(&fastq_rec, tp->adapter1,
+		    tp->min_match, tp->max_mismatch_percent);
+	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
 	{
 	    ++adapter_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
+			BL_FASTQ_SEQ(&fastq_rec) + index);
+	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
 	
-	if ( BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length )
-	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_LINE_UNLIMITED);
+	if ( BL_FASTQ_SEQ_LEN(&fastq_rec) >= tp->min_length )
+	    bl_fastq_write(tp->outstream1, &fastq_rec, BL_FASTQ_LINE_UNLIMITED);
 	else
 	{
 	    if ( tp->verbose )
 		fprintf(stderr, "Short    %zu %s\n",
-			BL_FASTQ_SEQ_LEN(&fastq_rec1),
-			BL_FASTQ_SEQ(&fastq_rec1));
+			BL_FASTQ_SEQ_LEN(&fastq_rec),
+			BL_FASTQ_SEQ(&fastq_rec));
 	    ++short_count;
 	}
 	
@@ -192,7 +207,7 @@ int     trim_single_reads(trim_t *tp)
 	    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\n",
 	    record_count, adapter_count, tp->min_qual, low_qual_count,
 	    tp->min_length, short_count);
-    bl_fastq_free(&fastq_rec1);
+    bl_fastq_free(&fastq_rec);
     return EX_OK;
 }
 
@@ -211,16 +226,20 @@ int     trim_paired_reads(trim_t *tp)
 		    short_count,
 		    low_qual_count;
     size_t          index;
-    bl_fastq_t      fastq_rec1,
-		    fastq_rec2;
-    int             s1, s2;
+    bl_fastq_t      fastq_rec[2];
+    int             s1, s2, c;
+    char            *adapter[2];
     
     fputs("  Mode:              Paired\n", stderr);
     fprintf(stderr,
-	  "  Adapters:          %s %s\n\n",
-	  TRIM_ADAPTER1(tp), TRIM_ADAPTER2(tp));
-    bl_fastq_init(&fastq_rec1);
-    bl_fastq_init(&fastq_rec2);
+	  "  Adapters:          %s %s\n\n", tp->adapter1, tp->adapter2);
+    bl_fastq_init(&fastq_rec[0]);
+    bl_fastq_init(&fastq_rec[1]);
+
+    // Select adapters with loop index
+    adapter[0] = tp->adapter1;
+    adapter[1] = tp->adapter2;
+    
     record_count = adapter_count = short_count = low_qual_count = 0;
 
     // Read from both files every iteration and break on error
@@ -228,90 +247,64 @@ int     trim_paired_reads(trim_t *tp)
     {
 	// FIXME: Explore using 2 threads here
 	
-	s1 = bl_fastq_read(tp->instream1, &fastq_rec1);
-	s2 = bl_fastq_read(tp->instream2, &fastq_rec2);
+	s1 = bl_fastq_read(tp->instream1, &fastq_rec[0]);
+	s2 = bl_fastq_read(tp->instream2, &fastq_rec[1]);
 	if ( (s1 != BL_READ_OK) || (s2 != BL_READ_OK) )
 	    break;
 	
 	// Compare read names just for sanity checking
-	if ( bl_fastq_name_cmp(&fastq_rec1, &fastq_rec2) != 0 )
+	if ( bl_fastq_name_cmp(&fastq_rec[0], &fastq_rec[1]) != 0 )
 	{
 	    fprintf(stderr, "fastq-trim: Paired files out of sync.\n");
 	    trim_close_files(tp);
 	    exit(EX_DATAERR);
 	}
 	
-	/*
-	 *  Trim read from R1
-	 */
-
-	// Trim low quality bases before adapters
-	index = bl_fastq_find_3p_qual(&fastq_rec1, tp->min_qual, tp->phred_base);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
+	for (c = 0; c <= 1; ++c)
 	{
-	    ++low_qual_count;
-	    if ( tp->verbose )
-		fprintf(stderr, "Low qual %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
-	}
-
-	index = tp->adapter_match_function(&fastq_rec1, tp->adapter1,
-					 tp->min_match);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
-	{
-	    ++adapter_count;
-	    if ( tp->verbose )
-		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec1) + index);
-	    bl_fastq_3p_trim(&fastq_rec1, index);
-	}
-	
-	/*
-	 *  Trim read from R2
-	 */
-
-	// Trim low quality bases before adapters
-	index = bl_fastq_find_3p_qual(&fastq_rec2, tp->min_qual, tp->phred_base);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
-	{
-	    ++low_qual_count;
-	    if ( tp->verbose )
-		fprintf(stderr, "Low qual %s\n",
-			BL_FASTQ_SEQ(&fastq_rec2) + index);
-	    bl_fastq_3p_trim(&fastq_rec2, index);
-	}
-	
-	index = tp->adapter_match_function(&fastq_rec2, tp->adapter2,
-					 tp->min_match);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
-	{
-	    ++adapter_count;
-	    if ( tp->verbose )
-		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec2) + index);
-	    bl_fastq_3p_trim(&fastq_rec2, index);
-	}
+	    // Trim low quality bases before adapters
+	    index = bl_fastq_find_3p_qual(&fastq_rec[c], tp->min_qual,
+					  tp->phred_base);
+	    if ( BL_FASTQ_SEQ_AE(&fastq_rec[c], index) != '\0' )
+	    {
+		++low_qual_count;
+		if ( tp->verbose )
+		    fprintf(stderr, "Low qual %s\n",
+			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
+		bl_fastq_3p_trim(&fastq_rec[c], index);
+	    }
+    
+	    index = tp->adapter_match_function(&fastq_rec[c], adapter[c],
+			tp->min_match, tp->max_mismatch_percent);
+	    if ( BL_FASTQ_SEQ_AE(&fastq_rec[c], index) != '\0' )
+	    {
+		++adapter_count;
+		if ( tp->verbose )
+		    fprintf(stderr, "Adapter  %s\n",
+			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
+		bl_fastq_3p_trim(&fastq_rec[c], index);
+	    }
+	}        
 
 	/*
 	 *  If either read is short, drop the pair.  Paired reads must be
 	 *  kept in sync across the R1 and R2 files.
 	 */
-	if ( (BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length) &&
-	     (BL_FASTQ_SEQ_LEN(&fastq_rec2) >= tp->min_length) )
+	if ( (BL_FASTQ_SEQ_LEN(&fastq_rec[0]) >= tp->min_length) &&
+	     (BL_FASTQ_SEQ_LEN(&fastq_rec[1]) >= tp->min_length) )
 	{
-	    bl_fastq_write(tp->outstream1, &fastq_rec1, BL_FASTQ_LINE_UNLIMITED);
-	    bl_fastq_write(tp->outstream2, &fastq_rec2, BL_FASTQ_LINE_UNLIMITED);
+	    bl_fastq_write(tp->outstream1, &fastq_rec[0], BL_FASTQ_LINE_UNLIMITED);
+	    bl_fastq_write(tp->outstream2, &fastq_rec[1], BL_FASTQ_LINE_UNLIMITED);
 	}
 	else
 	{
 	    if ( tp->verbose )
 		fprintf(stderr, "Short    %zu %s\n"
 				"         %zu %s\n",
-			BL_FASTQ_SEQ_LEN(&fastq_rec1),
-			BL_FASTQ_SEQ(&fastq_rec1),
-			BL_FASTQ_SEQ_LEN(&fastq_rec2),
-			BL_FASTQ_SEQ(&fastq_rec2));
+			BL_FASTQ_SEQ_LEN(&fastq_rec[0]),
+			BL_FASTQ_SEQ(&fastq_rec[1]),
+			BL_FASTQ_SEQ_LEN(&fastq_rec[0]),
+			BL_FASTQ_SEQ(&fastq_rec[1]));
 	    ++short_count;
 	}
 	
@@ -328,9 +321,9 @@ int     trim_paired_reads(trim_t *tp)
 	    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\n",
 	    record_count, adapter_count, tp->min_qual, low_qual_count,
 	    tp->min_length, short_count);
-    // fprintf(stderr, "%d %d\n", s1, s2);
-    bl_fastq_free(&fastq_rec1);
-    bl_fastq_free(&fastq_rec2);
+
+    bl_fastq_free(&fastq_rec[0]);
+    bl_fastq_free(&fastq_rec[1]);
     return EX_OK;
 }
 
@@ -429,6 +422,7 @@ void    trim_init(trim_t *tp)
     tp->adapter2 = strdup(ILLUMINA_UNIVERSAL);
     tp->min_length = 30;
     tp->min_match = 3;
+    tp->max_mismatch_percent = 10;
     tp->min_qual = 20;
     tp->phred_base = 33;
 }
@@ -538,12 +532,14 @@ size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual,
  ***************************************************************************/
 
 size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
-		const char *adapter, size_t min_match)
+	    const char *adapter, size_t min_match,
+	    unsigned max_mismatch_percent)
 
 {
     size_t      match, mismatch, max_mismatch,
 		adapter_len = strlen(adapter),
-		start, rc, ac;
+		start, rc, ac,
+		md;
     
     // Start at 5' end assuming 5' adapters already removed
     // Cutadapt uses a semiglobal alignment algorithm to find adapters.
@@ -551,10 +547,12 @@ size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
     // assume that errors in adapter sequences are extremely rare.
     // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
 
+    // Convert max mismatch percentage to a divisor
+    md = 100 / max_mismatch_percent;
     for (start = 0; start < read->seq_len; ++start)
     {
 	// FIXME: Allow error rate other than 1/10
-	max_mismatch = MIN((read->seq_len - start) / 10, adapter_len / 10);
+	max_mismatch = MIN((read->seq_len - start) / md, adapter_len / md);
 	for (rc = start, ac = 0, match = mismatch = 0;
 	     (mismatch <= max_mismatch) &&
 	     (adapter[ac] != '\0') && (read->seq[rc] != '\0');
@@ -575,8 +573,11 @@ size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
 }
 
 
-size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read, const char *adapter,
-			 size_t min_match)
+// max_mismatch_percent is not used, but the interface must be the
+// same for all match functions
+size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read,
+	    const char *adapter, size_t min_match,
+	    unsigned max_mismatch_percent)
 
 {
     size_t  start, rc, ac;
@@ -742,6 +743,7 @@ void    usage(char *argv[])
 	    "   [--3p-adapter1 seq]\n"
 	    "   [--3p-adapter2 seq]\n"
 	    "   [--min-match N]\n"
+	    "   [--max-mismatch-percent N]\n"
 	    "   [--min-qual N]\n"
 	    "   [--min-length N]\n"
 	    "   [--phred-base N]\n"

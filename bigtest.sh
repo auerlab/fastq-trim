@@ -3,14 +3,7 @@
 #############################################################################
 # Timing an early version with just adapter removal:
 #
-# Input: chondro-sample1-rep1-time1-R1.fastq.xz    1.0G
-#
-# Reads: 32455547  Adapters: 983636  Qual < 20: 1596887  Len < 30: 159
-# xz -2:    642.24 real       845.04 user         9.95 sys  1.5G
-# xz -1:    470.41 real       671.50 user         9.16 sys  1.5G
-# gzip -5:  562.98 real       761.33 user         7.57 sys  1.5G
-# gzip -1:  128.48 real       331.70 user         9.30 sys
-# None:     96.38 real       145.31 user         6.80 sys   8.3G
+# FIXME: Rig this to download some public data instead of the chondro sample
 #
 # gzip -1 provides a good load balance for xzipped input:
 # 95.92% xzcat
@@ -20,18 +13,33 @@
 make clean all
 export GZIP=-1
 
-if [ ! -e chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz ]; then
-    time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
-	--exact-match \
-	chondro-sample1-rep1-time1-R1.fastq.xz \
-	chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz
-fi
+# sample=neuro-sample10-rep1-time1
+sample=2M
 
-if [ ! -e chondro-sample1-rep1-time1-R1-trimmed.fastq.gz ]; then
-    time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
-	chondro-sample1-rep1-time1-R1.fastq.xz \
-	chondro-sample1-rep1-time1-R1-trimmed.fastq.gz
-fi
+adapter=AGATCGGAAGAGC
+time ./fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    --exact-match \
+    $sample-R1.fastq.xz \
+    $sample-R1-trimmed-exact.fastq.gz
+
+time ./fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    --max-mismatch-percent 10 \
+    $sample-R1.fastq.xz \
+    $sample-R1-trimmed-smart10.fastq.gz
+
+time ./fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    --max-mismatch-percent 20 \
+    $sample-R1.fastq.xz \
+    $sample-R1-trimmed-smart20.fastq.gz
+
+printf "Running cutadapt...\n"
+time cutadapt --report=minimal \
+    --cores=2 --quality-cutoff=20 --minimum-length=30 -a $adapter \
+    -o $sample-R1-trimmed-cutadapt.fastq.gz $sample-R1.fastq.xz \
+    2>&1 | fgrep -v reads/min
 
 cat << EOM
 
@@ -43,20 +51,37 @@ Also scanning for random sequence of the same length for comparison.
 EOM
 
 set +e  # Don't terminate when fgrep finds no matches
-printf "Raw data AGATCGGAAGAG:              "
-xzcat chondro-sample1-rep1-time1-R1.fastq.xz | fgrep AGATCGGAAGAG | wc -l
+
+adapterpart=AGATCGGAAG
+random=CCTGAGATCT
+
+printf "Raw data %-12s:              " $adapterpart
+xzcat $sample-R1.fastq.xz | fgrep $adapterpart | wc -l
 
 printf "Raw data random:                    "
-xzcat chondro-sample1-rep1-time1-R1.fastq.xz | fgrep CCTGAGATCTTC | wc -l
+xzcat $sample-R1.fastq.xz | fgrep $random | wc -l
 
-printf "Exact match output AGATCGGAAGAG:    "
-gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+printf "Exact match output %-12s:    " $adapterpart
+gzcat $sample-R1-trimmed-exact.fastq.gz | fgrep $adapterpart | wc -l
 
 printf "Exact match output random:          "
-gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+gzcat $sample-R1-trimmed-exact.fastq.gz | fgrep $random | wc -l
 
-printf "Smart match output AGATCGGAAGAG:    "
-gzcat chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+printf "Smart match 10 output %-12s: " $adapterpart
+gzcat $sample-R1-trimmed-smart10.fastq.gz | fgrep $adapterpart | wc -l
 
-printf "Smart match output random:          "
-gzcat chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+printf "Smart match 10 output random:       "
+gzcat $sample-R1-trimmed-smart10.fastq.gz | fgrep $random | wc -l
+
+printf "Smart match 20 output %-12s: " $adapterpart
+gzcat $sample-R1-trimmed-smart20.fastq.gz | fgrep $adapterpart | wc -l
+
+printf "Smart match 20 output random:       "
+gzcat $sample-R1-trimmed-smart20.fastq.gz | fgrep $random | wc -l
+
+printf "Cutadapt output %-12s:       " $adapterpart
+gzcat $sample-R1-trimmed-cutadapt.fastq.gz | fgrep $adapterpart | wc -l
+
+printf "Cutadapt output random:             "
+gzcat $sample-R1-trimmed-cutadapt.fastq.gz | fgrep $random | wc -l
+

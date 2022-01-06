@@ -33,5 +33,6 @@
 #define TRIM_ADAPTER2_AE(ptr,c)         ((ptr)->adapter2[c])
 #define TRIM_MIN_LENGTH(ptr)            ((ptr)->min_length)
 #define TRIM_MIN_MATCH(ptr)             ((ptr)->min_match)
+#define TRIM_MAX_MISMATCH_PERCENT(ptr)  ((ptr)->max_mismatch_percent)
 #define TRIM_MIN_QUAL(ptr)              ((ptr)->min_qual)
 #define TRIM_PHRED_BASE(ptr)            ((ptr)->phred_base)

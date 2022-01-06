@@ -1971,6 +1971,64 @@ int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
  *      -ltrim
  *
  *  Description:
+ *      Mutator for max_mismatch_percent member in a trim_t structure.
+ *      Use this function to set max_mismatch_percent in a trim_t variable
+ *      from non-member functions.  This function performs a direct
+ *      assignment for scalar or pointer structure members.  If
+ *      max_mismatch_percent is a pointer, data previously pointed to should
+ *      generally be freed before calling this function to avoid memory
+ *      leaks.
+ *
+ *      Note that there is an equivalent macro (), which performs
+ *      this function with no data verification or function call overhead.
+ *      Use the macro version to maximize performance where the validity
+ *      of new_max_mismatch_percent is guaranteed by other means.
+ *      
+ *
+ *  Arguments:
+ *      trim_ptr        Pointer to the structure to set
+ *      new_max_mismatch_percent The new value for max_mismatch_percent
+ *
+ *  Returns:
+ *      TRIM_DATA_OK if the new value is acceptable and assigned
+ *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *
+ *  Examples:
+ *      trim_t          trim;
+ *      unsigned        new_max_mismatch_percent;
+ *
+ *      if ( trim_set_max_mismatch_percent(&trim, new_max_mismatch_percent) == TRIM_DATA_OK )
+ *      {
+ *      }
+ *
+ *  See also:
+ *      (3)
+ *
+ *  History: 
+ *  Date        Name        Modification
+ *  2022-01-06  gen-get-set Auto-generated from trim.h
+ ***************************************************************************/
+
+int     trim_set_max_mismatch_percent(trim_t *trim_ptr, unsigned new_max_mismatch_percent)
+
+{
+    /* FIXME: Replace this with a proper sanity check */
+    if ( 0 )
+	return TRIM_DATA_OUT_OF_RANGE;
+    else
+    {
+	trim_ptr->max_mismatch_percent = new_max_mismatch_percent;
+	return TRIM_DATA_OK;
+    }
+}
+
+
+/***************************************************************************
+ *  Library:
+ *      #include <trim.h>
+ *      -ltrim
+ *
+ *  Description:
  *      Mutator for min_qual member in a trim_t structure.
  *      Use this function to set min_qual in a trim_t variable
  *      from non-member functions.  This function performs a direct
