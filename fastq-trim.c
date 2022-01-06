@@ -165,8 +165,10 @@ int     trim_single_reads(trim_t *tp)
 	}
 	
 	++record_count;
+	
+	// isatty() oddly returns true under SLURM
 	if ( ! tp->verbose && (record_count % 100000 == 0) &&
-	     isatty(fileno(stderr)) )
+	     isatty(fileno(stderr)) && (getenv("SLURM_JOB_ID") == NULL) )
 	{
 	    fprintf(stderr,
 		    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\r",
