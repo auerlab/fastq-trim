@@ -11,9 +11,7 @@
 # 82.94% fastq-tr
 
 make clean all
-export XZ_OPT=-1
 export GZIP=-1
-cutadapt --help
 
 time cutadapt --cores=2 --quality-cutoff=20 -a AGATCGGAAGAG \
      -o chondro-sample1-rep1-time1-R1-trimmed.fastq.gz \

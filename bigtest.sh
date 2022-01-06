@@ -20,17 +20,17 @@
 make clean all
 export GZIP=-1
 
+if [ ! -e chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz ]; then
+    time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
+	--exact-match \
+	chondro-sample1-rep1-time1-R1.fastq.xz \
+	chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz
+fi
+
 if [ ! -e chondro-sample1-rep1-time1-R1-trimmed.fastq.gz ]; then
     time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
 	chondro-sample1-rep1-time1-R1.fastq.xz \
 	chondro-sample1-rep1-time1-R1-trimmed.fastq.gz
-fi
-
-if [ ! -e chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz ]; then
-    time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
-	--adapter-smart-match \
-	chondro-sample1-rep1-time1-R1.fastq.xz \
-	chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz
 fi
 
 cat << EOM
@@ -56,7 +56,7 @@ printf "Exact match output random:          "
 gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz | fgrep CCTGAGATCTTC | wc -l
 
 printf "Smart match output AGATCGGAAGAG:    "
-gzcat chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+gzcat chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz | fgrep AGATCGGAAGAG | wc -l
 
 printf "Smart match output random:          "
-gzcat chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+gzcat chondro-sample1-rep1-time1-R1-trimmed-exact.fastq.gz | fgrep CCTGAGATCTTC | wc -l

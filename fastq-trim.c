@@ -137,7 +137,9 @@ int     trim_single_reads(trim_t *tp)
     size_t          index;
     bl_fastq_t      fastq_rec1;
     
-    fputs("  Mode:              Single\n\n", stderr);
+    fputs("  Mode:              Single\n", stderr);
+    fprintf(stderr,
+	  "  Adapter:           %s\n\n", TRIM_ADAPTER1(tp));
     bl_fastq_init(&fastq_rec1);
     record_count = adapter_count = short_count = low_qual_count = 0;
     while ( bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK )
@@ -213,7 +215,10 @@ int     trim_paired_reads(trim_t *tp)
 		    fastq_rec2;
     int             s1, s2;
     
-    fputs("  Mode:              Paired\n\n", stderr);
+    fputs("  Mode:              Paired\n", stderr);
+    fprintf(stderr,
+	  "  Adapters:          %s %s\n\n",
+	  TRIM_ADAPTER1(tp), TRIM_ADAPTER2(tp));
     bl_fastq_init(&fastq_rec1);
     bl_fastq_init(&fastq_rec2);
     record_count = adapter_count = short_count = low_qual_count = 0;
