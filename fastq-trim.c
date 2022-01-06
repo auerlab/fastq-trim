@@ -26,7 +26,7 @@
 
 void    usage(char *argv[]);
 size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read, const char *adapter, size_t min_match);
-size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
+size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read, const char *adapter,
 			 size_t min_match);
 size_t  bl_fastq_find_3p_qual(const bl_fastq_t *read, unsigned min_qual, unsigned phred_base);
 size_t  bl_fastq_3p_trim(bl_fastq_t *read, size_t new_len);
@@ -53,12 +53,17 @@ int     main(int argc,char *argv[])
     {
 	if ( strcmp(argv[arg], "--verbose") == 0 )
 	    trim_set_verbose(&tp, true);
-	if ( strcmp(argv[arg], "--adapter-smart-match") == 0 )
-	    trim_set_adapter_match_function(&tp, bl_fastq_find_3p_adapter_smart);
-	else if ( strcmp(argv[arg], "--3p-adapter") == 0 )
+	if ( strcmp(argv[arg], "--exact-match") == 0 )
+	    trim_set_adapter_match_function(&tp, bl_fastq_find_3p_adapter_exact);
+	else if ( strcmp(argv[arg], "--3p-adapter1") == 0 )
 	{
-	    free(TRIM_ADAPTER(&tp));
-	    trim_set_adapter(&tp, argv[++arg]);
+	    free(TRIM_ADAPTER1(&tp));
+	    trim_set_adapter1(&tp, argv[++arg]);
+	}
+	else if ( strcmp(argv[arg], "--3p-adapter2") == 0 )
+	{
+	    free(TRIM_ADAPTER2(&tp));
+	    trim_set_adapter2(&tp, argv[++arg]);
 	}
 	else if ( strcmp(argv[arg], "--min-match") == 0 )
 	{
@@ -87,10 +92,9 @@ int     main(int argc,char *argv[])
 	else
 	    usage(argv);
     }
-    strupper(TRIM_ADAPTER(&tp));
+    strupper(TRIM_ADAPTER1(&tp));
     fprintf(stderr, "\n*** FASTQ TRIM ***\n\n"
 		    "  Minimum match:     %zu\n"
-		    "  Maximum mismatch:  10%%\n"
 		    "  Minimum quality:   %u\n"
 		    "  Minimum length:    %zu\n"
 		    "  Phred base:        %u\n",
@@ -99,6 +103,12 @@ int     main(int argc,char *argv[])
 		    TRIM_MIN_LENGTH(&tp),
 		    TRIM_PHRED_BASE(&tp));
     
+    if ( TRIM_ADAPTER_MATCH_FUNCTION(&tp) == bl_fastq_find_3p_adapter_exact )
+	fprintf(stderr, "  Adapter matching:  Exact\n");
+    else
+	fprintf(stderr, "  Adapter matching:  Smart\n"
+			"  Maximum mismatch:  10%%\n");
+
     if ( trim_open_files(&tp, arg, argc, argv) == EX_OK )
     {
 	if ( TRIM_INFILE2(&tp) == NULL )
@@ -143,7 +153,7 @@ int     trim_single_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	index = tp->adapter_match_function(&fastq_rec1, tp->adapter, tp->min_match);
+	index = tp->adapter_match_function(&fastq_rec1, tp->adapter1, tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
 	    ++adapter_count;
@@ -241,7 +251,7 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec1, index);
 	}
 
-	index = tp->adapter_match_function(&fastq_rec1, tp->adapter,
+	index = tp->adapter_match_function(&fastq_rec1, tp->adapter1,
 					 tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec1, index) != '\0' )
 	{
@@ -267,7 +277,7 @@ int     trim_paired_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec2, index);
 	}
 	
-	index = tp->adapter_match_function(&fastq_rec2, tp->adapter,
+	index = tp->adapter_match_function(&fastq_rec2, tp->adapter2,
 					 tp->min_match);
 	if ( BL_FASTQ_SEQ_AE(&fastq_rec2, index) != '\0' )
 	{
@@ -401,7 +411,7 @@ void    trim_init(trim_t *tp)
 
 {
     tp->verbose = false;
-    tp->adapter_match_function = bl_fastq_find_3p_adapter;
+    tp->adapter_match_function = bl_fastq_find_3p_adapter_smart;
     tp->infile1 = NULL;
     tp->outfile1 = NULL;
     tp->infile2 = NULL;
@@ -410,7 +420,8 @@ void    trim_init(trim_t *tp)
     tp->outstream1 = stdout;
     tp->instream2 = NULL;
     tp->outstream2 = NULL;
-    tp->adapter = strdup(ILLUMINA_UNIVERSAL);
+    tp->adapter1 = strdup(ILLUMINA_UNIVERSAL);
+    tp->adapter2 = strdup(ILLUMINA_UNIVERSAL);
     tp->min_length = 30;
     tp->min_match = 3;
     tp->min_qual = 20;
@@ -559,7 +570,7 @@ size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
 }
 
 
-size_t  bl_fastq_find_3p_adapter(const bl_fastq_t *read, const char *adapter,
+size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read, const char *adapter,
 			 size_t min_match)
 
 {
@@ -721,10 +732,16 @@ void    usage(char *argv[])
 	    "Usage:\n\n"
 	    "%s --help\n"
 	    "%s\n"
-	    "    [--verbose] [--adapter-smart-match]\n"
-	    "    [--3p-adapter seq] [--min-qual N] [--min-length N] [--phred-base N]\n"
-	    "    [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
-	    "    [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",
+	    "   [--verbose]\n"
+	    "   [--exact-match]\n"
+	    "   [--3p-adapter1 seq]\n"
+	    "   [--3p-adapter2 seq]\n"
+	    "   [--min-match N]\n"
+	    "   [--min-qual N]\n"
+	    "   [--min-length N]\n"
+	    "   [--phred-base N]\n"
+	    "   [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
+	    "   [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",
 	    argv[0], argv[0]);
     exit(EX_USAGE);
 }

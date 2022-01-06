@@ -40,10 +40,13 @@ int trim_set_instream2_cpy(trim_t *trim_ptr, FILE *new_instream2, size_t array_s
 int trim_set_outstream2(trim_t *trim_ptr, FILE *new_outstream2);
 int trim_set_outstream2_ae(trim_t *trim_ptr, size_t c, FILE new_outstream2_element);
 int trim_set_outstream2_cpy(trim_t *trim_ptr, FILE *new_outstream2, size_t array_size);
-int trim_set_adapter(trim_t *trim_ptr, char *new_adapter);
-int trim_set_adapter_ae(trim_t *trim_ptr, size_t c, char new_adapter_element);
-int trim_set_adapter_cpy(trim_t *trim_ptr, char *new_adapter, size_t array_size);
+int trim_set_adapter1(trim_t *trim_ptr, char *new_adapter1);
+int trim_set_adapter1_ae(trim_t *trim_ptr, size_t c, char new_adapter1_element);
+int trim_set_adapter1_cpy(trim_t *trim_ptr, char *new_adapter1, size_t array_size);
+int trim_set_adapter2(trim_t *trim_ptr, char *new_adapter2);
+int trim_set_adapter2_ae(trim_t *trim_ptr, size_t c, char new_adapter2_element);
+int trim_set_adapter2_cpy(trim_t *trim_ptr, char *new_adapter2, size_t array_size);
 int trim_set_min_length(trim_t *trim_ptr, size_t new_min_length);
-int trim_set_min_match(trim_t *trim_ptr, size_t new_min_overlap);
+int trim_set_min_match(trim_t *trim_ptr, size_t new_min_match);
 int trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual);
 int trim_set_phred_base(trim_t *trim_ptr, unsigned new_phred_base);

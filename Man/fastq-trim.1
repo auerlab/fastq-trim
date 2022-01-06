@@ -27,10 +27,31 @@ Print a summary of usage and exit.
 Print some intermediate results during trimming for debugging purposes.
 
 .TP
-\fB\-\-\3p-adapterfR[=\fIseq\fR]
-Specify the 3' adapter to look for.  Default is the Illumina universal
+\fB\-\-\--exact-matchfR[=\fIN\fR]
+Use exact matching to find adapters.  Adapters will be matched if a segment
+matches the entire adapter sequence, or a portion of it at the end of the
+read matches to a minimum of min_match (default=3, controlled by
+--min-match) characters.  The default matching algorithm used when
+--exact-match is not specified is described below.
+
+.TP
+\fB\-\-\3p-adapter1fR[=\fIseq\fR]
+Specify the 3' adapter for single-end mode and read1 in paired-end mode.
+Default is the Illumina universal
 adapter, AGATCGGAAGAG.  Use fastq-vis(1) to identify other standard adapters
 in the input.
+
+.TP
+\fB\-\-\3p-adapter1fR[=\fIseq\fR]
+Specify the 3' adapter for read2 in paired-end mode.
+Default is the Illumina universal
+adapter, AGATCGGAAGAG.  Use fastq-vis(1) to identify other standard adapters
+in the input.
+
+.TP
+\fB\-\-\min-matchfR[=\fIN\fR]
+Minimum number of bases in the read that must match the adapter in order
+to report a hit.  This applies to both exact matching and smart matching.
 
 .TP
 \fB\-\-\min-qualfR[=\fIN\fR]
@@ -38,7 +59,12 @@ Minimum quality of bases to keep for end-trimming.  Default is 20.
 
 .TP
 \fB\-\-\min-lengthfR[=\fIN\fR]
-Miniumum length of reads to keep after trimming.  Default is 30.
+Minimum length of reads to keep after trimming.  Default is 30.
+
+.TP
+\fB\-\-\phred-basefR[=\fIN\fR]
+Offset used for characters in quality string.  Default is 33, which should
+be the correct value for virtually all modern sequence data.
 
 .SH "DESCRIPTION"
 
@@ -46,6 +72,21 @@ Miniumum length of reads to keep after trimming.  Default is 30.
 removes adapters and low-quality bases from the ends of each read in a
 FASTQ file.  Reads with a length less than the specified or default
 minimum are not output.
+
+The default "smart" adapter matching allows for roughly 10% of the bases to be
+substituted.  No insertions or deletions are currently handled for adapter
+matching.
+
+Exact matching can be selected using --exact-match.
+In either case, a minimum of min_match (default 3, controlled by
+--min-match) bases must be matched in order to decide that the sequence
+is indeed an adapter.
+
+Low-quality 3' end removal uses the same algorithm as fastq and cutadapt,
+namely scanning backward from the 3' end until the sum of (score - min-qual)
+becomes > 0, then trimming at the location of the minimum sum.  Quality
+trimming is done before adapter matching so that likely misread bases do not
+contribute to the adapter match scoring.
 
 .SH "SEE ALSO"
 fastq-vis(1), biolibc(3)

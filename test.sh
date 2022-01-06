@@ -1,38 +1,51 @@
 #!/bin/sh -e
 
-#############################################################################
-# Timing an early version with just adapter removal:
-#
-# Input: chondro-sample1-rep1-time1-R1.fastq.xz    1.0G
-#
-# Total reads processed = 32455547
-# xz -2:    642.24 real       845.04 user         9.95 sys  1.5G
-# xz -1:    470.41 real       671.50 user         9.16 sys  1.5G
-# gzip -5:  562.98 real       761.33 user         7.57 sys  1.5G
-# gzip -1:  112.32 real       295.73 user         8.69 sys  1.9G
-# None:     96.38 real       145.31 user         6.80 sys   8.3G
-#
-# gzip -1 provides a good load balance for xzipped input:
-# 95.92% xzcat
-# 95.40% gzip
-# 82.94% fastq-tr
-
 make clean all
-export GZIP=-1
+export GZIP=-1  # Speed up output compression
 
-time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
+time ./fastq-trim "$@" \
+    --3p-adapter1 AGATCGGAAGAGCACAC \
     250k-R1.fastq.xz 250k-R1-trimmed-ft.fastq.gz
 
-time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
+time ./fastq-trim "$@" \
+    --3p-adapter1 AGATCGGAAGAGCGTCG \
     250k-R2.fastq.xz 250k-R2-trimmed-ft.fastq.gz
 
+printf "Smart adapter matching...\n"
+time ./fastq-trim "$@" \
+    --adapter-smart-match \
+    --3p-adapter1 AGATCGGAAGAGCACAC \
+    250k-R1.fastq.xz 250k-R1-smart-trimmed-ft.fastq.gz
+
 printf "Paired mode...\n"
-time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
+time ./fastq-trim "$@" \
+    --3p-adapter1 AGATCGGAAGAGC \
+    --3p-adapter2 AGATCGGAAGAGC \
     250k-R1.fastq.xz 250k-R1-paired-trimmed-ft.fastq.gz \
     250k-R2.fastq.xz 250k-R2-paired-trimmed-ft.fastq.gz
 
-printf "Smart adapter matching...\n"
-time ./fastq-trim "$@" --adapter-smart-match --3p-adapter AGATCGGAAGAGCACAC \
-    250k-R1.fastq.xz 250k-R1-smart-trimmed-ft.fastq.gz
+cat << EOM
 
-gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep --color AGATCGGAAGAGC
+Scanning for a portion of the adapter to flag any adapters missed due to
+base substitutions.
+
+Also scanning for random sequence of the same length for comparison.
+
+EOM
+
+set +e  # Don't terminate when fgrep finds no matches
+printf "Raw data AGATCGGAAGAG:              "
+xzcat 250k-R1.fastq.xz | fgrep AGATCGGAAGAG | wc -l
+printf "Raw data random:                    "
+gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+
+printf "Exact match output AGATCGGAAGAG:    "
+gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+
+printf "Exact match output random:          "
+gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+
+printf "Smart match output AGATCGGAAGAG:    "
+gzcat 250k-R1-smart-trimmed-ft.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+printf "Smart match output random:          "
+gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l

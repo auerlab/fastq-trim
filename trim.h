@@ -26,7 +26,8 @@ typedef struct
     FILE        *outstream1;
     FILE        *instream2;
     FILE        *outstream2;
-    char        *adapter;
+    char        *adapter1;
+    char        *adapter2;
     size_t      min_length;
     size_t      min_match;
     unsigned    min_qual;

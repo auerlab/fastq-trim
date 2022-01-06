@@ -15,6 +15,6 @@ export XZ_OPT=-1
 export GZIP=-1
 cutadapt --help
 
-time cutadapt --quality-cutoff=20 -a AGATCGGAAGAGCACAC \
+time cutadapt --cores=2 --quality-cutoff=20 -a AGATCGGAAGAG \
      -o chondro-sample1-rep1-time1-R1-trimmed.fastq.gz \
      chondro-sample1-rep1-time1-R1.fastq.xz

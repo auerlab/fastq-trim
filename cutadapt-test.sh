@@ -13,6 +13,6 @@
 export GZIP=-1
 output=250k-R1-trimmed-ca.fastq.gz
 
-time cutadapt --quality-cutoff=20 --minimum-length=30 -a AGATCGGAAGAGCACAC \
+time cutadapt --quality-cutoff=20 --minimum-length=30 -a AGATCGGAAGAG \
      -o $output 250k-R1.fastq.xz
 blt fastx-stats $output

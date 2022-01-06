@@ -18,12 +18,45 @@
 # 82.94% fastq-tr
 
 make clean all
-export XZ_OPT=-1
 export GZIP=-1
-time ./fastq-trim "$@" --3p-adapter AGATCGGAAGAGCACAC \
-    chondro-sample1-rep1-time1-R1.fastq.xz \
-    chondro-sample1-rep1-time1-R1-trimmed.fastq.gz
 
-printf "Checking results...\n"
-gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz \
-    | fgrep --color AGATCGGAAGAGCACAC
+if [ ! -e chondro-sample1-rep1-time1-R1-trimmed.fastq.gz ]; then
+    time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
+	chondro-sample1-rep1-time1-R1.fastq.xz \
+	chondro-sample1-rep1-time1-R1-trimmed.fastq.gz
+fi
+
+if [ ! -e chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz ]; then
+    time ./fastq-trim "$@" --3p-adapter1 AGATCGGAAGAGCACAC \
+	--adapter-smart-match \
+	chondro-sample1-rep1-time1-R1.fastq.xz \
+	chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz
+fi
+
+cat << EOM
+
+Scanning for a portion of the adapter to flag any adapters missed due to
+base substitutions.
+
+Also scanning for random sequence of the same length for comparison.
+
+EOM
+
+set +e  # Don't terminate when fgrep finds no matches
+printf "Raw data AGATCGGAAGAG:              "
+xzcat chondro-sample1-rep1-time1-R1.fastq.xz | fgrep AGATCGGAAGAG | wc -l
+
+printf "Raw data random:                    "
+xzcat chondro-sample1-rep1-time1-R1.fastq.xz | fgrep CCTGAGATCTTC | wc -l
+
+printf "Exact match output AGATCGGAAGAG:    "
+gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+
+printf "Exact match output random:          "
+gzcat chondro-sample1-rep1-time1-R1-trimmed.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+
+printf "Smart match output AGATCGGAAGAG:    "
+gzcat chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+
+printf "Smart match output random:          "
+gzcat chondro-sample1-rep1-time1-R1-trimmed-smart.fastq.gz | fgrep CCTGAGATCTTC | wc -l
