@@ -88,6 +88,16 @@ int     main(int argc,char *argv[])
 	    usage(argv);
     }
     strupper(TRIM_ADAPTER(&tp));
+    fprintf(stderr, "\n*** FASTQ TRIM ***\n\n"
+		    "  Minimum match:     %zu\n"
+		    "  Maximum mismatch:  10%%\n"
+		    "  Minimum quality:   %u\n"
+		    "  Minimum length:    %zu\n"
+		    "  Phred base:        %u\n",
+		    TRIM_MIN_MATCH(&tp),
+		    TRIM_MIN_QUAL(&tp),
+		    TRIM_MIN_LENGTH(&tp),
+		    TRIM_PHRED_BASE(&tp));
     
     if ( trim_open_files(&tp, arg, argc, argv) == EX_OK )
     {
@@ -117,6 +127,7 @@ int     trim_single_reads(trim_t *tp)
     size_t          index;
     bl_fastq_t      fastq_rec1;
     
+    fputs("  Mode:              Single\n\n", stderr);
     bl_fastq_init(&fastq_rec1);
     record_count = adapter_count = short_count = low_qual_count = 0;
     while ( bl_fastq_read(tp->instream1, &fastq_rec1) == BL_READ_OK )
@@ -190,6 +201,7 @@ int     trim_paired_reads(trim_t *tp)
 		    fastq_rec2;
     int             s1, s2;
     
+    fputs("  Mode:              Paired\n\n", stderr);
     bl_fastq_init(&fastq_rec1);
     bl_fastq_init(&fastq_rec2);
     record_count = adapter_count = short_count = low_qual_count = 0;
@@ -263,8 +275,11 @@ int     trim_paired_reads(trim_t *tp)
 			BL_FASTQ_SEQ(&fastq_rec2) + index);
 	    bl_fastq_3p_trim(&fastq_rec2, index);
 	}
-	
-	//fprintf(stderr, "%zu\n", BL_FASTQ_SEQ_LEN(&fastq_rec1));
+
+	/*
+	 *  If either read is short, drop the pair.  Paired reads must be
+	 *  kept in sync across the R1 and R2 files.
+	 */
 	if ( (BL_FASTQ_SEQ_LEN(&fastq_rec1) >= tp->min_length) &&
 	     (BL_FASTQ_SEQ_LEN(&fastq_rec2) >= tp->min_length) )
 	{
