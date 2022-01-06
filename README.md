@@ -55,6 +55,7 @@ Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
 
 Also scanning for random sequence of the same length for comparison.
+
 Raw data AGATCGGAAGAG:                 39832
 Raw data random:                         280
 Exact match output AGATCGGAAGAG:         193
