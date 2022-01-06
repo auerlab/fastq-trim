@@ -2,12 +2,9 @@
 
 make clean all
 
-printf "Default matching...\n"
-time ./fastq-trim 250k-R1.fastq.xz 250k-R1-trimmed-ft.fastq
+time ./fastq-trim --exact-match 250k-R1.fastq.xz 250k-R1-trimmed-ft.fastq
 
-printf "Smart matching...\n"
-time ./fastq-trim --adapter-smart-match \
-    250k-R1.fastq.xz 250k-R1-trimmed-ft-smart.fastq
+time ./fastq-trim 250k-R1.fastq.xz 250k-R1-trimmed-ft-smart.fastq
 
 # Use parameters to match defaults for fastq-trim
 # 3 or 4 cores make very little difference
