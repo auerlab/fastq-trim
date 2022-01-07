@@ -35,15 +35,15 @@ set +e  # Don't terminate when fgrep finds no matches
 printf "Raw data AGATCGGAAGAG:              "
 xzcat 250k-R1.fastq.xz | fgrep AGATCGGAAGAG | wc -l
 printf "Raw data random:                    "
-gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+zcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
 
 printf "Exact match output AGATCGGAAGAG:    "
-gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+zcat 250k-R1-trimmed-ft.fastq.gz | fgrep AGATCGGAAGAG | wc -l
 
 printf "Exact match output random:          "
-gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+zcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
 
 printf "Smart match output AGATCGGAAGAG:    "
-gzcat 250k-R1-smart-trimmed-ft.fastq.gz | fgrep AGATCGGAAGAG | wc -l
+zcat 250k-R1-smart-trimmed-ft.fastq.gz | fgrep AGATCGGAAGAG | wc -l
 printf "Smart match output random:          "
-gzcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
+zcat 250k-R1-trimmed-ft.fastq.gz | fgrep CCTGAGATCTTC | wc -l
