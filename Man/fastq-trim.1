@@ -56,7 +56,10 @@ to report a match.  This applies to both exact matching and smart matching.
 .TP
 \fB\-\-max-mismatch-percent\fR \fIN\fR
 Maximum percentage of bases in the read can differ from the adapter and
-still consider it a match.  This applies only to smart matching.
+still consider it a match.  This applies only to smart matching.  Increasing
+the value from the default 10% slows down processing slightly, reduces the
+number of missed adapters, and increases the risk of removing real data
+resembling adapters.
 
 .TP
 \fB\-\-min-qual\fR \fIN\fR
@@ -77,6 +80,28 @@ be the correct value for virtually all modern sequence data.
 removes adapters and low-quality bases from the ends of each read in a
 FASTQ file.  Reads with a length less than the specified or default
 minimum are not output.
+
+Note that adapter matching (A.K.A. alignment) is not an exact science.
+Most bioinformatics data contain errors and hence the processing must be
+probabalistic.   It is possible that
+an adapter sequence occurs naturally in a given sample.  The longer the
+adapter, the less often this will occur, which is why adapters are typically
+12 or more bases long.  Also, read errors can occur in adapters as well as
+in the insert (the real DNA/RNA sequence between the adapters).  This is
+rare and using an exact match algorithm like memcmp(3) will generally find
+more than 99% of adapters.
+
+Tolerating some slop in adapter matching will result in fewer adapters left
+in the data and a higher risk of false positives (removing natural sequences
+resembling adapters).  Neither situation is catastrophic.  If a fraction of
+a percent of reads will not align to a genome properly because of adapter
+contamination, the end results of the downstream analysis won't tell a
+different story.  The same is true of reads that were shortened by removing
+a falsely identified adapter.
+
+The default tolerance is 10% of the adapter length (or the remaining bases
+at the end of the read if that's shorter).  This can be increased using
+--max-mismatch_percent.
 
 The default "smart" adapter matching allows for roughly 10% of the bases to be
 substituted.  No insertions or deletions are currently handled for adapter
