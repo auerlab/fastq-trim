@@ -539,7 +539,7 @@ size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
     size_t      match, mismatch, max_mismatch,
 		adapter_len = strlen(adapter),
 		start, rc, ac,
-		md;
+		md, adapter_mm;
     
     // Start at 5' end assuming 5' adapters already removed
     // Cutadapt uses a semiglobal alignment algorithm to find adapters.
@@ -547,26 +547,28 @@ size_t  bl_fastq_find_3p_adapter_smart(const bl_fastq_t *read,
     // assume that errors in adapter sequences are extremely rare.
     // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
 
-    // Convert max mismatch percentage to a divisor
+    // Convert max mismatch percentage to a divisor for the string len
     md = 100 / max_mismatch_percent;
+    adapter_mm = adapter_len / md;  // Max mismatch based on adapter len
+    // Could stop at read->seq_len - min_match, but the extra math
+    // outweights the few iterations saved
     for (start = 0; start < read->seq_len; ++start)
     {
-	// FIXME: Allow error rate other than 1/10
-	max_mismatch = MIN((read->seq_len - start) / md, adapter_len / md);
+	// Terminate loop as soon as max_mismatch is reached, before
+	// checking other conditions
+	max_mismatch = MIN((read->seq_len - start) / md, adapter_mm);
 	for (rc = start, ac = 0, match = mismatch = 0;
 	     (mismatch <= max_mismatch) &&
-	     (adapter[ac] != '\0') && (read->seq[rc] != '\0');
-	     ++rc, ++ac)
+	     (adapter[ac] != '\0') && (read->seq[rc] != '\0'); ++rc, ++ac)
 	{
 	    if ( toupper(read->seq[rc]) != adapter[ac] )
 		++mismatch;
-	    else
-		++match;
 	}
-	if ( (mismatch <= max_mismatch) && (match >= min_match) )
+	if ( mismatch <= max_mismatch )
 	{
-	    //printf("%zu %s\n", max_mismatch, start);
-	    return start;
+	    match = ac - mismatch;
+	    if ( match >= min_match )
+		return start;
 	}
     }
     return read->seq_len;   // Location of '\0' terminator
@@ -588,13 +590,14 @@ size_t  bl_fastq_find_3p_adapter_exact(const bl_fastq_t *read,
     // assume that errors in adapter sequences are extremely rare.
     // https://cutadapt.readthedocs.io/en/stable/algorithms.html#quality-trimming-algorithm
 
+    // Could stop at read->seq_len - min_match, but the extra math
+    // outweights the few iterations saved
     for (start = 0; start < read->seq_len; ++start)
     {
-	for (rc = start, ac = 0;
-	    (adapter[ac] != '\0') &&
-	    (toupper(read->seq[rc]) == adapter[ac]); ++rc, ++ac)
+	for (rc = start, ac = 0; (toupper(read->seq[rc]) == adapter[ac]) &&
+	     (adapter[ac] != '\0'); ++rc, ++ac)
 	    ;
-	if ( ((read->seq[rc] == '\0') && (rc - start >= min_match)) || (adapter[ac] == '\0') )
+	if ( (adapter[ac] == '\0') || ((read->seq[rc] == '\0') && (ac >= min_match)) )
 	    return start;
     }
     return read->seq_len;   // Location of '\0' terminator
