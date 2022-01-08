@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
-rm -f README.html *trimmed* *.core *-short.fastq
+rm -f README.html *trimmed* *.core *-short.fastq ca-out.txt
 git status
