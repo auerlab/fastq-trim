@@ -21,9 +21,15 @@ However, the results so far are encouraging, with better speed
 than cutadapt and nearly identical results (diffing fastq-trim and cutadapt
 results revealed only a few differences after trimming 250k reads).  Some
 basic statistics from a larger sample with ~32 million reads run on a
-2.9 GHz i5:
+2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
 
 ```
+Cores actually utilized (including xzcat, gzip, pigz):
+
+Fastq-trim      3
+Cutadapt 1-core 2
+Cutadapt 2-core 4
+
 *** FASTQ TRIM ***
 
   Minimum match:     3
@@ -36,7 +42,7 @@ basic statistics from a larger sample with ~32 million reads run on a
   Adapter:           AGATCGGAAGAGC
 
 Reads: 2000000  Adapters: 101071  Qual < 20: 93395  Len < 30: 77
-	7.27 real        19.48 user         0.51 sys
+	6.35 real        16.99 user         0.91 sys
 
 *** FASTQ TRIM ***
 
@@ -51,7 +57,7 @@ Reads: 2000000  Adapters: 101071  Qual < 20: 93395  Len < 30: 77
   Adapter:           AGATCGGAAGAGC
 
 Reads: 2000000  Adapters: 103096  Qual < 20: 93395  Len < 30: 89
-	9.38 real        22.05 user         0.95 sys
+	8.99 real        20.40 user         1.09 sys
 
 *** FASTQ TRIM ***
 
@@ -66,11 +72,17 @@ Reads: 2000000  Adapters: 103096  Qual < 20: 93395  Len < 30: 89
   Adapter:           AGATCGGAAGAGC
 
 Reads: 2000000  Adapters: 142427  Qual < 20: 93395  Len < 30: 578
-       10.86 real        23.03 user         1.04 sys
-Running cutadapt...
-status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
-OK      2000000 202000000       137     0       0       1999863 103341  180190 201023217
-       24.48 real        68.84 user         0.93 sys
+       10.10 real        21.34 user         1.30 sys
+
+Cutadapt 1 core...
+status  in_reads        in_bp   too_short       too_long        too_many_n      out_reads       w/adapters      qualtrim_bp     out_bp
+OK      2000000 202000000       137     0       0       1999863 103341  180190  201023217
+       44.10 real        60.33 user         0.72 sys
+
+Cutadapt 2 core...
+status  in_reads        in_bp   too_short       too_long        too_many_n      out_reads       w/adapters      qualtrim_bp     out_bp
+OK      2000000 202000000       137     0       0       1999863 103341  180190  201023217
+       22.49 real        61.15 user         1.48 sys
 
 Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
@@ -88,4 +100,3 @@ Smart match 20 output random:            208
 Cutadapt output AGATCGGAAG  :             62
 Cutadapt output random:                  209
 ```
-
