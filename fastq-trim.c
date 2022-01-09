@@ -21,6 +21,7 @@
 #include <unistd.h>         // isatty()
 #include <sys/param.h>      // MIN()
 #include <xtend/file.h>
+#include <xtend/string.h>
 #include <biolibc/fastq.h>
 #include "trim.h"
 
@@ -37,7 +38,6 @@ void    trim_init(trim_t *tp);
 int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[]);
 size_t  bl_fastq_name_cmp(bl_fastq_t *read1, bl_fastq_t *read2);
 void    trim_close_files(trim_t *tp);
-void    strupper(char *string);
 
 int     main(int argc,char *argv[])
 
@@ -692,45 +692,6 @@ size_t  bl_fastq_name_cmp(bl_fastq_t *read1, bl_fastq_t *read2)
     *p1 = save_p1;
     *p2 = save_p2;
     return status;
-}
-
-
-/***************************************************************************
- *  Use auto-c2man to generate a man page from this comment
- *
- *  Library:
- *      #include <xtend/string.h>
- *      -lxtend
- *
- *  Description:
- *      Convert all lower case characters in string to upper case.
- *  
- *  Arguments:
- *      sp  Pointer to null-terminated string to be converted
- *
- *  Returns:
- *
- *  Examples:
- *
- *  Files:
- *
- *  Environment
- *
- *  See also:
- *
- *  History: 
- *  Date        Name        Modification
- *  2022-01-04  Jason Bacon Begin
- ***************************************************************************/
-
-void    strupper(char *sp)
-
-{
-    while ( *sp != '\0' )
-    {
-	*sp = toupper(*sp);
-	++sp;
-    }
 }
 
 
