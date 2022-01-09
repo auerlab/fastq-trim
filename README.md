@@ -20,7 +20,7 @@ like cutadapt and trimmomatic are much more robust and feature-rich.
 However, the results so far are encouraging, with better speed
 than cutadapt and nearly identical results (diffing fastq-trim and cutadapt
 results revealed only a few differences after trimming 250k reads).  Some
-basic statistics from a larger sample with ~32 million reads run on a
+basic statistics from a larger sample with 2 million reads run on a
 2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
 
 ```

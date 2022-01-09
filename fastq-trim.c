@@ -2,10 +2,6 @@
  *  Description:
  *      Trim adapters and low-quality bases from FASTQ input
  *
- *  Arguments:
- *
- *  Returns:
- *
  *  History: 
  *  Date        Name        Modification
  *  2022-01-02  Jason Bacon Begin
