@@ -1,5 +1,9 @@
 #!/bin/sh -e
 
+# Unfortunately, this sample looks like it's already been trimmed.
+# Only 138 Nextera adapters found in almost a million reads and most not
+# near the 3' end.  Probably natural sequences.  Find a dirty, publicly
+# available sample for use here.
 sample=SRR11180057
 
 infile1=${sample}_1.fastq.xz

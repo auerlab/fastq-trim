@@ -53,7 +53,7 @@ BIN     = fastq-trim
 ############################################################################
 # List object files that comprise BIN.
 
-OBJS    = fastq-trim.o trim-mutators.o
+OBJS    = fastq-trim.o trim.o trim-mutators.o
 
 ############################################################################
 # Compile, link, and install options
