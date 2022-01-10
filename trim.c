@@ -4,10 +4,22 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>         // isatty()
+#include <ctype.h>
 #include <xtend/file.h>
 #include <xtend/string.h>
 #include <biolibc/fastq.h>
 #include "trim.h"
+
+static inline size_t bl_fastq_find_polya_tail(bl_fastq_t *rec)
+
+{
+    ssize_t c;
+    
+    for (c = rec->seq_len - 1; toupper(rec->seq[c] == 'A') && (c >= 0); --c)
+	;
+    return c + 1;
+}
+
 
 /***************************************************************************
  *  History: 
@@ -20,6 +32,7 @@ int     trim_single_reads(trim_t *tp)
 {
     unsigned long   record_count,
 		    adapter_count,
+		    polya_count,
 		    short_count,
 		    low_qual_count;
     size_t          index;
@@ -29,12 +42,12 @@ int     trim_single_reads(trim_t *tp)
     fprintf(stderr,
 	  "  Adapter:           %s\n\n", TRIM_ADAPTER1(tp));
     bl_fastq_init(&fastq_rec);
-    record_count = adapter_count = short_count = low_qual_count = 0;
+    record_count = adapter_count = polya_count = short_count = low_qual_count = 0;
     while ( bl_fastq_read(&fastq_rec, tp->instream1) == BL_READ_OK )
     {
 	// Trim low-quality bases before adapters
 	index = bl_fastq_find_3p_low_qual(&fastq_rec, tp->min_qual, tp->phred_base);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
+	if ( index < BL_FASTQ_SEQ_LEN(&fastq_rec) )
 	{
 	    ++low_qual_count;
 	    if ( tp->verbose )
@@ -45,7 +58,7 @@ int     trim_single_reads(trim_t *tp)
 
 	index = tp->adapter_match_function(&fastq_rec, tp->adapter1,
 		    tp->min_match, tp->max_mismatch_percent);
-	if ( BL_FASTQ_SEQ_AE(&fastq_rec, index) != '\0' )
+	if ( index < BL_FASTQ_SEQ_LEN(&fastq_rec) )
 	{
 	    ++adapter_count;
 	    if ( tp->verbose )
@@ -53,7 +66,24 @@ int     trim_single_reads(trim_t *tp)
 			BL_FASTQ_SEQ(&fastq_rec) + index);
 	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
-	
+
+	if ( tp->polya )
+	{
+	    index = bl_fastq_find_polya_tail(&fastq_rec);
+	    // Using unsigned and len could be < 10, so don't subtract
+	    if ( index + 10 < BL_FASTQ_SEQ_LEN(&fastq_rec) )
+	    {
+		++polya_count;
+		fprintf(stderr, "%zu %zu Trimming %s\n",
+			index, BL_FASTQ_SEQ_LEN(&fastq_rec) - 10,
+			fastq_rec.seq + index);
+		if ( tp->verbose )
+		    fprintf(stderr, "Poly-A   %s\n",
+			    BL_FASTQ_SEQ(&fastq_rec) + index);
+		bl_fastq_3p_trim(&fastq_rec, index);
+	    }
+	}
+
 	if ( BL_FASTQ_SEQ_LEN(&fastq_rec) >= tp->min_length )
 	    bl_fastq_write(&fastq_rec, tp->outstream1, BL_FASTQ_LINE_UNLIMITED);
 	else
@@ -72,15 +102,15 @@ int     trim_single_reads(trim_t *tp)
 	     isatty(fileno(stderr)) && (getenv("SLURM_JOB_ID") == NULL) )
 	{
 	    fprintf(stderr,
-		    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\r",
-		    record_count, adapter_count, tp->min_qual,
-		    low_qual_count, tp->min_length, short_count);
+		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
+		    record_count, adapter_count, polya_count,
+		    tp->min_qual, low_qual_count, tp->min_length, short_count);
 	}
     }
     fprintf(stderr,
-	    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\n",
-	    record_count, adapter_count, tp->min_qual, low_qual_count,
-	    tp->min_length, short_count);
+	    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\n",
+	    record_count, adapter_count, polya_count,
+	    tp->min_qual, low_qual_count, tp->min_length, short_count);
     bl_fastq_free(&fastq_rec);
     return EX_OK;
 }
@@ -97,6 +127,7 @@ int     trim_paired_reads(trim_t *tp)
 {
     unsigned long   record_count,
 		    adapter_count,
+		    polya_count,
 		    short_count,
 		    low_qual_count;
     size_t          index;
@@ -114,7 +145,7 @@ int     trim_paired_reads(trim_t *tp)
     adapter[0] = tp->adapter1;
     adapter[1] = tp->adapter2;
     
-    record_count = adapter_count = short_count = low_qual_count = 0;
+    record_count = adapter_count = polya_count = short_count = low_qual_count = 0;
 
     // Read from both files every iteration and break on error
     while ( true )
@@ -158,6 +189,19 @@ int     trim_paired_reads(trim_t *tp)
 			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
 		bl_fastq_3p_trim(&fastq_rec[c], index);
 	    }
+
+	    if ( tp->polya )
+	    {
+		index = bl_fastq_find_polya_tail(&fastq_rec[c]);
+		if ( BL_FASTQ_SEQ_AE(&fastq_rec[c], index) != '\0' )
+		{
+		    ++polya_count;
+		    if ( tp->verbose )
+			fprintf(stderr, "Poly-A   %s\n",
+				BL_FASTQ_SEQ(&fastq_rec[c]) + index);
+		    bl_fastq_3p_trim(&fastq_rec[c], index);
+		}
+	    }
 	}        
 
 	/*
@@ -186,15 +230,15 @@ int     trim_paired_reads(trim_t *tp)
 	if ( ! tp->verbose && (record_count % 100000 == 0) )
 	{
 	    fprintf(stderr,
-		    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\r",
-		    record_count, adapter_count, tp->min_qual,
-		    low_qual_count, tp->min_length, short_count);
+		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
+		    record_count, adapter_count, polya_count,
+		    tp->min_qual, low_qual_count, tp->min_length, short_count);
 	}
     }
     fprintf(stderr,
-	    "Reads: %lu  Adapters: %lu  Qual < %u: %lu  Len < %zu: %lu\n",
-	    record_count, adapter_count, tp->min_qual, low_qual_count,
-	    tp->min_length, short_count);
+	    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\n",
+	    record_count, adapter_count, polya_count,
+	    tp->min_qual, low_qual_count, tp->min_length, short_count);
 
     bl_fastq_free(&fastq_rec[0]);
     bl_fastq_free(&fastq_rec[1]);
@@ -283,6 +327,7 @@ void    trim_init(trim_t *tp)
 
 {
     tp->verbose = false;
+    tp->polya = false;
     tp->adapter_match_function = bl_fastq_find_adapter_smart;
     tp->infile1 = NULL;
     tp->outfile1 = NULL;
