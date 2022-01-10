@@ -13,9 +13,9 @@ available that are fast enough for most purposes.  However, trimming can
 take long enough to discourage experimenting, especially for those
 who don't have access to an HPC cluster.
 
-The current version is the culmination of roughly 2 days work starting
+The current version is the culmination of a few days work starting
 from a blank slate, so gauge your expectations accordingly.  Mature tools
-like cutadapt and trimmomatic are much more robust and feature-rich.
+like cutadapt and trimmomatic will be more robust and feature-rich.
 
 However, the results so far are encouraging, with better speed
 than cutadapt and nearly identical results (diffing fastq-trim and cutadapt
