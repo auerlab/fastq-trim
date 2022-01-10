@@ -55,11 +55,19 @@ bz2)
 gz)
     co=gzcat
     ;;
+fastq|fq)
+    co=cat
+    ;;
 *)
     printf "Unsupported compression: $ext\n"
     exit 1
 esac
 
 # Adapter sequences from FASTQ dist
+# Illumina Universal Adapter        AGATCGGAAGAG
+# Illumina Small RNA 3' Adapter     TGGAATTCTCGG
+# Illumina Small RNA 5' Adapter     GATCGTCGGACT
+# Nextera Transposase Sequence      CTGTCTCTTATA
+# SOLID Small RNA Adapter           CGCCTTGGCCGT
 $co $file | egrep --color \
     'AGATCGGAAGAG|TGGAATTCTCGG|GATCGTCGGACT|CTGTCTCTTATA|CGCCTTGGCCGT|AAAAAAAA+$'

@@ -2,3 +2,4 @@
 *.o
 fastq-trim
 *-trimmed*.fastq.gz
+SRR1972918*
