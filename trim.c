@@ -36,60 +36,57 @@ int     trim_single_reads(trim_t *tp)
 		    short_count,
 		    low_qual_count;
     size_t          index;
-    bl_fastq_t      fastq_rec;
+    bl_fastq_t      rec;
     
     fputs("  Mode:              Single\n", stderr);
     fprintf(stderr,
 	  "  Adapter:           %s\n\n", TRIM_ADAPTER1(tp));
-    bl_fastq_init(&fastq_rec);
+    bl_fastq_init(&rec);
     record_count = adapter_count = polya_count = short_count = low_qual_count = 0;
-    while ( bl_fastq_read(&fastq_rec, tp->instream1) == BL_READ_OK )
+    while ( bl_fastq_read(&rec, tp->instream1) == BL_READ_OK )
     {
 	// Trim low-quality bases before adapters
-	index = bl_fastq_find_3p_low_qual(&fastq_rec, tp->min_qual, tp->phred_base);
-	if ( index != BL_FASTQ_QUAL_LEN(&fastq_rec) )
+	index = bl_fastq_find_3p_low_qual(&rec, tp->min_qual, tp->phred_base);
+	if ( index != BL_FASTQ_QUAL_LEN(&rec) )
 	{
 	    ++low_qual_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Low qual %s %s\n",
-		    BL_FASTQ_SEQ(&fastq_rec) + index,
-		    BL_FASTQ_QUAL(&fastq_rec) + index);
-	    bl_fastq_3p_trim(&fastq_rec, index);
+		    BL_FASTQ_SEQ(&rec) + index, BL_FASTQ_QUAL(&rec) + index);
+	    bl_fastq_3p_trim(&rec, index);
 	}
 
-	index = tp->adapter_match_function(&fastq_rec, tp->adapter1,
+	index = tp->adapter_match_function(&rec, tp->adapter1,
 		    tp->min_match, tp->max_mismatch_percent);
-	if ( index != BL_FASTQ_SEQ_LEN(&fastq_rec) )
+	if ( index != BL_FASTQ_SEQ_LEN(&rec) )
 	{
 	    ++adapter_count;
 	    if ( tp->verbose )
-		fprintf(stderr, "Adapter  %s\n",
-		    BL_FASTQ_SEQ(&fastq_rec) + index);
-	    bl_fastq_3p_trim(&fastq_rec, index);
+		fprintf(stderr, "Adapter  %s\n", BL_FASTQ_SEQ(&rec) + index);
+	    bl_fastq_3p_trim(&rec, index);
 	}
 
 	if ( tp->polya_min_len != 0 )
 	{
-	    index = bl_fastq_find_polya_tail(&fastq_rec);
-	    // Using unsigned and len could be < 10, so don't subtract
-	    if ( index + tp->polya_min_len < BL_FASTQ_SEQ_LEN(&fastq_rec) )
+	    index = bl_fastq_find_polya_tail(&rec);
+	    // Using unsigned and len could be < polya_min, so don't subtract
+	    if ( index + tp->polya_min_len < BL_FASTQ_SEQ_LEN(&rec) )
 	    {
 		++polya_count;
 		if ( tp->verbose )
 		    fprintf(stderr, "Poly-A   %s\n",
-			BL_FASTQ_SEQ(&fastq_rec) + index);
-		bl_fastq_3p_trim(&fastq_rec, index);
+			BL_FASTQ_SEQ(&rec) + index);
+		bl_fastq_3p_trim(&rec, index);
 	    }
 	}
 
-	if ( BL_FASTQ_SEQ_LEN(&fastq_rec) >= tp->min_length )
-	    bl_fastq_write(&fastq_rec, tp->outstream1, BL_FASTQ_LINE_UNLIMITED);
+	if ( BL_FASTQ_SEQ_LEN(&rec) >= tp->min_length )
+	    bl_fastq_write(&rec, tp->outstream1, BL_FASTQ_LINE_UNLIMITED);
 	else
 	{
 	    if ( tp->verbose )
 		fprintf(stderr, "Short    %zu %s\n",
-			BL_FASTQ_SEQ_LEN(&fastq_rec),
-			BL_FASTQ_SEQ(&fastq_rec));
+			BL_FASTQ_SEQ_LEN(&rec), BL_FASTQ_SEQ(&rec));
 	    ++short_count;
 	}
 	
@@ -109,7 +106,7 @@ int     trim_single_reads(trim_t *tp)
 	    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\n",
 	    record_count, adapter_count, polya_count,
 	    tp->min_qual, low_qual_count, tp->min_length, short_count);
-    bl_fastq_free(&fastq_rec);
+    bl_fastq_free(&rec);
     return EX_OK;
 }
 
@@ -129,15 +126,15 @@ int     trim_paired_reads(trim_t *tp)
 		    short_count,
 		    low_qual_count;
     size_t          index;
-    bl_fastq_t      fastq_rec[2];
+    bl_fastq_t      rec[2];
     int             s1, s2, c;
     char            *adapter[2];
     
     fputs("  Mode:              Paired\n", stderr);
     fprintf(stderr,
 	  "  Adapters:          %s %s\n\n", tp->adapter1, tp->adapter2);
-    bl_fastq_init(&fastq_rec[0]);
-    bl_fastq_init(&fastq_rec[1]);
+    bl_fastq_init(&rec[0]);
+    bl_fastq_init(&rec[1]);
 
     // Select adapters with loop index
     adapter[0] = tp->adapter1;
@@ -150,13 +147,13 @@ int     trim_paired_reads(trim_t *tp)
     {
 	// FIXME: Explore using 2 threads here
 	
-	s1 = bl_fastq_read(&fastq_rec[0], tp->instream1);
-	s2 = bl_fastq_read(&fastq_rec[1], tp->instream2);
+	s1 = bl_fastq_read(&rec[0], tp->instream1);
+	s2 = bl_fastq_read(&rec[1], tp->instream2);
 	if ( (s1 != BL_READ_OK) || (s2 != BL_READ_OK) )
 	    break;
 	
 	// Compare read names just for sanity checking
-	if ( bl_fastq_name_cmp(&fastq_rec[0], &fastq_rec[1]) != 0 )
+	if ( bl_fastq_name_cmp(&rec[0], &rec[1]) != 0 )
 	{
 	    fprintf(stderr, "fastq-trim: Paired files out of sync.\n");
 	    trim_close_files(tp);
@@ -166,40 +163,40 @@ int     trim_paired_reads(trim_t *tp)
 	for (c = 0; c <= 1; ++c)
 	{
 	    // Trim low quality bases before adapters
-	    index = bl_fastq_find_3p_low_qual(&fastq_rec[c], tp->min_qual,
+	    index = bl_fastq_find_3p_low_qual(&rec[c], tp->min_qual,
 					  tp->phred_base);
-	    if ( index != BL_FASTQ_QUAL_LEN(&fastq_rec[c]) )
+	    if ( index != BL_FASTQ_QUAL_LEN(&rec[c]) )
 	    {
 		++low_qual_count;
 		if ( tp->verbose )
 		    fprintf(stderr, "Low qual %s %s\n",
-			BL_FASTQ_SEQ(&fastq_rec[c]) + index,
-			BL_FASTQ_QUAL(&fastq_rec[c]) + index);
-		bl_fastq_3p_trim(&fastq_rec[c], index);
+			BL_FASTQ_SEQ(&rec[c]) + index,
+			BL_FASTQ_QUAL(&rec[c]) + index);
+		bl_fastq_3p_trim(&rec[c], index);
 	    }
     
-	    index = tp->adapter_match_function(&fastq_rec[c], adapter[c],
+	    index = tp->adapter_match_function(&rec[c], adapter[c],
 			tp->min_match, tp->max_mismatch_percent);
-	    if ( index != BL_FASTQ_SEQ_LEN(&fastq_rec[c]) )
+	    if ( index != BL_FASTQ_SEQ_LEN(&rec[c]) )
 	    {
 		++adapter_count;
 		if ( tp->verbose )
 		    fprintf(stderr, "Adapter  %s\n",
-			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
-		bl_fastq_3p_trim(&fastq_rec[c], index);
+			BL_FASTQ_SEQ(&rec[c]) + index);
+		bl_fastq_3p_trim(&rec[c], index);
 	    }
 
 	    if ( tp->polya_min_len != 0 )
 	    {
-		index = bl_fastq_find_polya_tail(&fastq_rec[c]);
-		// Using unsigned and len could be < 10, so don't subtract
-		if ( index + tp->polya_min_len < BL_FASTQ_SEQ_LEN(&fastq_rec[c]) )
+		index = bl_fastq_find_polya_tail(&rec[c]);
+		// Using unsigned and len could be < polya_min, so don't subtract
+		if ( index + tp->polya_min_len < BL_FASTQ_SEQ_LEN(&rec[c]) )
 		{
 		    ++polya_count;
 		    if ( tp->verbose )
 			fprintf(stderr, "Poly-A   %s\n",
-			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
-		    bl_fastq_3p_trim(&fastq_rec[c], index);
+			    BL_FASTQ_SEQ(&rec[c]) + index);
+		    bl_fastq_3p_trim(&rec[c], index);
 		}
 	    }
 	}        
@@ -208,21 +205,21 @@ int     trim_paired_reads(trim_t *tp)
 	 *  If either read is short, drop the pair.  Paired reads must be
 	 *  kept in sync across the R1 and R2 files.
 	 */
-	if ( (BL_FASTQ_SEQ_LEN(&fastq_rec[0]) >= tp->min_length) &&
-	     (BL_FASTQ_SEQ_LEN(&fastq_rec[1]) >= tp->min_length) )
+	if ( (BL_FASTQ_SEQ_LEN(&rec[0]) >= tp->min_length) &&
+	     (BL_FASTQ_SEQ_LEN(&rec[1]) >= tp->min_length) )
 	{
-	    bl_fastq_write(&fastq_rec[0], tp->outstream1, BL_FASTQ_LINE_UNLIMITED);
-	    bl_fastq_write(&fastq_rec[1], tp->outstream2, BL_FASTQ_LINE_UNLIMITED);
+	    bl_fastq_write(&rec[0], tp->outstream1, BL_FASTQ_LINE_UNLIMITED);
+	    bl_fastq_write(&rec[1], tp->outstream2, BL_FASTQ_LINE_UNLIMITED);
 	}
 	else
 	{
 	    if ( tp->verbose )
 		fprintf(stderr, "Short    %zu %s\n"
 				"         %zu %s\n",
-			BL_FASTQ_SEQ_LEN(&fastq_rec[0]),
-			BL_FASTQ_SEQ(&fastq_rec[1]),
-			BL_FASTQ_SEQ_LEN(&fastq_rec[0]),
-			BL_FASTQ_SEQ(&fastq_rec[1]));
+			BL_FASTQ_SEQ_LEN(&rec[0]),
+			BL_FASTQ_SEQ(&rec[1]),
+			BL_FASTQ_SEQ_LEN(&rec[0]),
+			BL_FASTQ_SEQ(&rec[1]));
 	    ++short_count;
 	}
 	
@@ -240,8 +237,8 @@ int     trim_paired_reads(trim_t *tp)
 	    record_count, adapter_count, polya_count,
 	    tp->min_qual, low_qual_count, tp->min_length, short_count);
 
-    bl_fastq_free(&fastq_rec[0]);
-    bl_fastq_free(&fastq_rec[1]);
+    bl_fastq_free(&rec[0]);
+    bl_fastq_free(&rec[1]);
     return EX_OK;
 }
 

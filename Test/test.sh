@@ -113,7 +113,11 @@ for cores in 1 2; do
        -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
 done
 
-args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:10 TRAILING:20 MINLEN:30"
+# Last number after .fa file is simple clip threshold.  A perfect match of
+# 12 bases give a score of about 7 according to docs.  5 was chosen by trial
+# and error to bring the missed partial adapters to a level similar to
+# fastq-trim and cutadapt.
+args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30"
 time sh -c "xzcat $infile1 | trimmomatic $args"
 
 time ../fastq-trim "$@" \
