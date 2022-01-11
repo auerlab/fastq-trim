@@ -74,6 +74,12 @@ int     main(int argc,char *argv[])
 	    if ( *end != '\0' )
 		usage(argv);
 	}
+	else if ( strcmp(argv[arg], "--polya-min-length") == 0 )
+	{
+	    trim_set_polya_min_len(&tp, strtoul(argv[++arg], &end, 10));
+	    if ( *end != '\0' )
+		usage(argv);
+	}
 	else
 	    usage(argv);
     }
@@ -107,11 +113,13 @@ int     main(int argc,char *argv[])
 	    trim_single_reads(&tp);
 	else
 	    trim_paired_reads(&tp);
+	trim_close_files(&tp);
+	return EX_OK;
     }
     else if ( status == EX_USAGE )
 	usage(argv);
-    trim_close_files(&tp);
-    return EX_OK;
+    else
+	return status;
 }
 
 
@@ -130,10 +138,10 @@ void    usage(char *argv[])
 	    "   [--max-mismatch-percent N]\n"
 	    "   [--min-qual N]\n"
 	    "   [--min-length N]\n"
+	    "   [--polya_min-length N]\n"
 	    "   [--phred-base N]\n"
 	    "   [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
 	    "   [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",
 	    argv[0], argv[0]);
     exit(EX_USAGE);
 }
-

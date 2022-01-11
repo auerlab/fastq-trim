@@ -48,6 +48,7 @@ int trim_set_adapter2_ae(trim_t *trim_ptr, size_t c, char new_adapter2_element);
 int trim_set_adapter2_cpy(trim_t *trim_ptr, char *new_adapter2, size_t array_size);
 int trim_set_min_length(trim_t *trim_ptr, size_t new_min_length);
 int trim_set_min_match(trim_t *trim_ptr, size_t new_min_match);
+int trim_set_polya_min_len(trim_t *trim_ptr, size_t new_polya_min_len);
 int trim_set_max_mismatch_percent(trim_t *trim_ptr, unsigned new_max_mismatch_percent);
 int trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual);
 int trim_set_phred_base(trim_t *trim_ptr, unsigned new_phred_base);

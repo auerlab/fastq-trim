@@ -1,54 +1,154 @@
 #!/bin/sh -e
 
+##########################################################################
+#   Synopsis:
+#       ./test.sh big|little
+#
+#   Description:
+#       Benchmark fastq-trim against cutadapt, reporting run times and
+#       sequences removed
+#
+#   Arguments:
+#       $1:     big = process whole fastq, little = 250k reads
+#       
+#   History:
+#   Date        Name        Modification
+#   2022-01-11  Jason Bacon Begin
+##########################################################################
+
+usage()
+{
+    printf "Usage: $0 big|little [extra fastq-trim flags]\n"
+    exit 1
+}
+
+
+##########################################################################
+#   Main
+##########################################################################
+
+if [ $# -lt 1 ]; then
+    usage
+fi
+
+# SRR11180057 looks like it's already been trimmed.
+# Only 138 Nextera adapters found in almost a million reads and most not
+# near the 3' end.  Probably natural sequences.
+# SRR1553607 has only 203445 reads
+sample=SRR1972918
+
+case $1 in
+big)
+    suffix=''
+    ;;
+
+little)
+    suffix='-250k'
+    ;;
+
+*)
+    usage
+    ;;
+
+esac
+shift
+infile1=${sample}_1$suffix.fastq.xz
+infile2=${sample}_2$suffix.fastq.xz
+
+#############################################################################
+# Timing an early version with just adapter removal:
+#
+# FIXME: Rig this to download some public data instead of the chondro sample
+#
+# gzip -1 provides a good load balance for xzipped input:
+# 95.92% xzcat
+# 95.40% gzip
+# 82.94% fastq-tr
+
 cd ..
 make clean all
 cd Test
 
+export GZIP=-1
+
 . fetch-infiles.sh
 
+# adapter=AGATCGGAAGAGCACAC # Our mouse data
+adapter=CTGTCTCTTATA
+part=CTGTCTCTT
+rand=TCGAACGGC
+
 # Use gzip -1 for output to avoid bottleneck
-outfile1_exact=${sample}_1-trimmed-exact.fastq.gz
-outfile1_smart=${sample}_1-trimmed-smart.fastq.gz
-outfile2_smart=${sample}_2-trimmed-smart.fastq.gz
-outfile1_cutadapt=${sample}_1-trimmed-cutadapt.fastq.gz
+outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.gz
+outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.gz
+outfile1_smart20=${sample}_1$suffix-trimmed-smart20.fastq.gz
+outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.gz
+outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
+outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
 
-export GZIP=-1  # Speed up output compression
+# Make sure all runs benefit equally from read buffering
+printf "Buffering input files...\n"
+cat $infile1 > /dev/null
+cat $infile2 > /dev/null
 
 time ../fastq-trim "$@" \
+    --3p-adapter1 $adapter \
     --exact-match \
-    --3p-adapter1 $adapter \
-    $short1 $outfile1_exact
+    $infile1 $outfile1_exact
 
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
-    $short1 $outfile1_smart
+    $infile1 $outfile1_smart10
 
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
-    --3p-adapter2 $adapter \
-    $short1 $outfile1_smart $short2 $outfile2_smart
+    --max-mismatch-percent 20 \
+    $infile1 $outfile1_smart20
+
+for cores in 1 2; do
+    printf "\nCutadapt $cores core...\n"
+    time cutadapt --report=minimal \
+       --cores=$cores --quality-cutoff=20 --minimum-length=30 -a $adapter \
+       -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
+done
+
+time ../fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    $infile1 $outfile1_paired $infile2 $outfile2_paired
 
 cat << EOM
 
 Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
 
-Also scanning for random sequence of the same length for comparison.
+Also scanning for random sequence $rand for comparison.
 
 EOM
 
 set +e  # Don't terminate when fgrep finds no matches
-printf "Raw data $part:              "
-xzcat $short1 | fgrep $part | wc -l
-printf "Raw data $rand:              "
-xzcat $short1 | fgrep $rand | wc -l
 
-printf "Exact match output $part:    "
-zcat $outfile1_exact | fgrep $part | wc -l
-printf "Exact match output $rand:    "
-zcat $outfile1_exact | fgrep $rand | wc -l
+printf "Raw data %-12s:              " $part
+xzcat $infile1 | fgrep $part | wc -l
+printf "Raw data %-12s:              " $rand
+xzcat $infile1 | fgrep $rand | wc -l
 
-printf "Smart match output $part:    "
-zcat $outfile1_smart | fgrep $part | wc -l
-printf "Smart match output $rand:    "
-zcat $outfile1_smart | fgrep $rand | wc -l
+printf "Exact match output %-12s:    " $part
+gzcat $outfile1_exact | fgrep $part | wc -l
+printf "Exact match output %-12s:    " $rand
+gzcat $outfile1_exact | fgrep $rand | wc -l
+
+printf "Smart match 10 output %-12s: " $part
+gzcat $outfile1_smart10 | fgrep $part | wc -l
+printf "Smart match 10 output %-12s: " $rand
+gzcat $outfile1_smart10 | fgrep $rand | wc -l
+
+printf "Smart match 20 output %-12s: " $part
+gzcat $outfile1_smart20 | fgrep $part | wc -l
+printf "Smart match 20 output %-12s: " $rand
+gzcat $outfile1_smart20 | fgrep $rand | wc -l
+
+printf "Cutadapt output %-12s:       " $part
+gzcat $outfile1_cutadapt | fgrep $part | wc -l
+printf "Cutadapt output %-12s:       " $rand
+gzcat $outfile1_cutadapt | fgrep $rand | wc -l
+

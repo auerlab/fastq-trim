@@ -12,7 +12,7 @@ fastq-trim - Trim adapters and low-quality bases from FASTQ files
 .na 
 fastq-trim [--help]
 fastq-trim
-    [--3p-adapter seq] [--min-qual N] [--min-length N]
+    [--3p-adapter seq] [--min-qual N] [--min-length N] [--polya-min-length N]
     [file.fastq[.gz|.bz2|.xz]] [file.fastq[.gz|.bz2|.xz]]
 .ad
 .fi
@@ -68,6 +68,11 @@ Minimum quality of bases to keep for end-trimming.  Default is 20.
 .TP
 \fB\-\-min-length\fR \fIN\fR
 Minimum length of reads to keep after trimming.  Default is 30.
+
+.TP
+\fB\-\-polya-min-length\fR \fIN\fR
+Minimum length of poly-A tails to be removed (after other trimming).
+Default is 0, meaning no poly-A trimming is done.
 
 .TP
 \fB\-\-phred-base\fR \fIN\fR

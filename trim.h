@@ -21,7 +21,6 @@ typedef size_t (* trim_afp_t)(const bl_fastq_t *read,
 typedef struct
 {
     bool        verbose;
-    bool        polya;
     trim_afp_t  adapter_match_function;
     char        *infile1;
     char        *outfile1;
@@ -35,6 +34,7 @@ typedef struct
     char        *adapter2;
     size_t      min_length;
     size_t      min_match;
+    size_t      polya_min_len;
     unsigned    max_mismatch_percent;
     unsigned    min_qual;
     unsigned    phred_base;

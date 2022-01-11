@@ -67,16 +67,13 @@ int     trim_single_reads(trim_t *tp)
 	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
 
-	if ( tp->polya )
+	if ( tp->polya_min_len != 0 )
 	{
 	    index = bl_fastq_find_polya_tail(&fastq_rec);
 	    // Using unsigned and len could be < 10, so don't subtract
-	    if ( index + 10 < BL_FASTQ_SEQ_LEN(&fastq_rec) )
+	    if ( index + tp->polya_min_len < BL_FASTQ_SEQ_LEN(&fastq_rec) )
 	    {
 		++polya_count;
-		fprintf(stderr, "%zu %zu Trimming %s\n",
-			index, BL_FASTQ_SEQ_LEN(&fastq_rec) - 10,
-			fastq_rec.seq + index);
 		if ( tp->verbose )
 		    fprintf(stderr, "Poly-A   %s\n",
 			    BL_FASTQ_SEQ(&fastq_rec) + index);
@@ -190,10 +187,11 @@ int     trim_paired_reads(trim_t *tp)
 		bl_fastq_3p_trim(&fastq_rec[c], index);
 	    }
 
-	    if ( tp->polya )
+	    if ( tp->polya_min_len != 0 )
 	    {
 		index = bl_fastq_find_polya_tail(&fastq_rec[c]);
-		if ( BL_FASTQ_SEQ_AE(&fastq_rec[c], index) != '\0' )
+		// Using unsigned and len could be < 10, so don't subtract
+		if ( index + tp->polya_min_len < BL_FASTQ_SEQ_LEN(&fastq_rec[c]) )
 		{
 		    ++polya_count;
 		    if ( tp->verbose )
@@ -327,7 +325,6 @@ void    trim_init(trim_t *tp)
 
 {
     tp->verbose = false;
-    tp->polya = false;
     tp->adapter_match_function = bl_fastq_find_adapter_smart;
     tp->infile1 = NULL;
     tp->outfile1 = NULL;
@@ -341,6 +338,7 @@ void    trim_init(trim_t *tp)
     tp->adapter2 = strdup(ILLUMINA_UNIVERSAL);
     tp->min_length = 30;
     tp->min_match = 3;
+    tp->polya_min_len = 0;
     tp->max_mismatch_percent = 10;
     tp->min_qual = 20;
     tp->phred_base = 33;
