@@ -34,7 +34,7 @@ Peak memory use (application only, not compression tools):
 
 		Virtual Resident
 Fastq-trim      13      2
-Cutadapt        46      30
+Cutadapt 1-core 46      30
 Cutadapt 2-core 58      40      ( each of 3 processes )
 Trimmomatic     3473    740
 
@@ -92,6 +92,16 @@ status  in_reads        in_bp   too_short       too_long        too_many_n     o
 OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
        13.83 real        43.64 user         0.52 sys
 
+TrimmomaticSE: Started with arguments:
+ /dev/stdin SRR1972918_1-trimmed-trimmomatic.fastq.gz ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30
+Automatically using 4 threads
+Using Short Clipping Sequence: 'CTGTCTCTTATA'
+ILLUMINACLIP: Using 0 prefix pairs, 1 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Quality encoding detected as phred33
+Input Reads: 1000000 Surviving: 987900 (98.79%) Dropped: 12100 (1.21%)
+TrimmomaticSE: Completed successfully
+       20.94 real        33.22 user         0.95 sys
+
 *** FASTQ TRIM ***
 
   Minimum match:     3
@@ -123,4 +133,6 @@ Smart match 20 output CTGTCTCTT   :       95
 Smart match 20 output TCGAACGGC   :     1225
 Cutadapt output CTGTCTCTT   :            169
 Cutadapt output TCGAACGGC   :           1304
+Trimmomatic output CTGTCTCTT   :         103
+Trimmomatic output TCGAACGGC   :        1308
 ```
