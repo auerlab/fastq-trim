@@ -83,6 +83,7 @@ outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.gz
 outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.gz
 outfile1_smart20=${sample}_1$suffix-trimmed-smart20.fastq.gz
 outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.gz
+outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
 outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
 
@@ -111,6 +112,9 @@ for cores in 1 2; do
        --cores=$cores --quality-cutoff=20 --minimum-length=30 -a $adapter \
        -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
 done
+
+args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:10 TRAILING:20 MINLEN:30"
+time sh -c "xzcat $infile1 | trimmomatic $args"
 
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
@@ -151,4 +155,9 @@ printf "Cutadapt output %-12s:       " $part
 gzcat $outfile1_cutadapt | fgrep $part | wc -l
 printf "Cutadapt output %-12s:       " $rand
 gzcat $outfile1_cutadapt | fgrep $rand | wc -l
+
+printf "Trimmomatic output %-12s:    " $part
+gzcat $outfile1_trimmo | fgrep $part | wc -l
+printf "Trimmomatic output %-12s:    " $rand
+gzcat $outfile1_trimmo | fgrep $rand | wc -l
 

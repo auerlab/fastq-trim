@@ -24,11 +24,19 @@ basic statistics from a larger sample with 1 million reads run on a
 2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
 
 ```
-Cores actually utilized (including xzcat, gzip, pigz):
+Cores actually used (including xzcat, gzip, pigz):
 
 Fastq-trim      3
 Cutadapt 1-core 2
 Cutadapt 2-core 4
+
+Peak memory use (application only, not compression tools):
+
+		Virtual Resident
+Fastq-trim      13      2
+Cutadapt        46      30
+Cutadapt 2-core 58      40      ( each of 3 processes )
+Trimmomatic     3473    740
 
 *** FASTQ TRIM ***
 
