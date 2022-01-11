@@ -121,7 +121,7 @@ cat << EOM
 Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
 
-Also scanning for random sequence $rand for comparison.
+Also scanning for random sequence $rand as a control.
 
 EOM
 

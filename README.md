@@ -20,7 +20,7 @@ like cutadapt and trimmomatic will be more robust and feature-rich.
 However, the results so far are encouraging, with better speed
 than cutadapt and nearly identical results (diffing fastq-trim and cutadapt
 results revealed only a few differences after trimming 250k reads).  Some
-basic statistics from a larger sample with 2 million reads run on a
+basic statistics from a larger sample with 1 million reads run on a
 2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
 
 ```
@@ -103,7 +103,7 @@ Read: 1000000  Adapter: 92062  Poly-A: 0  Q < 20: 1401026  Len < 30: 545696
 Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
 
-Also scanning for random sequence TCGAACGGC for comparison.
+Also scanning for random sequence TCGAACGGC as a control.
 
 Raw data CTGTCTCTT   :                 63410
 Raw data TCGAACGGC   :                  1525
