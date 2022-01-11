@@ -32,7 +32,7 @@ int     main(int argc,char *argv[])
     {
 	if ( strcmp(argv[arg], "--verbose") == 0 )
 	    trim_set_verbose(&tp, true);
-	if ( strcmp(argv[arg], "--exact-match") == 0 )
+	else if ( strcmp(argv[arg], "--exact-match") == 0 )
 	    trim_set_adapter_match_function(&tp, bl_fastq_find_adapter_exact);
 	else if ( strcmp(argv[arg], "--3p-adapter1") == 0 )
 	{

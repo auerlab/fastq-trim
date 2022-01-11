@@ -47,23 +47,24 @@ int     trim_single_reads(trim_t *tp)
     {
 	// Trim low-quality bases before adapters
 	index = bl_fastq_find_3p_low_qual(&fastq_rec, tp->min_qual, tp->phred_base);
-	if ( index < BL_FASTQ_SEQ_LEN(&fastq_rec) )
+	if ( index != BL_FASTQ_QUAL_LEN(&fastq_rec) )
 	{
 	    ++low_qual_count;
 	    if ( tp->verbose )
-		fprintf(stderr, "Low qual %s\n",
-			BL_FASTQ_SEQ(&fastq_rec) + index);
+		fprintf(stderr, "Low qual %s %s\n",
+		    BL_FASTQ_SEQ(&fastq_rec) + index,
+		    BL_FASTQ_QUAL(&fastq_rec) + index);
 	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
 
 	index = tp->adapter_match_function(&fastq_rec, tp->adapter1,
 		    tp->min_match, tp->max_mismatch_percent);
-	if ( index < BL_FASTQ_SEQ_LEN(&fastq_rec) )
+	if ( index != BL_FASTQ_SEQ_LEN(&fastq_rec) )
 	{
 	    ++adapter_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Adapter  %s\n",
-			BL_FASTQ_SEQ(&fastq_rec) + index);
+		    BL_FASTQ_SEQ(&fastq_rec) + index);
 	    bl_fastq_3p_trim(&fastq_rec, index);
 	}
 
@@ -76,7 +77,7 @@ int     trim_single_reads(trim_t *tp)
 		++polya_count;
 		if ( tp->verbose )
 		    fprintf(stderr, "Poly-A   %s\n",
-			    BL_FASTQ_SEQ(&fastq_rec) + index);
+			BL_FASTQ_SEQ(&fastq_rec) + index);
 		bl_fastq_3p_trim(&fastq_rec, index);
 	    }
 	}
@@ -167,18 +168,19 @@ int     trim_paired_reads(trim_t *tp)
 	    // Trim low quality bases before adapters
 	    index = bl_fastq_find_3p_low_qual(&fastq_rec[c], tp->min_qual,
 					  tp->phred_base);
-	    if ( BL_FASTQ_SEQ_AE(&fastq_rec[c], index) != '\0' )
+	    if ( index != BL_FASTQ_QUAL_LEN(&fastq_rec[c]) )
 	    {
 		++low_qual_count;
 		if ( tp->verbose )
-		    fprintf(stderr, "Low qual %s\n",
-			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
+		    fprintf(stderr, "Low qual %s %s\n",
+			BL_FASTQ_SEQ(&fastq_rec[c]) + index,
+			BL_FASTQ_QUAL(&fastq_rec[c]) + index);
 		bl_fastq_3p_trim(&fastq_rec[c], index);
 	    }
     
 	    index = tp->adapter_match_function(&fastq_rec[c], adapter[c],
 			tp->min_match, tp->max_mismatch_percent);
-	    if ( BL_FASTQ_SEQ_AE(&fastq_rec[c], index) != '\0' )
+	    if ( index != BL_FASTQ_SEQ_LEN(&fastq_rec[c]) )
 	    {
 		++adapter_count;
 		if ( tp->verbose )
@@ -196,7 +198,7 @@ int     trim_paired_reads(trim_t *tp)
 		    ++polya_count;
 		    if ( tp->verbose )
 			fprintf(stderr, "Poly-A   %s\n",
-				BL_FASTQ_SEQ(&fastq_rec[c]) + index);
+			    BL_FASTQ_SEQ(&fastq_rec[c]) + index);
 		    bl_fastq_3p_trim(&fastq_rec[c], index);
 		}
 	    }

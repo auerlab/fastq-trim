@@ -37,12 +37,12 @@ Cutadapt 2-core 4
   Minimum length:    30
   Phred base:        33
   Adapter matching:  Exact
-  Filename:          2M-R1.fastq.xz
+  Filename:          SRR1972918_1.fastq.xz
   Mode:              Single
-  Adapter:           AGATCGGAAGAGC
+  Adapter:           CTGTCTCTTATA
 
-Reads: 2000000  Adapters: 101071  Qual < 20: 93395  Len < 30: 77
-	6.35 real        16.99 user         0.91 sys
+Read: 1000000  Adapter: 85032  Poly-A: 0  Q < 20: 572761  Len < 30: 92544
+	5.91 real        13.06 user         0.32 sys
 
 *** FASTQ TRIM ***
 
@@ -52,12 +52,12 @@ Reads: 2000000  Adapters: 101071  Qual < 20: 93395  Len < 30: 77
   Phred base:        33
   Adapter matching:  Smart
   Maximum mismatch:  10%
-  Filename:          2M-R1.fastq.xz
+  Filename:          SRR1972918_1.fastq.xz
   Mode:              Single
-  Adapter:           AGATCGGAAGAGC
+  Adapter:           CTGTCTCTTATA
 
-Reads: 2000000  Adapters: 103096  Qual < 20: 93395  Len < 30: 89
-	8.99 real        20.40 user         1.09 sys
+Read: 1000000  Adapter: 85607  Poly-A: 0  Q < 20: 572761  Len < 30: 92553
+	5.93 real        14.35 user         0.32 sys
 
 *** FASTQ TRIM ***
 
@@ -67,36 +67,52 @@ Reads: 2000000  Adapters: 103096  Qual < 20: 93395  Len < 30: 89
   Phred base:        33
   Adapter matching:  Smart
   Maximum mismatch:  20%
-  Filename:          2M-R1.fastq.xz
+  Filename:          SRR1972918_1.fastq.xz
   Mode:              Single
-  Adapter:           AGATCGGAAGAGC
+  Adapter:           CTGTCTCTTATA
 
-Reads: 2000000  Adapters: 142427  Qual < 20: 93395  Len < 30: 578
-       10.10 real        21.34 user         1.30 sys
+Read: 1000000  Adapter: 105995  Poly-A: 0  Q < 20: 572761  Len < 30: 92760
+	6.35 real        14.90 user         0.27 sys
 
 Cutadapt 1 core...
-status  in_reads        in_bp   too_short       too_long        too_many_n      out_reads       w/adapters      qualtrim_bp     out_bp
-OK      2000000 202000000       137     0       0       1999863 103341  180190  201023217
-       44.10 real        60.33 user         0.72 sys
+status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
+OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
+       23.09 real        31.17 user         0.25 sys
 
 Cutadapt 2 core...
-status  in_reads        in_bp   too_short       too_long        too_many_n      out_reads       w/adapters      qualtrim_bp     out_bp
-OK      2000000 202000000       137     0       0       1999863 103341  180190  201023217
-       22.49 real        61.15 user         1.48 sys
+status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
+OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
+       13.83 real        43.64 user         0.52 sys
+
+*** FASTQ TRIM ***
+
+  Minimum match:     3
+  Minimum quality:   20
+  Minimum length:    30
+  Phred base:        33
+  Adapter matching:  Smart
+  Maximum mismatch:  10%
+  Filename:          SRR1972918_1.fastq.xz
+  Filename:          SRR1972918_2.fastq.xz
+  Mode:              Paired
+  Adapters:          CTGTCTCTTATA AGATCGGAAGAG
+
+Read: 1000000  Adapter: 92062  Poly-A: 0  Q < 20: 1401026  Len < 30: 545696
+	8.08 real        26.41 user         0.55 sys
 
 Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
 
-Also scanning for random sequence of the same length for comparison.
+Also scanning for random sequence TCGAACGGC for comparison.
 
-Raw data AGATCGGAAG  :                 23304
-Raw data random:                         209
-Exact match output AGATCGGAAG  :         208
-Exact match output random:               209
-Smart match 10 output AGATCGGAAG  :       83
-Smart match 10 output random:            209
-Smart match 20 output AGATCGGAAG  :       51
-Smart match 20 output random:            208
-Cutadapt output AGATCGGAAG  :             62
-Cutadapt output random:                  209
+Raw data CTGTCTCTT   :                 63410
+Raw data TCGAACGGC   :                  1525
+Exact match output CTGTCTCTT   :         275
+Exact match output TCGAACGGC   :        1229
+Smart match 10 output CTGTCTCTT   :      177
+Smart match 10 output TCGAACGGC   :     1229
+Smart match 20 output CTGTCTCTT   :       95
+Smart match 20 output TCGAACGGC   :     1225
+Cutadapt output CTGTCTCTT   :            169
+Cutadapt output TCGAACGGC   :           1304
 ```
