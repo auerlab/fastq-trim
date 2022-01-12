@@ -27,7 +27,7 @@ Print a summary of usage and exit.
 Print some intermediate results during trimming for debugging purposes.
 
 .TP
-\fB\-\-exact-match\fR \fIN\fR
+\fB\-\-exact-match\fR
 Use exact matching to find adapters.  Adapters will be matched if a segment
 matches the entire adapter sequence, or a portion of it at the end of the
 read matches to a minimum of min_match (default=3, controlled by
@@ -52,6 +52,7 @@ in the input.
 \fB\-\-min-match\fR \fIN\fR
 Minimum number of bases in the read that must match the adapter in order
 to report a match.  This applies to both exact matching and smart matching.
+Default is 3.
 
 .TP
 \fB\-\-max-mismatch-percent\fR \fIN\fR
