@@ -117,7 +117,7 @@ In either case, a minimum of min_match (default 3, controlled by
 --min-match) bases must be matched in order to decide that the sequence
 is indeed an adapter.
 
-Low-quality 3' end removal uses the same algorithm as fastq and cutadapt,
+Low-quality 3' end removal uses the same algorithm as BWA and Cutadapt,
 namely scanning backward from the 3' end until the sum of (score - min-qual)
 becomes > 0, then trimming at the location of the minimum sum.  Quality
 trimming is done before adapter matching so that likely misread bases do not
