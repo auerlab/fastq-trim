@@ -202,7 +202,7 @@ optimizations such as -march=native, and for
 for which binary packages are not yet maintained.
 
 ```
-cd /usr/ports/category/fastq-trim && env CFLAGS='-march=native -O2' make install
+cd /usr/ports/wip/fastq-trim && env CFLAGS='-march=native -O2' make install
 ```
 
 ### Installing via pkgsrc
@@ -222,7 +222,7 @@ First bootstrap pkgsrc using auto-pkgsrc-setup or any
 other method.  Then run the following commands:
 
 ```
-cd pkgsrc-dir/biology/fastq-trim
+cd pkgsrc-dir/wip/fastq-trim
 bmake install clean
 ```
 
