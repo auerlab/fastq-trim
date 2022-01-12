@@ -223,7 +223,7 @@ int     trim_paired_reads(trim_t *tp)
 	    ++short_count;
 	}
 	
-	++record_count;
+	record_count += 2;
 	if ( ! tp->verbose && (record_count % 100000 == 0) )
 	{
 	    fprintf(stderr,

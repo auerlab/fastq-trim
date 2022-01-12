@@ -31,30 +31,6 @@ if [ $# -lt 1 ]; then
     usage
 fi
 
-# SRR11180057 looks like it's already been trimmed.
-# Only 138 Nextera adapters found in almost a million reads and most not
-# near the 3' end.  Probably natural sequences.
-# SRR1553607 has only 203445 reads
-sample=SRR1972918
-
-case $1 in
-big)
-    suffix=''
-    ;;
-
-little)
-    suffix='-250k'
-    ;;
-
-*)
-    usage
-    ;;
-
-esac
-shift
-infile1=${sample}_1$suffix.fastq.xz
-infile2=${sample}_2$suffix.fastq.xz
-
 #############################################################################
 # Timing an early version with just adapter removal:
 #
@@ -66,12 +42,33 @@ infile2=${sample}_2$suffix.fastq.xz
 # 82.94% fastq-tr
 
 cd ..
-./cave-man-install.sh
+make clean all
 cd Test
 
 export GZIP=-1
 
 . ./fetch-infiles.sh
+
+# After fetch-files.sh
+case $1 in
+big)
+    suffix=''
+    infile1=$long1
+    infile2=$long2
+    ;;
+
+little)
+    suffix='-250k'
+    infile1=$short1
+    infile2=$short2
+    ;;
+
+*)
+    usage
+    ;;
+
+esac
+shift
 
 # adapter=AGATCGGAAGAGCACAC # Our mouse data
 adapter=CTGTCTCTTATA
@@ -81,8 +78,10 @@ rand=TCGAACGGC
 # Use gzip -1 for output to avoid bottleneck
 outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.gz
 outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.gz
+outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.gz
 outfile1_smart20=${sample}_1$suffix-trimmed-smart20.fastq.gz
 outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.gz
+outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.gz
 outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
 outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
@@ -117,8 +116,18 @@ done
 # 12 bases give a score of about 7 according to docs.  5 was chosen by trial
 # and error to bring the missed partial adapters to a level similar to
 # fastq-trim and cutadapt.
+printf "\n"
 args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30"
 time sh -c "xzcat $infile1 | trimmomatic $args"
+
+time ../fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    $infile2 $outfile2_smart10
+
+printf "\nCutadapt 2 core reverse read...\n"
+time cutadapt --report=minimal \
+   --cores=2 --quality-cutoff=20 --minimum-length=30 -a $adapter \
+   -o $outfile2_cutadapt $infile2 2>&1 | fgrep -v reads/min
 
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
