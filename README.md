@@ -192,7 +192,7 @@ workstation, laptop, or VM using
 To install the binary package on FreeBSD:
 
 ```
-pkg install Fastq-trim
+pkg install fastq-trim
 ```
 
 You can just as easily build and install from source.  This is useful for
@@ -202,7 +202,7 @@ optimizations such as -march=native, and for
 for which binary packages are not yet maintained.
 
 ```
-cd /usr/ports/category/Fastq-trim && env CFLAGS='-march=native -O2' make install
+cd /usr/ports/category/fastq-trim && env CFLAGS='-march=native -O2' make install
 ```
 
 ### Installing via pkgsrc
@@ -222,7 +222,7 @@ First bootstrap pkgsrc using auto-pkgsrc-setup or any
 other method.  Then run the following commands:
 
 ```
-cd pkgsrc-dir/biology/Fastq-trim
+cd pkgsrc-dir/biology/fastq-trim
 bmake install clean
 ```
 
@@ -230,7 +230,7 @@ There may also be binary packages available for your platform.  If this is
 the case, you can install by running:
 
 ```
-pkgin install Fastq-trim
+pkgin install fastq-trim
 ```
 
 See the [Joyent Cloud Services Site](https://pkgsrc.joyent.com/) for
