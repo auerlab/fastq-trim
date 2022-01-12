@@ -66,12 +66,12 @@ infile2=${sample}_2$suffix.fastq.xz
 # 82.94% fastq-tr
 
 cd ..
-make clean all
+./cave-man-install.sh
 cd Test
 
 export GZIP=-1
 
-. fetch-infiles.sh
+. ./fetch-infiles.sh
 
 # adapter=AGATCGGAAGAGCACAC # Our mouse data
 adapter=CTGTCTCTTATA
