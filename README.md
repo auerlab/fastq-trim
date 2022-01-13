@@ -28,7 +28,7 @@ basic statistics from a larger sample with 1 million reads run on a
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 
-Peak CPU (including xzcat, gzip -1, pigz), wall time, and peak memory:
+Peak CPU (including xzcat, gzip -1, pigz), wall time, and peak memory (MiB):
 
 		CPU     Wall    Virtual Resident
 Fastq-trim      260%    5.93    13      2
