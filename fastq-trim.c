@@ -138,7 +138,7 @@ void    usage(char *argv[])
 	    "   [--max-mismatch-percent N]\n"
 	    "   [--min-qual N]\n"
 	    "   [--min-length N]\n"
-	    "   [--polya_min-length N]\n"
+	    "   [--polya-min-length N]\n"
 	    "   [--phred-base N]\n"
 	    "   [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
 	    "   [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",

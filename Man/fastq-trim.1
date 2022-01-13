@@ -11,9 +11,12 @@ fastq-trim - Trim adapters and low-quality bases from FASTQ files
 .nf 
 .na 
 fastq-trim [--help]
-fastq-trim
-    [--3p-adapter seq] [--min-qual N] [--min-length N] [--polya-min-length N]
-    [file.fastq[.gz|.bz2|.xz]] [file.fastq[.gz|.bz2|.xz]]
+fastq-trim [--verbose] [--exact-match]
+    [--3p-adapter1 seq] [--3p-adapter2 seq]
+    [--min-matcn N] [--max-mismatch-percent N]
+    [--min-qual N] [--min-length N] [--polya-min-length N]
+    [--phred-base N]
+    [infile.fastq[.gz|.bz2|.xz]] [outfile.fastq[.gz|.bz2|.xz]]
 .ad
 .fi
 
@@ -123,6 +126,19 @@ namely scanning backward from the 3' end until the sum of (score - min-qual)
 becomes > 0, then trimming at the location of the minimum sum.  Quality
 trimming is done before adapter matching so that likely misread bases do not
 contribute to the adapter match scoring.
+
+Input and output files may be compressed using gzip(1), bzip2(1), or xz(1).
+Support for this is provided by xt_fopen(3), which automatically determines
+the file type from the filename extension and pipes input or output as
+needed.  Compression level of output files and other options can be
+be passed to gzip(1), bzip2(1), and xz(1) via the
+environment variables GZIP, BZIP2, BZIP, and XZ_OPT.  This is often useful
+for adjusting the compression level of output files in order to tune
+performance.  
+
+.SH "ENVIRONMENT"
+
+GZIP, BZIP2, BZIP, XZ_OPT: Fine-tune output compression.
 
 .SH "SEE ALSO"
 fastq-vis(1), biolibc(3)
