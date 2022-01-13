@@ -2,45 +2,40 @@
 
 ## Description
 
-A lightening fast read trimmer.
+Near-optimal read trimmer based on [biolibc](https:https://github.com/auerlab/biolibc)
 
 This is a back-burner project to explore the possibility of developing a
-significantly faster short read trimmer.
+significantly faster read trimmer.
 The ultimate goal is a trimmer that runs in a fraction of the time of
-popular trimmers and produces good enough results so that a more
-sophisticated trimmer won't make a meaningful difference to the downstream
-analysis.
+popular trimmers and produces comparable results.
 
 There is no sense of urgency since there are multiple highly-evolved trimmers
 available that are fast enough for most purposes.  However, trimming can
-take long enough to discourage experimenting, especially for those
-who don't have access to an HPC cluster.
+take long enough to discourage experimenting with trim parameters,
+especially for those who don't have access to an HPC cluster.
 
 The current version is the culmination of a few days work starting
 from a blank slate, so gauge your expectations accordingly.  Mature tools
 like cutadapt and trimmomatic will be more robust and feature-rich.
 
-However, the results so far are encouraging, with better speed
-than cutadapt and nearly identical results (diffing fastq-trim and cutadapt
+However, the results so far are encouraging, with significantly better
+speed than cutadapt or trimmomatic and nearly identical results (diffing
+fastq-trim and cutadapt
 results revealed only a few differences after trimming 250k reads).  Some
 basic statistics from a larger sample with 1 million reads run on a
 2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
 
 ```
-CPU (actually hyperthread) usage (including xzcat, gzip -1, pigz):
+Peak CPU (i5 2-core, 4-hyperthread) usage (including xzcat, gzip -1, pigz)
+wall time, and peak memory use:
 
-Fastq-trim      260%
-Cutadapt 1-core 140%
-Cutadapt 2-core 310%
-Trimmomatic     150%
+		CPU     Wall    Virtual Resident
+Fastq-trim      260%    5.93    13      2
+Cutadapt 1-core 140%    23.09   46      30
+Cutadapt 2-core 310%    13.83   58      40  ( each of 3 processes )
+Trimmomatic     150%    20.94   3473    740
 
-Peak memory use (application only, not compression tools):
-
-		Virtual Resident
-Fastq-trim      13      2
-Cutadapt 1-core 46      30
-Cutadapt 2-core 58      40      ( each of 3 processes )
-Trimmomatic     3473    740
+Detailed output:
 
 *** FASTQ TRIM ***
 
