@@ -92,9 +92,8 @@ int     trim_single_reads(trim_t *tp)
 	
 	++record_count;
 	
-	// isatty() oddly returns true under SLURM
 	if ( ! tp->verbose && (record_count % 100000 == 0) &&
-	     isatty(fileno(stderr)) && (getenv("SLURM_JOB_ID") == NULL) )
+	     isatty(fileno(stderr)) )
 	{
 	    fprintf(stderr,
 		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
@@ -224,7 +223,8 @@ int     trim_paired_reads(trim_t *tp)
 	}
 	
 	record_count += 2;
-	if ( ! tp->verbose && (record_count % 100000 == 0) )
+	if ( ! tp->verbose && (record_count % 100000 == 0) &&
+	     isatty(fileno(stderr)) )
 	{
 	    fprintf(stderr,
 		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
