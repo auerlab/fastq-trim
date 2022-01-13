@@ -2,7 +2,7 @@
 
 ## Description
 
-Near-optimal read trimmer based on [biolibc](https:https://github.com/auerlab/biolibc)
+Near-optimal read trimmer based on [biolibc](https://github.com/auerlab/biolibc)
 
 This is a back-burner project to explore the possibility of developing a
 significantly faster read trimmer.
