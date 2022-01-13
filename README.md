@@ -26,13 +26,14 @@ basic statistics from a larger sample with 1 million reads run on a
 2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
 
 ```
-Peak CPU (i5 2-core, 4-hyperthread) usage (including xzcat, gzip -1, pigz)
-wall time, and peak memory use:
+Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
+
+Peak CPU (including xzcat, gzip -1, pigz), wall time, and peak memory:
 
 		CPU     Wall    Virtual Resident
 Fastq-trim      260%    5.93    13      2
 Cutadapt 1-core 140%    23.09   46      30
-Cutadapt 2-core 310%    13.83   58      40  ( each of 3 processes )
+Cutadapt 2-core 310%    13.83   172     120
 Trimmomatic     150%    20.94   3473    740
 
 Detailed output:
