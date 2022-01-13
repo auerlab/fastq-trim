@@ -33,7 +33,7 @@ Peak CPU (including xzcat, gzip -1, pigz), wall time, and peak memory:
 		CPU     Wall    Virtual Resident
 Fastq-trim      260%    5.93    13      2
 Cutadapt 1-core 140%    23.09   46      30
-Cutadapt 2-core 310%    13.83   172     120
+Cutadapt 2-core 310%    13.83   174     120
 Trimmomatic     150%    20.94   3473    740
 
 Detailed output:
