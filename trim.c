@@ -92,6 +92,7 @@ int     trim_single_reads(trim_t *tp)
 	
 	++record_count;
 	
+	// Display periodic progress only if running interactively
 	if ( ! tp->verbose && (record_count % 100000 == 0) &&
 	     isatty(fileno(stderr)) )
 	{
@@ -223,6 +224,8 @@ int     trim_paired_reads(trim_t *tp)
 	}
 	
 	record_count += 2;
+
+	// Display periodic progress only if running interactively
 	if ( ! tp->verbose && (record_count % 100000 == 0) &&
 	     isatty(fileno(stderr)) )
 	{
