@@ -13,14 +13,15 @@ fastq-trim - Trim adapters and low-quality bases from FASTQ files
 fastq-trim [--help]
 fastq-trim [--verbose] [--exact-match]
     [--3p-adapter1 seq] [--3p-adapter2 seq]
-    [--min-matcn N] [--max-mismatch-percent N]
+    [--min-match N] [--max-mismatch-percent N]
     [--min-qual N] [--min-length N] [--polya-min-length N]
     [--phred-base N]
-    [infile.fastq[.gz|.bz2|.xz]] [outfile.fastq[.gz|.bz2|.xz]]
+    [infile1.fastq[.gz|.bz2|.xz]] [outfile1.fastq[.gz|.bz2|.xz]]
+    [infile2.fastq[.gz|.bz2|.xz] outfile2.fastq[.gz|.bz2|.xz]]
 .ad
 .fi
 
-.SH OPTIONS
+.SH OPTIONS AND ARGUMENTS
 .TP
 \fB\-\-help\fR
 Print a summary of usage and exit.
@@ -83,6 +84,24 @@ Default is 0, meaning no poly-A trimming is done.
 Offset used for characters in quality string.  Default is 33, which should
 be the correct value for virtually all modern sequence data.
 
+.TP
+\fBFile Arguments:\fR
+.B Fastq-trim
+optionally accepts 1, 2, or 4 filenames.
+
+If no filenames are provided, single-read mode is selected with input
+read from the standard input and output written to the standard output.
+
+If one filename is provided, single-read mode is selected with input read
+from the given filename and output is written to the standard output.
+
+If two filenames are provided, single-read mode is selected with input read
+from the first filename and output written to the second.
+
+If four filenames are provided, paired mode is selected.  The first filename
+is the forward read input, the second the forward read output, the third
+the reverse read input and the fourth the reverse read output.
+
 .SH "DESCRIPTION"
 
 .B Fastq-trim
@@ -92,7 +111,7 @@ minimum are not output.
 
 Note that adapter matching (A.K.A. alignment) is not an exact science.
 Most bioinformatics data contain errors and hence the processing must be
-probabalistic.   It is possible that
+probabilistic.   It is possible that
 an adapter sequence occurs naturally in a given sample.  The longer the
 adapter, the less often this will occur, which is why adapters are typically
 12 or more bases long.  Also, read errors can occur in adapters as well as
