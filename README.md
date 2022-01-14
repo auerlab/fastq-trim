@@ -20,10 +20,18 @@ like cutadapt and trimmomatic will be more robust and feature-rich.
 
 However, the results so far are encouraging, with significantly better
 speed than cutadapt or trimmomatic and nearly identical results (diffing
-fastq-trim and cutadapt
-results revealed only a few differences after trimming 250k reads).  Some
-basic statistics from a larger sample with 1 million reads run on a
-2.9 GHz i5 are below.  Note that fastq-trim is currently single-threaded.
+fastq-trim and cutadapt results revealed only a few differences after
+trimming 250k reads).
+
+Resident memory peaks at around 2 MiB, which means fastq-trim will run
+almost entirely in cache RAM.
+
+Run time with default parameters is only slightly longer than
+```xzcat infile.xz | gzip > outfile.gz```, so there isn't much room for
+improvement.
+
+Results from running "./test.sh big" (in the Test directory) on a 2.9 GHz i5
+are shown below.  Note that fastq-trim is currently single-threaded.
 
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
@@ -31,12 +39,16 @@ Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 Peak CPU (including xzcat, gzip -1, pigz), wall time, and peak memory (MiB):
 
 		CPU     Wall    Virtual Resident
-Fastq-trim      260%    5.93    13      2
-Cutadapt 1-core 140%    23.09   46      30
-Cutadapt 2-core 310%    13.83   174     120
-Trimmomatic     150%    20.94   3473    740
+Fastq-trim      260%    5.42    13      2
+Cutadapt 1-core 140%    22.37   46      30
+Cutadapt 2-core 310%    13.30   174     120
+Trimmomatic     150%    21.03   3473    740
 
 Detailed output:
+
+Timing read and write without trimming...
+	4.80 real         4.77 user         0.00 sys
+	4.82 real         4.75 user         0.06 sys
 
 *** FASTQ TRIM ***
 
@@ -49,8 +61,8 @@ Detailed output:
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 85032  Poly-A: 0  Q < 20: 572761  Len < 30: 13000
-	5.91 real        13.06 user         0.32 sys
+Read: 1000000  Adapter: 86180  Poly-A: 0  Q < 20: 572761  Len < 30: 13000
+	5.35 real        12.35 user         0.49 sys
 
 *** FASTQ TRIM ***
 
@@ -64,8 +76,8 @@ Read: 1000000  Adapter: 85032  Poly-A: 0  Q < 20: 572761  Len < 30: 13000
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 85607  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
-	5.93 real        14.35 user         0.32 sys
+Read: 1000000  Adapter: 86768  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
+	5.42 real        13.88 user         0.37 sys
 
 *** FASTQ TRIM ***
 
@@ -79,18 +91,18 @@ Read: 1000000  Adapter: 85607  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 105995  Poly-A: 0  Q < 20: 572761  Len < 30: 13346
-	6.35 real        14.90 user         0.27 sys
+Read: 1000000  Adapter: 108722  Poly-A: 0  Q < 20: 572761  Len < 30: 13346
+	5.63 real        14.42 user         0.31 sys
 
 Cutadapt 1 core...
 status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
 OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
-       23.09 real        31.17 user         0.25 sys
+       22.37 real        30.40 user         0.30 sys
 
 Cutadapt 2 core...
 status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
 OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
-       13.83 real        43.64 user         0.52 sys
+       13.70 real        41.51 user         0.41 sys
 
 TrimmomaticSE: Started with arguments:
  /dev/stdin SRR1972918_1-trimmed-trimmomatic.fastq.gz ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30
@@ -100,7 +112,27 @@ ILLUMINACLIP: Using 0 prefix pairs, 1 forward/reverse sequences, 0 forward only 
 Quality encoding detected as phred33
 Input Reads: 1000000 Surviving: 987900 (98.79%) Dropped: 12100 (1.21%)
 TrimmomaticSE: Completed successfully
-       20.94 real        33.22 user         0.95 sys
+       21.03 real        32.94 user         1.18 sys
+
+*** FASTQ TRIM ***
+
+  Minimum match:     3
+  Minimum quality:   20
+  Minimum length:    30
+  Phred base:        33
+  Adapter matching:  Smart
+  Maximum mismatch:  10%
+  Filename:          SRR1972918_2.fastq.xz
+  Mode:              Single
+  Adapter:           CTGTCTCTTATA
+
+Read: 1000000  Adapter: 61965  Poly-A: 0  Q < 20: 828265  Len < 30: 234054
+	5.26 real        11.34 user         0.36 sys
+
+Cutadapt 2 core reverse read...
+status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
+OK      1000000 101000000       234057  0       0       765943  62032   4028031456652196
+       11.87 real        34.79 user         0.37 sys
 
 *** FASTQ TRIM ***
 
@@ -115,8 +147,8 @@ TrimmomaticSE: Completed successfully
   Mode:              Paired
   Adapters:          CTGTCTCTTATA AGATCGGAAGAG
 
-Read: 1000000  Adapter: 92062  Poly-A: 0  Q < 20: 1401026  Len < 30: 545696
-	8.08 real        26.41 user         0.55 sys
+Read: 2000000  Adapter: 97978  Poly-A: 0  Q < 20: 1401026  Len < 30: 242967
+	8.87 real        28.09 user         1.20 sys
 
 Scanning for a portion of the adapter to flag any adapters missed due to
 base substitutions.
@@ -125,12 +157,12 @@ Also scanning for random sequence TCGAACGGC as a control.
 
 Raw data CTGTCTCTT   :                 63410
 Raw data TCGAACGGC   :                  1525
-Exact match output CTGTCTCTT   :         275
-Exact match output TCGAACGGC   :        1229
-Smart match 10 output CTGTCTCTT   :      177
-Smart match 10 output TCGAACGGC   :     1229
-Smart match 20 output CTGTCTCTT   :       95
-Smart match 20 output TCGAACGGC   :     1225
+Exact match output CTGTCTCTT   :         284
+Exact match output TCGAACGGC   :        1304
+Smart match 10 output CTGTCTCTT   :      185
+Smart match 10 output TCGAACGGC   :     1304
+Smart match 20 output CTGTCTCTT   :      103
+Smart match 20 output TCGAACGGC   :     1300
 Cutadapt output CTGTCTCTT   :            169
 Cutadapt output TCGAACGGC   :           1304
 Trimmomatic output CTGTCTCTT   :         103

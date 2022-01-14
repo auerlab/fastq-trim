@@ -76,6 +76,8 @@ part=CTGTCTCTT
 rand=TCGAACGGC
 
 # Use gzip -1 for output to avoid bottleneck
+outfile1_raw=${sample}_1$suffix-trimmed-raw.fastq.gz
+outfile2_raw=${sample}_2$suffix-trimmed-raw.fastq.gz
 outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.gz
 outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.gz
 outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.gz
@@ -87,9 +89,11 @@ outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
 
 # Make sure all runs benefit equally from read buffering
-printf "Buffering input files...\n"
-cat $infile1 > /dev/null
-cat $infile2 > /dev/null
+cat $infile1 $infile2 > /dev/null
+
+printf "Timing read and write without trimming...\n"
+time xzcat $infile1 | gzip > $outfile1_raw
+time xzcat $infile2 | gzip > $outfile2_raw
 
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
