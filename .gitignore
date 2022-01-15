@@ -1,5 +1,6 @@
 .*.bak
 *.o
+*.a
 fastq-trim
 *-trimmed*.fastq.gz
 SRR1972918*

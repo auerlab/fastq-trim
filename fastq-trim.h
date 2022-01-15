@@ -15,13 +15,13 @@
 #endif
 
 // Must typedef this to avoid confusing auto-gen-get-set in the structure
-typedef size_t (* trim_afp_t)(const bl_fastq_t *read,
+typedef size_t (* fastq_trim_afp_t)(const bl_fastq_t *read,
 	    const char *adapter, size_t min_match, unsigned max_mismatch_percent);
 
 typedef struct
 {
     bool        verbose;
-    trim_afp_t  adapter_match_function;
+    fastq_trim_afp_t  adapter_match_function;
     char        *infile1;
     char        *outfile1;
     char        *infile2;
@@ -33,21 +33,21 @@ typedef struct
     char        *adapter1;
     char        *adapter2;
     size_t      min_length;
-    size_t      min_match;
-    size_t      polya_min_len;
-    unsigned    max_mismatch_percent;
-    unsigned    min_qual;
-    unsigned    phred_base;
-}   trim_t;
+    size_t      min_match;              // aggs:1:20
+    size_t      polya_min_len;          // aggs:0:20
+    unsigned    max_mismatch_percent;   // aggs:1:100
+    unsigned    min_qual;               // aggs:1:60
+    unsigned    phred_base;             // aggs:32:127
+}   fastq_trim_t;
 
 /* trim.c */
-int     trim_single_reads(trim_t *tp);
-int     trim_paired_reads(trim_t *tp);
-void    trim_init(trim_t *tp);
-int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[]);
-void    trim_close_files(trim_t *tp);
+int     fastq_trim_single_reads(fastq_trim_t *tp);
+int     fastq_trim_paired_reads(fastq_trim_t *tp);
+void    fastq_trim_init(fastq_trim_t *tp);
+int     fastq_trim_open_files(fastq_trim_t *tp, int arg, int argc, char *argv[]);
+void    fastq_trim_close_files(fastq_trim_t *tp);
 
-#include "trim-rvs.h"
-#include "trim-accessors.h"
-#include "trim-mutators.h"
+#include "fastq-trim-rvs.h"
+#include "fastq-trim-accessors.h"
+#include "fastq-trim-mutators.h"
 

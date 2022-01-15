@@ -8,19 +8,20 @@
 
 #include <string.h>
 #include <ctype.h>
-#include <stdbool.h>
+#include <stdbool.h>        // In case of bool
+#include <stdint.h>         // In case of int64_t, etc
 #include <xtend/string.h>   // strlcpy() on Linux
-#include "trim.h"
+#include "fastq-trim.h"
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for verbose member in a trim_t structure.
- *      Use this function to set verbose in a trim_t variable
+ *      Mutator for verbose member in a fastq_trim_t structure.
+ *      Use this function to set verbose in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      verbose is a pointer, data previously pointed to should
@@ -34,18 +35,18 @@
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_verbose     The new value for verbose
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      bool            new_verbose;
  *
- *      if ( trim_set_verbose(&trim, new_verbose) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_verbose(&fastq_trim, new_verbose) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -54,31 +55,30 @@
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_verbose(trim_t *trim_ptr, bool new_verbose)
+int     fastq_trim_set_verbose(fastq_trim_t *fastq_trim_ptr, bool new_verbose)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->verbose = new_verbose;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->verbose = new_verbose;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for adapter_match_function member in a trim_t structure.
- *      Use this function to set adapter_match_function in a trim_t variable
+ *      Mutator for adapter_match_function member in a fastq_trim_t structure.
+ *      Use this function to set adapter_match_function in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      adapter_match_function is a pointer, data previously pointed to should
@@ -92,18 +92,18 @@ int     trim_set_verbose(trim_t *trim_ptr, bool new_verbose)
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_adapter_match_function The new value for adapter_match_function
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      trim_afp_t      new_adapter_match_function;
  *
- *      if ( trim_set_adapter_match_function(&trim, new_adapter_match_function) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter_match_function(&fastq_trim, new_adapter_match_function) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -112,31 +112,30 @@ int     trim_set_verbose(trim_t *trim_ptr, bool new_verbose)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter_match_function(trim_t *trim_ptr, trim_afp_t new_adapter_match_function)
+int     fastq_trim_set_adapter_match_function(fastq_trim_t *fastq_trim_ptr, fastq_trim_afp_t new_adapter_match_function)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->adapter_match_function = new_adapter_match_function;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->adapter_match_function = new_adapter_match_function;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for infile1 member in a trim_t structure.
- *      Use this function to set infile1 in a trim_t variable
+ *      Mutator for infile1 member in a fastq_trim_t structure.
+ *      Use this function to set infile1 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      infile1 is a pointer, data previously pointed to should
@@ -150,18 +149,18 @@ int     trim_set_adapter_match_function(trim_t *trim_ptr, trim_afp_t new_adapter
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_infile1     The new value for infile1
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_infile1;
  *
- *      if ( trim_set_infile1(&trim, new_infile1) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_infile1(&fastq_trim, new_infile1) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -170,143 +169,140 @@ int     trim_set_adapter_match_function(trim_t *trim_ptr, trim_afp_t new_adapter
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_infile1(trim_t *trim_ptr, char * new_infile1)
+int     fastq_trim_set_infile1(fastq_trim_t *fastq_trim_ptr, char * new_infile1)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_infile1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->infile1 = new_infile1;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->infile1 = new_infile1;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of infile1 member in a trim_t
+ *      Mutator for an array element of infile1 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      infile1 in a trim_t variable from non-member functions.
+ *      infile1 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_INFILE1_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INFILE1_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_infile1_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the infile1 array
  *      new_infile1_element The new value for infile1[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      char *          new_infile1_element;
  *
- *      if ( trim_set_infile1(&trim, c, new_infile1_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_infile1(&fastq_trim, c, new_infile1_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INFILE1_AE(3)
+ *      FASTQ_TRIM_SET_INFILE1_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_infile1_ae(trim_t *trim_ptr, size_t c, char  new_infile1_element)
+int     fastq_trim_set_infile1_ae(fastq_trim_t *fastq_trim_ptr, size_t c, char  new_infile1_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->infile1[c] = new_infile1_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->infile1[c] = new_infile1_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for infile1 member in a trim_t structure.
- *      Use this function to set infile1 in a trim_t variable
+ *      Mutator for infile1 member in a fastq_trim_t structure.
+ *      Use this function to set infile1 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_infile1 to ->infile1.
  *
- *      Note that there is an equivalent macro TRIM_SET_INFILE1(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INFILE1(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_infile1 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_infile1     The new value for infile1
  *      array_size      Size of the infile1 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_infile1;
  *      size_t          array_size;
  *
- *      if ( trim_set_infile1(&trim, new_infile1, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_infile1(&fastq_trim, new_infile1, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INFILE1(3)
+ *      FASTQ_TRIM_SET_INFILE1(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_infile1_cpy(trim_t *trim_ptr, char * new_infile1, size_t array_size)
+int     fastq_trim_set_infile1_cpy(fastq_trim_t *fastq_trim_ptr, char * new_infile1, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_infile1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
 	// FIXME: Assuming char array is a null-terminated string
-	strlcpy(trim_ptr->infile1, new_infile1, array_size);
-	return TRIM_DATA_OK;
+	strlcpy(fastq_trim_ptr->infile1, new_infile1, array_size);
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outfile1 member in a trim_t structure.
- *      Use this function to set outfile1 in a trim_t variable
+ *      Mutator for outfile1 member in a fastq_trim_t structure.
+ *      Use this function to set outfile1 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      outfile1 is a pointer, data previously pointed to should
@@ -320,18 +316,18 @@ int     trim_set_infile1_cpy(trim_t *trim_ptr, char * new_infile1, size_t array_
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outfile1    The new value for outfile1
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_outfile1;
  *
- *      if ( trim_set_outfile1(&trim, new_outfile1) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outfile1(&fastq_trim, new_outfile1) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -340,143 +336,140 @@ int     trim_set_infile1_cpy(trim_t *trim_ptr, char * new_infile1, size_t array_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outfile1(trim_t *trim_ptr, char * new_outfile1)
+int     fastq_trim_set_outfile1(fastq_trim_t *fastq_trim_ptr, char * new_outfile1)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outfile1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outfile1 = new_outfile1;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outfile1 = new_outfile1;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of outfile1 member in a trim_t
+ *      Mutator for an array element of outfile1 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      outfile1 in a trim_t variable from non-member functions.
+ *      outfile1 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTFILE1_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTFILE1_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outfile1_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the outfile1 array
  *      new_outfile1_element The new value for outfile1[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      char *          new_outfile1_element;
  *
- *      if ( trim_set_outfile1(&trim, c, new_outfile1_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outfile1(&fastq_trim, c, new_outfile1_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTFILE1_AE(3)
+ *      FASTQ_TRIM_SET_OUTFILE1_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outfile1_ae(trim_t *trim_ptr, size_t c, char  new_outfile1_element)
+int     fastq_trim_set_outfile1_ae(fastq_trim_t *fastq_trim_ptr, size_t c, char  new_outfile1_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outfile1[c] = new_outfile1_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outfile1[c] = new_outfile1_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outfile1 member in a trim_t structure.
- *      Use this function to set outfile1 in a trim_t variable
+ *      Mutator for outfile1 member in a fastq_trim_t structure.
+ *      Use this function to set outfile1 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_outfile1 to ->outfile1.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTFILE1(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTFILE1(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outfile1 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outfile1    The new value for outfile1
  *      array_size      Size of the outfile1 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_outfile1;
  *      size_t          array_size;
  *
- *      if ( trim_set_outfile1(&trim, new_outfile1, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outfile1(&fastq_trim, new_outfile1, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTFILE1(3)
+ *      FASTQ_TRIM_SET_OUTFILE1(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outfile1_cpy(trim_t *trim_ptr, char * new_outfile1, size_t array_size)
+int     fastq_trim_set_outfile1_cpy(fastq_trim_t *fastq_trim_ptr, char * new_outfile1, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outfile1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
 	// FIXME: Assuming char array is a null-terminated string
-	strlcpy(trim_ptr->outfile1, new_outfile1, array_size);
-	return TRIM_DATA_OK;
+	strlcpy(fastq_trim_ptr->outfile1, new_outfile1, array_size);
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for infile2 member in a trim_t structure.
- *      Use this function to set infile2 in a trim_t variable
+ *      Mutator for infile2 member in a fastq_trim_t structure.
+ *      Use this function to set infile2 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      infile2 is a pointer, data previously pointed to should
@@ -490,18 +483,18 @@ int     trim_set_outfile1_cpy(trim_t *trim_ptr, char * new_outfile1, size_t arra
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_infile2     The new value for infile2
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_infile2;
  *
- *      if ( trim_set_infile2(&trim, new_infile2) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_infile2(&fastq_trim, new_infile2) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -510,143 +503,140 @@ int     trim_set_outfile1_cpy(trim_t *trim_ptr, char * new_outfile1, size_t arra
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_infile2(trim_t *trim_ptr, char * new_infile2)
+int     fastq_trim_set_infile2(fastq_trim_t *fastq_trim_ptr, char * new_infile2)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_infile2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->infile2 = new_infile2;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->infile2 = new_infile2;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of infile2 member in a trim_t
+ *      Mutator for an array element of infile2 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      infile2 in a trim_t variable from non-member functions.
+ *      infile2 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_INFILE2_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INFILE2_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_infile2_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the infile2 array
  *      new_infile2_element The new value for infile2[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      char *          new_infile2_element;
  *
- *      if ( trim_set_infile2(&trim, c, new_infile2_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_infile2(&fastq_trim, c, new_infile2_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INFILE2_AE(3)
+ *      FASTQ_TRIM_SET_INFILE2_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_infile2_ae(trim_t *trim_ptr, size_t c, char  new_infile2_element)
+int     fastq_trim_set_infile2_ae(fastq_trim_t *fastq_trim_ptr, size_t c, char  new_infile2_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->infile2[c] = new_infile2_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->infile2[c] = new_infile2_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for infile2 member in a trim_t structure.
- *      Use this function to set infile2 in a trim_t variable
+ *      Mutator for infile2 member in a fastq_trim_t structure.
+ *      Use this function to set infile2 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_infile2 to ->infile2.
  *
- *      Note that there is an equivalent macro TRIM_SET_INFILE2(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INFILE2(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_infile2 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_infile2     The new value for infile2
  *      array_size      Size of the infile2 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_infile2;
  *      size_t          array_size;
  *
- *      if ( trim_set_infile2(&trim, new_infile2, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_infile2(&fastq_trim, new_infile2, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INFILE2(3)
+ *      FASTQ_TRIM_SET_INFILE2(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_infile2_cpy(trim_t *trim_ptr, char * new_infile2, size_t array_size)
+int     fastq_trim_set_infile2_cpy(fastq_trim_t *fastq_trim_ptr, char * new_infile2, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_infile2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
 	// FIXME: Assuming char array is a null-terminated string
-	strlcpy(trim_ptr->infile2, new_infile2, array_size);
-	return TRIM_DATA_OK;
+	strlcpy(fastq_trim_ptr->infile2, new_infile2, array_size);
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outfile2 member in a trim_t structure.
- *      Use this function to set outfile2 in a trim_t variable
+ *      Mutator for outfile2 member in a fastq_trim_t structure.
+ *      Use this function to set outfile2 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      outfile2 is a pointer, data previously pointed to should
@@ -660,18 +650,18 @@ int     trim_set_infile2_cpy(trim_t *trim_ptr, char * new_infile2, size_t array_
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outfile2    The new value for outfile2
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_outfile2;
  *
- *      if ( trim_set_outfile2(&trim, new_outfile2) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outfile2(&fastq_trim, new_outfile2) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -680,143 +670,140 @@ int     trim_set_infile2_cpy(trim_t *trim_ptr, char * new_infile2, size_t array_
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outfile2(trim_t *trim_ptr, char * new_outfile2)
+int     fastq_trim_set_outfile2(fastq_trim_t *fastq_trim_ptr, char * new_outfile2)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outfile2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outfile2 = new_outfile2;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outfile2 = new_outfile2;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of outfile2 member in a trim_t
+ *      Mutator for an array element of outfile2 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      outfile2 in a trim_t variable from non-member functions.
+ *      outfile2 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTFILE2_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTFILE2_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outfile2_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the outfile2 array
  *      new_outfile2_element The new value for outfile2[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      char *          new_outfile2_element;
  *
- *      if ( trim_set_outfile2(&trim, c, new_outfile2_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outfile2(&fastq_trim, c, new_outfile2_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTFILE2_AE(3)
+ *      FASTQ_TRIM_SET_OUTFILE2_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outfile2_ae(trim_t *trim_ptr, size_t c, char  new_outfile2_element)
+int     fastq_trim_set_outfile2_ae(fastq_trim_t *fastq_trim_ptr, size_t c, char  new_outfile2_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outfile2[c] = new_outfile2_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outfile2[c] = new_outfile2_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outfile2 member in a trim_t structure.
- *      Use this function to set outfile2 in a trim_t variable
+ *      Mutator for outfile2 member in a fastq_trim_t structure.
+ *      Use this function to set outfile2 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_outfile2 to ->outfile2.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTFILE2(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTFILE2(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outfile2 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outfile2    The new value for outfile2
  *      array_size      Size of the outfile2 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_outfile2;
  *      size_t          array_size;
  *
- *      if ( trim_set_outfile2(&trim, new_outfile2, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outfile2(&fastq_trim, new_outfile2, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTFILE2(3)
+ *      FASTQ_TRIM_SET_OUTFILE2(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outfile2_cpy(trim_t *trim_ptr, char * new_outfile2, size_t array_size)
+int     fastq_trim_set_outfile2_cpy(fastq_trim_t *fastq_trim_ptr, char * new_outfile2, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outfile2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
 	// FIXME: Assuming char array is a null-terminated string
-	strlcpy(trim_ptr->outfile2, new_outfile2, array_size);
-	return TRIM_DATA_OK;
+	strlcpy(fastq_trim_ptr->outfile2, new_outfile2, array_size);
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for instream1 member in a trim_t structure.
- *      Use this function to set instream1 in a trim_t variable
+ *      Mutator for instream1 member in a fastq_trim_t structure.
+ *      Use this function to set instream1 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      instream1 is a pointer, data previously pointed to should
@@ -830,18 +817,18 @@ int     trim_set_outfile2_cpy(trim_t *trim_ptr, char * new_outfile2, size_t arra
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_instream1   The new value for instream1
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_instream1;
  *
- *      if ( trim_set_instream1(&trim, new_instream1) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_instream1(&fastq_trim, new_instream1) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -850,148 +837,143 @@ int     trim_set_outfile2_cpy(trim_t *trim_ptr, char * new_outfile2, size_t arra
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_instream1(trim_t *trim_ptr, FILE * new_instream1)
+int     fastq_trim_set_instream1(fastq_trim_t *fastq_trim_ptr, FILE * new_instream1)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_instream1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->instream1 = new_instream1;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->instream1 = new_instream1;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of instream1 member in a trim_t
+ *      Mutator for an array element of instream1 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      instream1 in a trim_t variable from non-member functions.
+ *      instream1 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_INSTREAM1_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INSTREAM1_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_instream1_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the instream1 array
  *      new_instream1_element The new value for instream1[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      FILE *          new_instream1_element;
  *
- *      if ( trim_set_instream1(&trim, c, new_instream1_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_instream1(&fastq_trim, c, new_instream1_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INSTREAM1_AE(3)
+ *      FASTQ_TRIM_SET_INSTREAM1_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_instream1_ae(trim_t *trim_ptr, size_t c, FILE  new_instream1_element)
+int     fastq_trim_set_instream1_ae(fastq_trim_t *fastq_trim_ptr, size_t c, FILE  new_instream1_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->instream1[c] = new_instream1_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->instream1[c] = new_instream1_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for instream1 member in a trim_t structure.
- *      Use this function to set instream1 in a trim_t variable
+ *      Mutator for instream1 member in a fastq_trim_t structure.
+ *      Use this function to set instream1 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_instream1 to ->instream1.
  *
- *      Note that there is an equivalent macro TRIM_SET_INSTREAM1(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INSTREAM1(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_instream1 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_instream1   The new value for instream1
  *      array_size      Size of the instream1 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_instream1;
  *      size_t          array_size;
  *
- *      if ( trim_set_instream1(&trim, new_instream1, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_instream1(&fastq_trim, new_instream1, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INSTREAM1(3)
+ *      FASTQ_TRIM_SET_INSTREAM1(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_instream1_cpy(trim_t *trim_ptr, FILE * new_instream1, size_t array_size)
+int     fastq_trim_set_instream1_cpy(fastq_trim_t *fastq_trim_ptr, FILE * new_instream1, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_instream1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	{
-	    size_t  c;
-	    
-	    // FIXME: Assuming all elements should be copied
-	    for (c = 0; c < array_size; ++c)
-		trim_ptr->instream1[c] = new_instream1[c];
-	}
-	return TRIM_DATA_OK;
+	size_t  c;
+	
+	// FIXME: Assuming all elements should be copied
+	for (c = 0; c < array_size; ++c)
+	    fastq_trim_ptr->instream1[c] = new_instream1[c];
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outstream1 member in a trim_t structure.
- *      Use this function to set outstream1 in a trim_t variable
+ *      Mutator for outstream1 member in a fastq_trim_t structure.
+ *      Use this function to set outstream1 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      outstream1 is a pointer, data previously pointed to should
@@ -1005,18 +987,18 @@ int     trim_set_instream1_cpy(trim_t *trim_ptr, FILE * new_instream1, size_t ar
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outstream1  The new value for outstream1
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_outstream1;
  *
- *      if ( trim_set_outstream1(&trim, new_outstream1) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outstream1(&fastq_trim, new_outstream1) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1025,148 +1007,143 @@ int     trim_set_instream1_cpy(trim_t *trim_ptr, FILE * new_instream1, size_t ar
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outstream1(trim_t *trim_ptr, FILE * new_outstream1)
+int     fastq_trim_set_outstream1(fastq_trim_t *fastq_trim_ptr, FILE * new_outstream1)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outstream1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outstream1 = new_outstream1;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outstream1 = new_outstream1;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of outstream1 member in a trim_t
+ *      Mutator for an array element of outstream1 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      outstream1 in a trim_t variable from non-member functions.
+ *      outstream1 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTSTREAM1_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTSTREAM1_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outstream1_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the outstream1 array
  *      new_outstream1_element The new value for outstream1[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      FILE *          new_outstream1_element;
  *
- *      if ( trim_set_outstream1(&trim, c, new_outstream1_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outstream1(&fastq_trim, c, new_outstream1_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTSTREAM1_AE(3)
+ *      FASTQ_TRIM_SET_OUTSTREAM1_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outstream1_ae(trim_t *trim_ptr, size_t c, FILE  new_outstream1_element)
+int     fastq_trim_set_outstream1_ae(fastq_trim_t *fastq_trim_ptr, size_t c, FILE  new_outstream1_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outstream1[c] = new_outstream1_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outstream1[c] = new_outstream1_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outstream1 member in a trim_t structure.
- *      Use this function to set outstream1 in a trim_t variable
+ *      Mutator for outstream1 member in a fastq_trim_t structure.
+ *      Use this function to set outstream1 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_outstream1 to ->outstream1.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTSTREAM1(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTSTREAM1(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outstream1 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outstream1  The new value for outstream1
  *      array_size      Size of the outstream1 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_outstream1;
  *      size_t          array_size;
  *
- *      if ( trim_set_outstream1(&trim, new_outstream1, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outstream1(&fastq_trim, new_outstream1, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTSTREAM1(3)
+ *      FASTQ_TRIM_SET_OUTSTREAM1(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outstream1_cpy(trim_t *trim_ptr, FILE * new_outstream1, size_t array_size)
+int     fastq_trim_set_outstream1_cpy(fastq_trim_t *fastq_trim_ptr, FILE * new_outstream1, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outstream1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	{
-	    size_t  c;
-	    
-	    // FIXME: Assuming all elements should be copied
-	    for (c = 0; c < array_size; ++c)
-		trim_ptr->outstream1[c] = new_outstream1[c];
-	}
-	return TRIM_DATA_OK;
+	size_t  c;
+	
+	// FIXME: Assuming all elements should be copied
+	for (c = 0; c < array_size; ++c)
+	    fastq_trim_ptr->outstream1[c] = new_outstream1[c];
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for instream2 member in a trim_t structure.
- *      Use this function to set instream2 in a trim_t variable
+ *      Mutator for instream2 member in a fastq_trim_t structure.
+ *      Use this function to set instream2 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      instream2 is a pointer, data previously pointed to should
@@ -1180,18 +1157,18 @@ int     trim_set_outstream1_cpy(trim_t *trim_ptr, FILE * new_outstream1, size_t 
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_instream2   The new value for instream2
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_instream2;
  *
- *      if ( trim_set_instream2(&trim, new_instream2) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_instream2(&fastq_trim, new_instream2) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1200,148 +1177,143 @@ int     trim_set_outstream1_cpy(trim_t *trim_ptr, FILE * new_outstream1, size_t 
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_instream2(trim_t *trim_ptr, FILE * new_instream2)
+int     fastq_trim_set_instream2(fastq_trim_t *fastq_trim_ptr, FILE * new_instream2)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_instream2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->instream2 = new_instream2;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->instream2 = new_instream2;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of instream2 member in a trim_t
+ *      Mutator for an array element of instream2 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      instream2 in a trim_t variable from non-member functions.
+ *      instream2 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_INSTREAM2_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INSTREAM2_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_instream2_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the instream2 array
  *      new_instream2_element The new value for instream2[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      FILE *          new_instream2_element;
  *
- *      if ( trim_set_instream2(&trim, c, new_instream2_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_instream2(&fastq_trim, c, new_instream2_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INSTREAM2_AE(3)
+ *      FASTQ_TRIM_SET_INSTREAM2_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_instream2_ae(trim_t *trim_ptr, size_t c, FILE  new_instream2_element)
+int     fastq_trim_set_instream2_ae(fastq_trim_t *fastq_trim_ptr, size_t c, FILE  new_instream2_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->instream2[c] = new_instream2_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->instream2[c] = new_instream2_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for instream2 member in a trim_t structure.
- *      Use this function to set instream2 in a trim_t variable
+ *      Mutator for instream2 member in a fastq_trim_t structure.
+ *      Use this function to set instream2 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_instream2 to ->instream2.
  *
- *      Note that there is an equivalent macro TRIM_SET_INSTREAM2(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_INSTREAM2(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_instream2 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_instream2   The new value for instream2
  *      array_size      Size of the instream2 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_instream2;
  *      size_t          array_size;
  *
- *      if ( trim_set_instream2(&trim, new_instream2, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_instream2(&fastq_trim, new_instream2, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_INSTREAM2(3)
+ *      FASTQ_TRIM_SET_INSTREAM2(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_instream2_cpy(trim_t *trim_ptr, FILE * new_instream2, size_t array_size)
+int     fastq_trim_set_instream2_cpy(fastq_trim_t *fastq_trim_ptr, FILE * new_instream2, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_instream2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	{
-	    size_t  c;
-	    
-	    // FIXME: Assuming all elements should be copied
-	    for (c = 0; c < array_size; ++c)
-		trim_ptr->instream2[c] = new_instream2[c];
-	}
-	return TRIM_DATA_OK;
+	size_t  c;
+	
+	// FIXME: Assuming all elements should be copied
+	for (c = 0; c < array_size; ++c)
+	    fastq_trim_ptr->instream2[c] = new_instream2[c];
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outstream2 member in a trim_t structure.
- *      Use this function to set outstream2 in a trim_t variable
+ *      Mutator for outstream2 member in a fastq_trim_t structure.
+ *      Use this function to set outstream2 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      outstream2 is a pointer, data previously pointed to should
@@ -1355,18 +1327,18 @@ int     trim_set_instream2_cpy(trim_t *trim_ptr, FILE * new_instream2, size_t ar
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outstream2  The new value for outstream2
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_outstream2;
  *
- *      if ( trim_set_outstream2(&trim, new_outstream2) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outstream2(&fastq_trim, new_outstream2) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1375,148 +1347,143 @@ int     trim_set_instream2_cpy(trim_t *trim_ptr, FILE * new_instream2, size_t ar
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outstream2(trim_t *trim_ptr, FILE * new_outstream2)
+int     fastq_trim_set_outstream2(fastq_trim_t *fastq_trim_ptr, FILE * new_outstream2)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outstream2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outstream2 = new_outstream2;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outstream2 = new_outstream2;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of outstream2 member in a trim_t
+ *      Mutator for an array element of outstream2 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      outstream2 in a trim_t variable from non-member functions.
+ *      outstream2 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTSTREAM2_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTSTREAM2_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outstream2_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the outstream2 array
  *      new_outstream2_element The new value for outstream2[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      FILE *          new_outstream2_element;
  *
- *      if ( trim_set_outstream2(&trim, c, new_outstream2_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outstream2(&fastq_trim, c, new_outstream2_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTSTREAM2_AE(3)
+ *      FASTQ_TRIM_SET_OUTSTREAM2_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outstream2_ae(trim_t *trim_ptr, size_t c, FILE  new_outstream2_element)
+int     fastq_trim_set_outstream2_ae(fastq_trim_t *fastq_trim_ptr, size_t c, FILE  new_outstream2_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->outstream2[c] = new_outstream2_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->outstream2[c] = new_outstream2_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for outstream2 member in a trim_t structure.
- *      Use this function to set outstream2 in a trim_t variable
+ *      Mutator for outstream2 member in a fastq_trim_t structure.
+ *      Use this function to set outstream2 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_outstream2 to ->outstream2.
  *
- *      Note that there is an equivalent macro TRIM_SET_OUTSTREAM2(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_OUTSTREAM2(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_outstream2 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_outstream2  The new value for outstream2
  *      array_size      Size of the outstream2 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      FILE *          new_outstream2;
  *      size_t          array_size;
  *
- *      if ( trim_set_outstream2(&trim, new_outstream2, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_outstream2(&fastq_trim, new_outstream2, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_OUTSTREAM2(3)
+ *      FASTQ_TRIM_SET_OUTSTREAM2(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_outstream2_cpy(trim_t *trim_ptr, FILE * new_outstream2, size_t array_size)
+int     fastq_trim_set_outstream2_cpy(fastq_trim_t *fastq_trim_ptr, FILE * new_outstream2, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_outstream2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	{
-	    size_t  c;
-	    
-	    // FIXME: Assuming all elements should be copied
-	    for (c = 0; c < array_size; ++c)
-		trim_ptr->outstream2[c] = new_outstream2[c];
-	}
-	return TRIM_DATA_OK;
+	size_t  c;
+	
+	// FIXME: Assuming all elements should be copied
+	for (c = 0; c < array_size; ++c)
+	    fastq_trim_ptr->outstream2[c] = new_outstream2[c];
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for adapter1 member in a trim_t structure.
- *      Use this function to set adapter1 in a trim_t variable
+ *      Mutator for adapter1 member in a fastq_trim_t structure.
+ *      Use this function to set adapter1 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      adapter1 is a pointer, data previously pointed to should
@@ -1530,18 +1497,18 @@ int     trim_set_outstream2_cpy(trim_t *trim_ptr, FILE * new_outstream2, size_t 
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_adapter1    The new value for adapter1
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_adapter1;
  *
- *      if ( trim_set_adapter1(&trim, new_adapter1) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter1(&fastq_trim, new_adapter1) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1550,143 +1517,140 @@ int     trim_set_outstream2_cpy(trim_t *trim_ptr, FILE * new_outstream2, size_t 
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter1(trim_t *trim_ptr, char * new_adapter1)
+int     fastq_trim_set_adapter1(fastq_trim_t *fastq_trim_ptr, char * new_adapter1)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_adapter1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->adapter1 = new_adapter1;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->adapter1 = new_adapter1;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of adapter1 member in a trim_t
+ *      Mutator for an array element of adapter1 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      adapter1 in a trim_t variable from non-member functions.
+ *      adapter1 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_ADAPTER1_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_ADAPTER1_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_adapter1_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the adapter1 array
  *      new_adapter1_element The new value for adapter1[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      char *          new_adapter1_element;
  *
- *      if ( trim_set_adapter1(&trim, c, new_adapter1_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter1(&fastq_trim, c, new_adapter1_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_ADAPTER1_AE(3)
+ *      FASTQ_TRIM_SET_ADAPTER1_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter1_ae(trim_t *trim_ptr, size_t c, char  new_adapter1_element)
+int     fastq_trim_set_adapter1_ae(fastq_trim_t *fastq_trim_ptr, size_t c, char  new_adapter1_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->adapter1[c] = new_adapter1_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->adapter1[c] = new_adapter1_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for adapter1 member in a trim_t structure.
- *      Use this function to set adapter1 in a trim_t variable
+ *      Mutator for adapter1 member in a fastq_trim_t structure.
+ *      Use this function to set adapter1 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_adapter1 to ->adapter1.
  *
- *      Note that there is an equivalent macro TRIM_SET_ADAPTER1(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_ADAPTER1(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_adapter1 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_adapter1    The new value for adapter1
  *      array_size      Size of the adapter1 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_adapter1;
  *      size_t          array_size;
  *
- *      if ( trim_set_adapter1(&trim, new_adapter1, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter1(&fastq_trim, new_adapter1, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_ADAPTER1(3)
+ *      FASTQ_TRIM_SET_ADAPTER1(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter1_cpy(trim_t *trim_ptr, char * new_adapter1, size_t array_size)
+int     fastq_trim_set_adapter1_cpy(fastq_trim_t *fastq_trim_ptr, char * new_adapter1, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_adapter1 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
 	// FIXME: Assuming char array is a null-terminated string
-	strlcpy(trim_ptr->adapter1, new_adapter1, array_size);
-	return TRIM_DATA_OK;
+	strlcpy(fastq_trim_ptr->adapter1, new_adapter1, array_size);
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for adapter2 member in a trim_t structure.
- *      Use this function to set adapter2 in a trim_t variable
+ *      Mutator for adapter2 member in a fastq_trim_t structure.
+ *      Use this function to set adapter2 in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      adapter2 is a pointer, data previously pointed to should
@@ -1700,18 +1664,18 @@ int     trim_set_adapter1_cpy(trim_t *trim_ptr, char * new_adapter1, size_t arra
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_adapter2    The new value for adapter2
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_adapter2;
  *
- *      if ( trim_set_adapter2(&trim, new_adapter2) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter2(&fastq_trim, new_adapter2) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1720,143 +1684,140 @@ int     trim_set_adapter1_cpy(trim_t *trim_ptr, char * new_adapter1, size_t arra
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter2(trim_t *trim_ptr, char * new_adapter2)
+int     fastq_trim_set_adapter2(fastq_trim_t *fastq_trim_ptr, char * new_adapter2)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_adapter2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->adapter2 = new_adapter2;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->adapter2 = new_adapter2;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for an array element of adapter2 member in a trim_t
+ *      Mutator for an array element of adapter2 member in a fastq_trim_t
  *      structure. Use this function to set an element of the array
- *      adapter2 in a trim_t variable from non-member functions.
+ *      adapter2 in a fastq_trim_t variable from non-member functions.
  *
- *      Note that there is an equivalent macro TRIM_SET_ADAPTER2_AE(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_ADAPTER2_AE(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_adapter2_element is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      c               Subscript to the adapter2 array
  *      new_adapter2_element The new value for adapter2[c]
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          c;
  *      char *          new_adapter2_element;
  *
- *      if ( trim_set_adapter2(&trim, c, new_adapter2_element) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter2(&fastq_trim, c, new_adapter2_element) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_ADAPTER2_AE(3)
+ *      FASTQ_TRIM_SET_ADAPTER2_AE(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter2_ae(trim_t *trim_ptr, size_t c, char  new_adapter2_element)
+int     fastq_trim_set_adapter2_ae(fastq_trim_t *fastq_trim_ptr, size_t c, char  new_adapter2_element)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->adapter2[c] = new_adapter2_element;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->adapter2[c] = new_adapter2_element;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for adapter2 member in a trim_t structure.
- *      Use this function to set adapter2 in a trim_t variable
+ *      Mutator for adapter2 member in a fastq_trim_t structure.
+ *      Use this function to set adapter2 in a fastq_trim_t variable
  *      from non-member functions.  This function copies the array pointed to
  *      by new_adapter2 to ->adapter2.
  *
- *      Note that there is an equivalent macro TRIM_SET_ADAPTER2(), which performs
+ *      Note that there is an equivalent macro FASTQ_TRIM_SET_ADAPTER2(), which performs
  *      this function with no data verification or function call overhead.
  *      Use the macro version to maximize performance where the validity
  *      of new_adapter2 is guaranteed by other means.
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_adapter2    The new value for adapter2
  *      array_size      Size of the adapter2 array.
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      char *          new_adapter2;
  *      size_t          array_size;
  *
- *      if ( trim_set_adapter2(&trim, new_adapter2, array_size) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_adapter2(&fastq_trim, new_adapter2, array_size) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
  *  See also:
- *      TRIM_SET_ADAPTER2(3)
+ *      FASTQ_TRIM_SET_ADAPTER2(3)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_adapter2_cpy(trim_t *trim_ptr, char * new_adapter2, size_t array_size)
+int     fastq_trim_set_adapter2_cpy(fastq_trim_t *fastq_trim_ptr, char * new_adapter2, size_t array_size)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
     if ( new_adapter2 == NULL )
-	return TRIM_DATA_OUT_OF_RANGE;
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
 	// FIXME: Assuming char array is a null-terminated string
-	strlcpy(trim_ptr->adapter2, new_adapter2, array_size);
-	return TRIM_DATA_OK;
+	strlcpy(fastq_trim_ptr->adapter2, new_adapter2, array_size);
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for min_length member in a trim_t structure.
- *      Use this function to set min_length in a trim_t variable
+ *      Mutator for min_length member in a fastq_trim_t structure.
+ *      Use this function to set min_length in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      min_length is a pointer, data previously pointed to should
@@ -1870,18 +1831,18 @@ int     trim_set_adapter2_cpy(trim_t *trim_ptr, char * new_adapter2, size_t arra
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_min_length  The new value for min_length
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          new_min_length;
  *
- *      if ( trim_set_min_length(&trim, new_min_length) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_min_length(&fastq_trim, new_min_length) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1890,31 +1851,30 @@ int     trim_set_adapter2_cpy(trim_t *trim_ptr, char * new_adapter2, size_t arra
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
+int     fastq_trim_set_min_length(fastq_trim_t *fastq_trim_ptr, size_t new_min_length)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( false )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->min_length = new_min_length;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->min_length = new_min_length;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for min_match member in a trim_t structure.
- *      Use this function to set min_match in a trim_t variable
+ *      Mutator for min_match member in a fastq_trim_t structure.
+ *      Use this function to set min_match in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      min_match is a pointer, data previously pointed to should
@@ -1928,18 +1888,18 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_min_match   The new value for min_match
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          new_min_match;
  *
- *      if ( trim_set_min_match(&trim, new_min_match) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_min_match(&fastq_trim, new_min_match) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -1948,31 +1908,30 @@ int     trim_set_min_length(trim_t *trim_ptr, size_t new_min_length)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
+int     fastq_trim_set_min_match(fastq_trim_t *fastq_trim_ptr, size_t new_min_match)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( (new_min_match < 1) || (new_min_match > 20) )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->min_match = new_min_match;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->min_match = new_min_match;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for polya_min_len member in a trim_t structure.
- *      Use this function to set polya_min_len in a trim_t variable
+ *      Mutator for polya_min_len member in a fastq_trim_t structure.
+ *      Use this function to set polya_min_len in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      polya_min_len is a pointer, data previously pointed to should
@@ -1986,18 +1945,18 @@ int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_polya_min_len The new value for polya_min_len
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      size_t          new_polya_min_len;
  *
- *      if ( trim_set_polya_min_len(&trim, new_polya_min_len) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_polya_min_len(&fastq_trim, new_polya_min_len) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -2006,31 +1965,30 @@ int     trim_set_min_match(trim_t *trim_ptr, size_t new_min_match)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_polya_min_len(trim_t *trim_ptr, size_t new_polya_min_len)
+int     fastq_trim_set_polya_min_len(fastq_trim_t *fastq_trim_ptr, size_t new_polya_min_len)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( new_polya_min_len > 20 )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->polya_min_len = new_polya_min_len;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->polya_min_len = new_polya_min_len;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for max_mismatch_percent member in a trim_t structure.
- *      Use this function to set max_mismatch_percent in a trim_t variable
+ *      Mutator for max_mismatch_percent member in a fastq_trim_t structure.
+ *      Use this function to set max_mismatch_percent in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      max_mismatch_percent is a pointer, data previously pointed to should
@@ -2044,18 +2002,18 @@ int     trim_set_polya_min_len(trim_t *trim_ptr, size_t new_polya_min_len)
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_max_mismatch_percent The new value for max_mismatch_percent
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      unsigned        new_max_mismatch_percent;
  *
- *      if ( trim_set_max_mismatch_percent(&trim, new_max_mismatch_percent) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_max_mismatch_percent(&fastq_trim, new_max_mismatch_percent) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -2064,31 +2022,30 @@ int     trim_set_polya_min_len(trim_t *trim_ptr, size_t new_polya_min_len)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_max_mismatch_percent(trim_t *trim_ptr, unsigned new_max_mismatch_percent)
+int     fastq_trim_set_max_mismatch_percent(fastq_trim_t *fastq_trim_ptr, unsigned new_max_mismatch_percent)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( (new_max_mismatch_percent < 1) || (new_max_mismatch_percent > 100) )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->max_mismatch_percent = new_max_mismatch_percent;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->max_mismatch_percent = new_max_mismatch_percent;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for min_qual member in a trim_t structure.
- *      Use this function to set min_qual in a trim_t variable
+ *      Mutator for min_qual member in a fastq_trim_t structure.
+ *      Use this function to set min_qual in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      min_qual is a pointer, data previously pointed to should
@@ -2102,18 +2059,18 @@ int     trim_set_max_mismatch_percent(trim_t *trim_ptr, unsigned new_max_mismatc
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_min_qual    The new value for min_qual
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      unsigned        new_min_qual;
  *
- *      if ( trim_set_min_qual(&trim, new_min_qual) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_min_qual(&fastq_trim, new_min_qual) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -2122,31 +2079,30 @@ int     trim_set_max_mismatch_percent(trim_t *trim_ptr, unsigned new_max_mismatc
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual)
+int     fastq_trim_set_min_qual(fastq_trim_t *fastq_trim_ptr, unsigned new_min_qual)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( (new_min_qual < 1) || (new_min_qual > 60) )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->min_qual = new_min_qual;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->min_qual = new_min_qual;
+	return FASTQ_TRIM_DATA_OK;
     }
 }
 
 
 /***************************************************************************
  *  Library:
- *      #include <trim.h>
- *      -ltrim
+ *      #include <fastq-trim.h>
+ *      -lfastq-trim
  *
  *  Description:
- *      Mutator for phred_base member in a trim_t structure.
- *      Use this function to set phred_base in a trim_t variable
+ *      Mutator for phred_base member in a fastq_trim_t structure.
+ *      Use this function to set phred_base in a fastq_trim_t variable
  *      from non-member functions.  This function performs a direct
  *      assignment for scalar or pointer structure members.  If
  *      phred_base is a pointer, data previously pointed to should
@@ -2160,18 +2116,18 @@ int     trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual)
  *      
  *
  *  Arguments:
- *      trim_ptr        Pointer to the structure to set
+ *      fastq_trim_ptr  Pointer to the structure to set
  *      new_phred_base  The new value for phred_base
  *
  *  Returns:
- *      TRIM_DATA_OK if the new value is acceptable and assigned
- *      TRIM_DATA_OUT_OF_RANGE otherwise
+ *      FASTQ_TRIM_DATA_OK if the new value is acceptable and assigned
+ *      FASTQ_TRIM_DATA_OUT_OF_RANGE otherwise
  *
  *  Examples:
- *      trim_t          trim;
+ *      fastq_trim_t    fastq_trim;
  *      unsigned        new_phred_base;
  *
- *      if ( trim_set_phred_base(&trim, new_phred_base) == TRIM_DATA_OK )
+ *      if ( fastq_trim_set_phred_base(&fastq_trim, new_phred_base) == FASTQ_TRIM_DATA_OK )
  *      {
  *      }
  *
@@ -2180,18 +2136,17 @@ int     trim_set_min_qual(trim_t *trim_ptr, unsigned new_min_qual)
  *
  *  History: 
  *  Date        Name        Modification
- *  2022-01-11  gen-get-set Auto-generated from trim.h
+ *  2022-01-15  gen-get-set Auto-generated from fastq-trim.h
  ***************************************************************************/
 
-int     trim_set_phred_base(trim_t *trim_ptr, unsigned new_phred_base)
+int     fastq_trim_set_phred_base(fastq_trim_t *fastq_trim_ptr, unsigned new_phred_base)
 
 {
-    /* FIXME: Replace this with a proper sanity check */
-    if ( 0 )
-	return TRIM_DATA_OUT_OF_RANGE;
+    if ( (new_phred_base < 32) || (new_phred_base > 127) )
+	return FASTQ_TRIM_DATA_OUT_OF_RANGE;
     else
     {
-	trim_ptr->phred_base = new_phred_base;
-	return TRIM_DATA_OK;
+	fastq_trim_ptr->phred_base = new_phred_base;
+	return FASTQ_TRIM_DATA_OK;
     }
 }

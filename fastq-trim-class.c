@@ -8,7 +8,7 @@
 #include <xtend/file.h>
 #include <xtend/string.h>
 #include <biolibc/fastq.h>
-#include "trim.h"
+#include "fastq-trim.h"
 
 // Explicit inlining makes no difference
 size_t bl_fastq_find_polya_tail(bl_fastq_t *rec)
@@ -28,7 +28,7 @@ size_t bl_fastq_find_polya_tail(bl_fastq_t *rec)
  *  2022-01-03  Jason Bacon Begin
  ***************************************************************************/
 
-int     trim_single_reads(trim_t *tp)
+int     fastq_trim_single_reads(fastq_trim_t *tp)
 
 {
     unsigned long   record_count,
@@ -41,7 +41,7 @@ int     trim_single_reads(trim_t *tp)
     
     fputs("  Mode:              Single\n", stderr);
     fprintf(stderr,
-	  "  Adapter:           %s\n\n", TRIM_ADAPTER1(tp));
+	  "  Adapter:           %s\n\n", FASTQ_TRIM_ADAPTER1(tp));
     bl_fastq_init(&rec);
     record_count = adapter_count = polya_count = short_count = low_qual_count = 0;
     while ( bl_fastq_read(&rec, tp->instream1) == BL_READ_OK )
@@ -118,7 +118,7 @@ int     trim_single_reads(trim_t *tp)
  *  2022-01-03  Jason Bacon Begin
  ***************************************************************************/
 
-int     trim_paired_reads(trim_t *tp)
+int     fastq_trim_paired_reads(fastq_trim_t *tp)
 
 {
     unsigned long   record_count,
@@ -157,7 +157,7 @@ int     trim_paired_reads(trim_t *tp)
 	if ( bl_fastq_name_cmp(&rec[0], &rec[1]) != 0 )
 	{
 	    fprintf(stderr, "fastq-trim: Paired files out of sync.\n");
-	    trim_close_files(tp);
+	    fastq_trim_close_files(tp);
 	    exit(EX_DATAERR);
 	}
 	
@@ -253,7 +253,7 @@ int     trim_paired_reads(trim_t *tp)
  *  2022-01-03  Jason Bacon Begin
  ***************************************************************************/
 
-int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[])
+int     fastq_trim_open_files(fastq_trim_t *tp, int arg, int argc, char *argv[])
 
 {
     // infile1 must be named before outfile1
@@ -275,7 +275,7 @@ int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[])
 	{
 	    fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0],
 		    tp->infile1, strerror(errno));
-	    trim_close_files(tp);
+	    fastq_trim_close_files(tp);
 	    return EX_CANTCREAT;
 	}
     }
@@ -288,7 +288,7 @@ int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[])
 	{
 	    fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0],
 		    tp->infile2, strerror(errno));
-	    trim_close_files(tp);
+	    fastq_trim_close_files(tp);
 	    return EX_NOINPUT;
 	}
 	if ( arg == argc - 1 )
@@ -298,7 +298,7 @@ int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[])
 	    {
 		fprintf(stderr, "%s: Cannot open %s: %s\n", argv[0],
 			tp->infile2, strerror(errno));
-		trim_close_files(tp);
+		fastq_trim_close_files(tp);
 		return EX_CANTCREAT;
 	    }
 	    // paired_reads();
@@ -310,7 +310,7 @@ int     trim_open_files(trim_t *tp, int arg, int argc, char *argv[])
 }
 
 
-void    trim_close_files(trim_t *tp)
+void    fastq_trim_close_files(fastq_trim_t *tp)
 
 {
     if ( tp->infile1 != NULL )
@@ -324,7 +324,7 @@ void    trim_close_files(trim_t *tp)
 }
 
 
-void    trim_init(trim_t *tp)
+void    fastq_trim_init(fastq_trim_t *tp)
 
 {
     tp->verbose = false;
