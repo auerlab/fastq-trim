@@ -10,7 +10,8 @@
 #include <biolibc/fastq.h>
 #include "trim.h"
 
-static inline size_t bl_fastq_find_polya_tail(bl_fastq_t *rec)
+// Explicit inlining makes no difference
+size_t bl_fastq_find_polya_tail(bl_fastq_t *rec)
 
 {
     ssize_t c;
