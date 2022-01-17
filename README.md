@@ -14,6 +14,8 @@ available that are fast enough for most purposes.  However, trimming can
 take long enough to discourage experimenting with trim parameters,
 especially for those who don't have access to an HPC cluster.
 
+## Status
+
 The current version is the culmination of a few days work starting
 from a blank slate, so gauge your expectations accordingly.  Mature tools
 like cutadapt and trimmomatic will be more robust and feature-rich.
@@ -21,7 +23,8 @@ like cutadapt and trimmomatic will be more robust and feature-rich.
 However, the results so far are encouraging, with significantly better
 speed than cutadapt or trimmomatic and nearly identical results (diffing
 fastq-trim and cutadapt results revealed only a few differences after
-trimming 250k reads).
+trimming 250k reads).  More functionality will be added at a later date as
+time permits.  Feel free to open an issue to request a new feature.
 
 Resident memory peaks at around 2 MiB, which means fastq-trim will run
 almost entirely in cache RAM.
