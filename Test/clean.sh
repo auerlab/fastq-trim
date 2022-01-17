@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
-rm -f *trimmed* *.core ca-out.txt
+rm -f *trimmed* *-out* *.core
 git status
