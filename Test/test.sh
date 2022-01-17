@@ -91,10 +91,23 @@ outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
 # Make sure all runs benefit equally from read buffering
 cat $infile1 $infile2 > /dev/null
 
-printf "Timing read and write without trimming...\n"
+printf "\nTiming compressed read and write with
+out trimming...\n"
 time xzcat $infile1 | gzip > $outfile1_raw
 time xzcat $infile2 | gzip > $outfile2_raw
 
+printf "\nTrimming with uncompressed input and output...\n"
+xzcat $infile1 > temp-infile1.fastq
+time ../fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    temp-infile1.fastq temp-infile2.fast2
+
+printf "\nTrimming with compressed input and uncompressed output...\n"
+time ../fastq-trim "$@" \
+    --3p-adapter1 $adapter \
+    $infile1 temp-infile2.fast2
+
+printf "All remaining tests use compressed input and output...\n\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
     --exact-match \

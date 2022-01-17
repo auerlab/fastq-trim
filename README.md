@@ -29,12 +29,15 @@ time permits.  Feel free to open an issue to request a new feature.
 Resident memory peaks at around 2 MiB, which means fastq-trim will run
 almost entirely in cache RAM.
 
+Fastq-trim is currently single-threaded, as using additional cores will
+not improve performance of the basic features.
 Run time with default parameters is only slightly longer than
-```xzcat infile.xz | gzip > outfile.gz```, so there isn't much room for
-improvement.
+```xzcat infile.xz | gzip > outfile.gz```, and fastq-trim on uncompressed
+input and output actually outruns xzcat and gzip -1.  Multi-threading will
+be considered if and when more computationally expensive features are added.
 
 Results from running "./test.sh big" (in the Test directory) on a 2.9 GHz i5
-are shown below.  Note that fastq-trim is currently single-threaded.
+are shown below.
 
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
@@ -49,9 +52,28 @@ Trimmomatic     150%    21.03   3473    740
 
 Detailed output:
 
-Timing read and write without trimming...
-	4.80 real         4.77 user         0.00 sys
-	4.82 real         4.75 user         0.06 sys
+Timing compressed read and write without trimming...
+	4.78 real         4.68 user         0.07 sys
+	4.79 real         4.75 user         0.03 sys
+
+Trimming with uncompressed input and output...
+
+*** FASTQ TRIM ***
+
+  Minimum match:     3
+  Minimum quality:   20
+  Minimum length:    30
+  Phred base:        33
+  Adapter matching:  Smart
+  Maximum mismatch:  10%
+  Filename:          temp-infile1.fastq
+  Mode:              Single
+  Adapter:           CTGTCTCTTATA
+
+Read: 1000000  Adapter: 86768  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
+	4.52 real         4.43 user         0.08 sys
+
+All remaining tests use compressed input and output...
 
 *** FASTQ TRIM ***
 
