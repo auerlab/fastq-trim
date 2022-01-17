@@ -88,26 +88,36 @@ outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
 outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
 
+printf "\ngzip flags = $GZIP\n"
+
 # Make sure all runs benefit equally from read buffering
+printf "\nBuffering inputs...\n"
 cat $infile1 $infile2 > /dev/null
 
-printf "\nTiming compressed read and write with
-out trimming...\n"
-time xzcat $infile1 | gzip > $outfile1_raw
-time xzcat $infile2 | gzip > $outfile2_raw
+infile1_uc=${infile1%.xz}
+outfile1_uc=${sample}_1-out.fastq
+xzcat $infile1 > $infile1_uc
 
-printf "\nTrimming with uncompressed input and output...\n"
-xzcat $infile1 > temp-infile1.fastq
+printf "\ncat $infile1_uc > $outfile1_uc\n"
+time cat $infile1_uc > $outfile1_uc
+rm -f $outfile1_uc
+
+printf "\nTrimming with uc input and output...\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
-    temp-infile1.fastq temp-infile2.fast2
+    $infile1_uc $outfile1_uc
 
 printf "\nTrimming with compressed input and uncompressed output...\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
-    $infile1 temp-infile2.fast2
+    $infile1_uc $outfile1_uc.gz
 
-printf "All remaining tests use compressed input and output...\n\n"
+printf "\nAll remaining tests use compressed input and output...\n"
+
+printf "\nTiming compressed read and write without trimming...\n"
+time xzcat $infile1 | gzip > $outfile1_raw
+time xzcat $infile2 | gzip > $outfile2_raw
+
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
     --exact-match \
