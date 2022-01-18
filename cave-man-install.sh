@@ -20,7 +20,7 @@
 case $(uname) in
 *)
     if [ -z "$CFLAGS" ]; then
-	export CFLAGS="-Wall -g -O"
+	export CFLAGS="-Wall -g -O2"
     fi
     LIBDIR=$(realpath $PREFIX/lib)
     export LDFLAGS="-L$LIBDIR -Wl,-rpath,$LIBDIR:/usr/lib:/lib"

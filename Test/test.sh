@@ -102,7 +102,7 @@ printf "\ncat $infile1_uc > $outfile1_uc\n"
 time cat $infile1_uc > $outfile1_uc
 rm -f $outfile1_uc
 
-printf "\nTrimming with uc input and output...\n"
+printf "\nTrimming with uncompressed input and output...\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
     $infile1_uc $outfile1_uc
@@ -110,7 +110,7 @@ time ../fastq-trim "$@" \
 printf "\nTrimming with compressed input and uncompressed output...\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
-    $infile1_uc $outfile1_uc.gz
+    $infile1 $outfile1_uc
 
 printf "\nAll remaining tests use compressed input and output...\n"
 
@@ -139,17 +139,19 @@ for cores in 1 2; do
        -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
 done
 
-# Last number after .fa file is simple clip threshold.  A perfect match of
-# 12 bases give a score of about 7 according to docs.  5 was chosen by trial
-# and error to bring the missed partial adapters to a level similar to
-# fastq-trim and cutadapt.
-printf "\n"
-args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30"
-time sh -c "xzcat $infile1 | trimmomatic $args"
-
-time ../fastq-trim "$@" \
-    --3p-adapter1 $adapter \
-    $infile2 $outfile2_smart10
+if which trimmomatic > /dev/null 2>&1; then
+    # Last number after .fa file is simple clip threshold.  A perfect match of
+    # 12 bases give a score of about 7 according to docs.  5 was chosen by trial
+    # and error to bring the missed partial adapters to a level similar to
+    # fastq-trim and cutadapt.
+    printf "\n"
+    args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30"
+    time sh -c "xzcat $infile1 | trimmomatic $args"
+    
+    time ../fastq-trim "$@" \
+	--3p-adapter1 $adapter \
+	$infile2 $outfile2_smart10
+fi
 
 printf "\nCutadapt 2 core reverse read...\n"
 time cutadapt --report=minimal \
@@ -196,8 +198,9 @@ gzcat $outfile1_cutadapt | fgrep $part | wc -l
 printf "Cutadapt output %-12s:       " $rand
 gzcat $outfile1_cutadapt | fgrep $rand | wc -l
 
-printf "Trimmomatic output %-12s:    " $part
-gzcat $outfile1_trimmo | fgrep $part | wc -l
-printf "Trimmomatic output %-12s:    " $rand
-gzcat $outfile1_trimmo | fgrep $rand | wc -l
-
+if which trimmomatic > /dev/null 2>&1; then
+    printf "Trimmomatic output %-12s:    " $part
+    gzcat $outfile1_trimmo | fgrep $part | wc -l
+    printf "Trimmomatic output %-12s:    " $rand
+    gzcat $outfile1_trimmo | fgrep $rand | wc -l
+fi
