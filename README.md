@@ -42,7 +42,8 @@ are shown below.
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 
-Peak CPU (including xzcat, gzip -1, pigz), wall time, and peak memory (MiB):
+Peak CPU (including xzcat, gzip -1, pigz), wall time,
+and peak memory (MiB, application only):
 
 		CPU     Wall    Virtual Resident
 Fastq-trim      260%    5.42    13      2
@@ -51,10 +52,6 @@ Cutadapt 2-core 310%    13.30   174     120
 Trimmomatic     150%    21.03   3473    740
 
 Detailed output:
-
-Timing compressed read and write without trimming...
-	4.78 real         4.68 user         0.07 sys
-	4.79 real         4.75 user         0.03 sys
 
 Trimming with uncompressed input and output...
 
@@ -70,10 +67,14 @@ Trimming with uncompressed input and output...
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 86768  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
+Read: 1000000  Adapter: 86768  Q < 20: 572761  Len < 30: 13012
 	4.52 real         4.43 user         0.08 sys
 
 All remaining tests use compressed input and output...
+
+Timing compressed read and write without trimming...
+	4.78 real         4.68 user         0.07 sys
+	4.79 real         4.75 user         0.03 sys
 
 *** FASTQ TRIM ***
 
@@ -86,7 +87,7 @@ All remaining tests use compressed input and output...
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 86180  Poly-A: 0  Q < 20: 572761  Len < 30: 13000
+Read: 1000000  Adapter: 86180  Q < 20: 572761  Len < 30: 13000
 	5.35 real        12.35 user         0.49 sys
 
 *** FASTQ TRIM ***
@@ -101,7 +102,7 @@ Read: 1000000  Adapter: 86180  Poly-A: 0  Q < 20: 572761  Len < 30: 13000
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 86768  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
+Read: 1000000  Adapter: 86768  Q < 20: 572761  Len < 30: 13012
 	5.42 real        13.88 user         0.37 sys
 
 *** FASTQ TRIM ***
@@ -116,7 +117,7 @@ Read: 1000000  Adapter: 86768  Poly-A: 0  Q < 20: 572761  Len < 30: 13012
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 108722  Poly-A: 0  Q < 20: 572761  Len < 30: 13346
+Read: 1000000  Adapter: 108722  Q < 20: 572761  Len < 30: 13346
 	5.63 real        14.42 user         0.31 sys
 
 Cutadapt 1 core...
@@ -151,7 +152,7 @@ TrimmomaticSE: Completed successfully
   Mode:              Single
   Adapter:           CTGTCTCTTATA
 
-Read: 1000000  Adapter: 61965  Poly-A: 0  Q < 20: 828265  Len < 30: 234054
+Read: 1000000  Adapter: 61965  Q < 20: 828265  Len < 30: 234054
 	5.26 real        11.34 user         0.36 sys
 
 Cutadapt 2 core reverse read...
@@ -172,7 +173,7 @@ OK      1000000 101000000       234057  0       0       765943  62032   40280314
   Mode:              Paired
   Adapters:          CTGTCTCTTATA AGATCGGAAGAG
 
-Read: 2000000  Adapter: 97978  Poly-A: 0  Q < 20: 1401026  Len < 30: 242967
+Read: 2000000  Adapter: 97978  Q < 20: 1401026  Len < 30: 242967
 	8.87 real        28.09 user         1.20 sys
 
 Scanning for a portion of the adapter to flag any adapters missed due to
