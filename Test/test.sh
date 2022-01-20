@@ -153,6 +153,9 @@ if which trimmomatic > /dev/null 2>&1; then
 	$infile2 $outfile2_smart10
 fi
 
+# xzcat SRR1972918_1.fastq.xz \
+#    | fastp -q 20 -l 30 --thread 1 --stdin -o temp.fastq.gz
+
 printf "\nCutadapt 2 core reverse read...\n"
 time cutadapt --report=minimal \
    --cores=2 --quality-cutoff=20 --minimum-length=30 -a $adapter \

@@ -1,25 +1,26 @@
 fastq-trim-class.o: fastq-trim-class.c ../local/include/xtend/file.h \
- ../local/include/xtend/string.h ../local/include/biolibc/fastq.h \
- ../local/include/biolibc/biolibc.h ../local/include/biolibc/fastq-rvs.h \
- ../local/include/biolibc/fastq-accessors.h \
- ../local/include/biolibc/fastq-mutators.h fastq-trim.h fastq-trim-rvs.h \
- fastq-trim-accessors.h fastq-trim-mutators.h
+  ../local/include/xtend/string.h ../local/include/biolibc/fastq.h \
+  ../local/include/biolibc/biolibc.h \
+  ../local/include/biolibc/fastq-rvs.h \
+  ../local/include/biolibc/fastq-accessors.h \
+  ../local/include/biolibc/fastq-mutators.h fastq-trim.h \
+  fastq-trim-rvs.h fastq-trim-accessors.h fastq-trim-mutators.h
 	${CC} -c ${CFLAGS} fastq-trim-class.c
 
 fastq-trim-mutators.o: fastq-trim-mutators.c \
- ../local/include/xtend/string.h fastq-trim.h \
- ../local/include/biolibc/fastq.h ../local/include/biolibc/biolibc.h \
- ../local/include/biolibc/fastq-rvs.h \
- ../local/include/biolibc/fastq-accessors.h \
- ../local/include/biolibc/fastq-mutators.h fastq-trim-rvs.h \
- fastq-trim-accessors.h fastq-trim-mutators.h
+  ../local/include/xtend/string.h fastq-trim.h \
+  ../local/include/biolibc/fastq.h ../local/include/biolibc/biolibc.h \
+  ../local/include/biolibc/fastq-rvs.h \
+  ../local/include/biolibc/fastq-accessors.h \
+  ../local/include/biolibc/fastq-mutators.h fastq-trim-rvs.h \
+  fastq-trim-accessors.h fastq-trim-mutators.h
 	${CC} -c ${CFLAGS} fastq-trim-mutators.c
 
 fastq-trim.o: fastq-trim.c ../local/include/xtend/string.h \
- ../local/include/biolibc/fastq.h ../local/include/biolibc/biolibc.h \
- ../local/include/biolibc/fastq-rvs.h \
- ../local/include/biolibc/fastq-accessors.h \
- ../local/include/biolibc/fastq-mutators.h fastq-trim.h fastq-trim-rvs.h \
- fastq-trim-accessors.h fastq-trim-mutators.h
+  ../local/include/biolibc/fastq.h ../local/include/biolibc/biolibc.h \
+  ../local/include/biolibc/fastq-rvs.h \
+  ../local/include/biolibc/fastq-accessors.h \
+  ../local/include/biolibc/fastq-mutators.h fastq-trim.h \
+  fastq-trim-rvs.h fastq-trim-accessors.h fastq-trim-mutators.h
 	${CC} -c ${CFLAGS} fastq-trim.c
 
