@@ -74,6 +74,8 @@ shift
 adapter=CTGTCTCTTATA
 part=CTGTCTCTT
 rand=TCGAACGGC
+strict_percent=20
+
 
 # Use gzip -1 for output to avoid bottleneck
 outfile1_raw=${sample}_1$suffix-trimmed-raw.fastq.gz
@@ -81,7 +83,7 @@ outfile2_raw=${sample}_2$suffix-trimmed-raw.fastq.gz
 outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.gz
 outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.gz
 outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.gz
-outfile1_smart20=${sample}_1$suffix-trimmed-smart20.fastq.gz
+outfile1_smart_strict=${sample}_1$suffix-trimmed-smart$strict_percent.fastq.gz
 outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.gz
 outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.gz
 outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
@@ -129,8 +131,8 @@ time ../fastq-trim "$@" \
 
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
-    --max-mismatch-percent 20 \
-    $infile1 $outfile1_smart20
+    --max-mismatch-percent $strict_percent \
+    $infile1 $outfile1_smart_strict
 
 for cores in 1 2; do
     printf "\nCutadapt $cores core...\n"
@@ -191,10 +193,10 @@ gzcat $outfile1_smart10 | fgrep $part | wc -l
 printf "Smart match 10 output %-12s: " $rand
 gzcat $outfile1_smart10 | fgrep $rand | wc -l
 
-printf "Smart match 20 output %-12s: " $part
-gzcat $outfile1_smart20 | fgrep $part | wc -l
-printf "Smart match 20 output %-12s: " $rand
-gzcat $outfile1_smart20 | fgrep $rand | wc -l
+printf "Smart match $strict_percent output %-12s: " $part
+gzcat $outfile1_smart_strict | fgrep $part | wc -l
+printf "Smart match $strict_percent output %-12s: " $rand
+gzcat $outfile1_smart_strict | fgrep $rand | wc -l
 
 printf "Cutadapt output %-12s:       " $part
 gzcat $outfile1_cutadapt | fgrep $part | wc -l
