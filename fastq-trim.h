@@ -10,13 +10,17 @@
 #include <biolibc/fastq.h>
 #endif
 
+#ifndef _BIOLIBC_ALIGN_H_
+#include <biolibc/align.h>
+#endif
+
 #ifndef __bool_true_false_are_defined
 #include <stdbool.h>
 #endif
 
 // Must typedef this to avoid confusing auto-gen-get-set in the structure
-typedef size_t (* fastq_trim_afp_t)(const bl_fastq_t *read,
-	    const char *adapter, size_t min_match, unsigned max_mismatch_percent);
+typedef size_t (* fastq_trim_afp_t)(const bl_align_t *params,
+    const char *big, size_t big_len, const char *little, size_t little_len);
 
 typedef struct
 {

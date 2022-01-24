@@ -23,7 +23,7 @@ case $(uname) in
 	export CFLAGS="-Wall -g -O2"
     fi
     LIBDIR=$(realpath $PREFIX/lib)
-    export LDFLAGS="-L$LIBDIR -Wl,-rpath,$LIBDIR:/usr/lib:/lib"
+    export LDFLAGS="-L. -L$LIBDIR -Wl,-rpath,$LIBDIR:/usr/lib:/lib"
     for pkgsrc in /usr/pkg /opt/pkg ~/Pkgsrc/pkg; do
 	if [ -e $pkgsrc ]; then
 	    echo "Using $pkgsrc..."

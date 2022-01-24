@@ -7,12 +7,25 @@ Near-optimal read trimmer based on [biolibc](https://github.com/auerlab/biolibc)
 This is a back-burner project to explore the possibility of developing a
 significantly faster read trimmer.
 The ultimate goal is a trimmer that runs in a fraction of the time of
-popular trimmers and produces comparable results.
 
 There is no sense of urgency since there are multiple highly-evolved trimmers
 available that are fast enough for most purposes.  However, trimming can
 take long enough to discourage experimenting with trim parameters,
 especially for those who don't have access to an HPC cluster.
+popular trimmers and produces comparable results.
+
+The code is designed for dropping in alternative alignment functions, which
+use a generic API and are called via a function pointer.  The default
+is a simple function with two parameters, a minimum number of bases matched
+and a maximum percentage of mismatches:
+
+```
+size_t bl_align_map_seq_sub(const bl_align_t *params,
+    const char *big, size_t big_len, const char *little, size_t little_len);
+```
+An exact-match function is also currently available and any other function
+with this interface can be easily added to support more sophisticated
+alignment algorithms.
 
 ## Status
 

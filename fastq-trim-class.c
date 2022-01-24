@@ -8,6 +8,7 @@
 #include <xtend/file.h>
 #include <xtend/string.h>
 #include <biolibc/fastq.h>
+#include <biolibc/align.h>
 #include "fastq-trim.h"
 
 // Explicit inlining makes no difference
@@ -38,13 +39,19 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 		    low_qual_count,
 		    adapter_pos_sum,
 		    read_len_sum;
-    size_t          index;
+    size_t          index, adapter_len;
     bl_fastq_t      rec;
+    bl_align_t      align_params;
     
     fputs("  Mode:              Single\n", stderr);
     fprintf(stderr,
 	  "  Adapter:           %s\n\n", FASTQ_TRIM_ADAPTER1(tp));
     bl_fastq_init(&rec);
+
+    adapter_len = strlen(tp->adapter1);
+    bl_align_set_min_match(&align_params, tp->min_match);
+    bl_align_set_max_mismatch_percent(&align_params, tp->max_mismatch_percent);
+    
     read_count = adapter_count = polya_count = short_count = 
     low_qual_count = adapter_pos_sum = read_len_sum = 0;
     while ( bl_fastq_read(&rec, tp->instream1) == BL_READ_OK )
@@ -63,8 +70,9 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	    bl_fastq_3p_trim(&rec, index);
 	}
 
-	index = tp->adapter_match_function(&rec, tp->adapter1,
-		    tp->min_match, tp->max_mismatch_percent);
+	index = tp->adapter_match_function(&align_params,
+		    BL_FASTQ_SEQ(&rec), BL_FASTQ_SEQ_LEN(&rec),
+		    tp->adapter1, adapter_len);
 	if ( index != BL_FASTQ_SEQ_LEN(&rec) )
 	{
 	    adapter_pos_sum += index;
@@ -138,8 +146,9 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		    low_qual_count,
 		    adapter_pos_sum,
 		    read_len_sum;
-    size_t          index;
+    size_t          index, adapter_len[2];
     bl_fastq_t      rec[2];
+    bl_align_t      align_params;
     int             s1, s2, c;
     char            *adapter[2];
     
@@ -152,9 +161,14 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
     // Select adapters with loop index
     adapter[0] = tp->adapter1;
     adapter[1] = tp->adapter2;
+    adapter_len[0] = strlen(adapter[0]);
+    adapter_len[1] = strlen(adapter[1]);
     
     read_count = adapter_count = polya_count = short_count = low_qual_count =
     adapter_pos_sum = read_len_sum = 0;
+
+    bl_align_set_min_match(&align_params, tp->min_match);
+    bl_align_set_max_mismatch_percent(&align_params, tp->max_mismatch_percent);
 
     // Read from both files every iteration and break on error
     while ( true )
@@ -192,8 +206,9 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		bl_fastq_3p_trim(&rec[c], index);
 	    }
     
-	    index = tp->adapter_match_function(&rec[c], adapter[c],
-			tp->min_match, tp->max_mismatch_percent);
+	    index = tp->adapter_match_function(&align_params,
+			BL_FASTQ_SEQ(&rec[c]), BL_FASTQ_SEQ_LEN(&rec[c]),
+			adapter[c], adapter_len[c]);
 	    if ( index != BL_FASTQ_SEQ_LEN(&rec[c]) )
 	    {
 		++adapter_count;
@@ -347,7 +362,7 @@ void    fastq_trim_init(fastq_trim_t *tp)
 
 {
     tp->verbose = false;
-    tp->adapter_match_function = bl_fastq_find_adapter_smart;
+    tp->adapter_match_function = bl_align_map_seq_sub;
     tp->infile1 = NULL;
     tp->outfile1 = NULL;
     tp->infile2 = NULL;

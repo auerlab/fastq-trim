@@ -33,7 +33,7 @@ int     main(int argc,char *argv[])
 	if ( strcmp(argv[arg], "--verbose") == 0 )
 	    fastq_trim_set_verbose(&tp, true);
 	else if ( strcmp(argv[arg], "--exact-match") == 0 )
-	    fastq_trim_set_adapter_match_function(&tp, bl_fastq_find_adapter_exact);
+	    fastq_trim_set_adapter_match_function(&tp, bl_align_map_seq_exact);
 	else if ( strcmp(argv[arg], "--3p-adapter1") == 0 )
 	{
 	    free(FASTQ_TRIM_ADAPTER1(&tp));
@@ -95,7 +95,7 @@ int     main(int argc,char *argv[])
 		    FASTQ_TRIM_MIN_LENGTH(&tp),
 		    FASTQ_TRIM_PHRED_BASE(&tp));
     
-    if ( FASTQ_TRIM_ADAPTER_MATCH_FUNCTION(&tp) == bl_fastq_find_adapter_exact )
+    if ( FASTQ_TRIM_ADAPTER_MATCH_FUNCTION(&tp) == bl_align_map_seq_exact )
 	fprintf(stderr, "  Adapter matching:  Exact\n");
     else
 	fprintf(stderr, "  Adapter matching:  Smart\n"
