@@ -11,10 +11,13 @@ long2=${sample}_2.fastq.xz
 
 if [ ! -e $long1 ]; then
     printf "Downloading FASTQ files...\n"
+    stty intr undef
     fastq-dump --maxSpotId 1000000 --split-files $sample
+    printf "Compressing...\n"
     xz ${long1%.xz} &
     xz ${long2%.xz}
     wait
+    stty intr ^C
 else
     printf "Using existing $long1 and $long2.\n"
 fi
@@ -24,10 +27,11 @@ short2=${sample}_2-250k.fastq.xz
 
 if [ ! -e $short1 ]; then
     printf "Compressing...\n"
+    stty intr undef
     xzcat -3 $long1 | head -1000000 | xz > $short1 &
     xzcat -3 $long2 | head -1000000 | xz > $short2
     wait
+    stty intr ^C
 else
     printf "Using existing $short1 and $short2.\n"
 fi
-
