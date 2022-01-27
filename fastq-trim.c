@@ -28,6 +28,11 @@ int     main(int argc,char *argv[])
     
     if ( (argc == 2) && (strcmp(argv[1], "--help") == 0) )
 	usage(argv);
+    else if ( strcmp(argv[1], "--version") == 0 )
+    {
+	  printf("fastq-trim %s\n", VERSION);
+	  return EX_OK;
+    }
     for (arg = 1; (arg < argc) && (*argv[arg] == '-'); ++arg)
     {
 	if ( strcmp(argv[arg], "--verbose") == 0 )
@@ -129,6 +134,7 @@ void    usage(char *argv[])
     fprintf(stderr,
 	    "Usage:\n\n"
 	    "%s --help\n"
+	    "%s --version\n"
 	    "%s\n"
 	    "   [--verbose]\n"
 	    "   [--exact-match]\n"
@@ -142,6 +148,6 @@ void    usage(char *argv[])
 	    "   [--phred-base N]\n"
 	    "   [infile1.fastq[.xz|.bz2|.gz]] [outfile1.fastq[.xz|.bz2|.gz]]\n\n"
 	    "   [infile2.fastq[.xz|.bz2|.gz]] [outfile2.fastq[.xz|.bz2|.gz]]\n\n",
-	    argv[0], argv[0]);
+	    argv[0], argv[0], argv[0]);
     exit(EX_USAGE);
 }

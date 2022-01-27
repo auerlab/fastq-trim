@@ -48,8 +48,8 @@
 ############################################################################
 # Installed targets
 
-LIB     = libfastq-trim.a
 BIN     = fastq-trim
+LIB     = libfastq-trim.a
 
 ############################################################################
 # List object files that comprise BIN.
@@ -83,6 +83,7 @@ MANDIR      ?= ${MANPREFIX}/man
 # Defaults that should work with GCC and Clang.
 CC          ?= cc
 CFLAGS      ?= -Wall -g -O
+CFLAGS      += -DVERSION=\"`./version.sh`\"
 
 # Link command:
 # Use ${FC} to link when mixing C and Fortran
