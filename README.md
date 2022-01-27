@@ -14,18 +14,25 @@ take long enough to discourage experimenting with trim parameters,
 especially for those who don't have access to an HPC cluster.
 popular trimmers and produces comparable results.
 
-The code is designed for dropping in alternative alignment functions, which
-use a generic API and are called via a function pointer.  The default
-is a simple function with two parameters, a minimum number of bases matched
+At present, fastq-trim uses simple alignment algorithms suitable for
+typical analyses such as RNA-Seq or ATAC-Seq, where some residual adapter
+content will not impact the downstream analysis.
+The default is a simple function with two parameters, a minimum number of bases matched
 and a maximum percentage of mismatches:
 
 ```
 size_t bl_align_map_seq_sub(const bl_align_t *params,
     const char *big, size_t big_len, const char *little, size_t little_len);
 ```
-An exact-match function is also currently available and any other function
-with this interface can be easily added to support more sophisticated
-alignment algorithms.
+An exact-match function is also currently available, which runs slightly
+faster and misses slightly more adapters.
+
+These algorithms are not suitable for analyses that are highly sensitive to
+adapter content. However, fastq-trim is designed for dropping in alternative
+alignment functions using the same API as the function above.  The
+bl_align_t structure can be extended to provide additional parameters for
+new algorithms.  Hence, fastq-trim can be easily adapted to perform trimming
+for just about any purpose.
 
 ## Status
 
