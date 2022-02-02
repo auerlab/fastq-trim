@@ -35,5 +35,4 @@ case $(uname) in
 esac
 
 make clean
-make depend
 make install
