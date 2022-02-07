@@ -109,6 +109,11 @@ time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
     $infile1_uc $outfile1_uc
 
+printf "\nCutadapt 2 core uncompressed input and output...\n"
+time cutadapt --report=minimal \
+   --cores=2 --quality-cutoff=20 --minimum-length=30 -a $adapter \
+   -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
+
 printf "\nTrimming with compressed input and uncompressed output...\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
