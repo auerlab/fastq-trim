@@ -26,7 +26,7 @@ int     main(int argc,char *argv[])
     
     fastq_trim_init(&tp);
     
-    if ( (argc == 2) && (strcmp(argv[1], "--help") == 0) )
+    if ( (argc < 2) || ((argc == 2) && (strcmp(argv[1], "--help") == 0)) )
 	usage(argv);
     else if ( strcmp(argv[1], "--version") == 0 )
     {
