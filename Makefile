@@ -181,7 +181,7 @@ install: all
 	    ${DESTDIR}${MANDIR}/man1 ${DESTDIR}${MANDIR}/man3 \
 	    ${DESTDIR}${PREFIX}/lib ${DESTDIR}${PREFIX}/include
 	${INSTALL} -s -m 0755 ${BIN} ${DESTDIR}${PREFIX}/bin
-	${INSTALL} -m 0755 fastq-vis ${DESTDIR}${PREFIX}/bin
+	${INSTALL} -m 0755 fastq-scum ${DESTDIR}${PREFIX}/bin
 	${INSTALL} -m 0644 ${LIB} ${DESTDIR}${PREFIX}/lib
 	${INSTALL} -m 0644 *.h ${DESTDIR}${PREFIX}/include
 	${INSTALL} -m 0644 Man/*.1 ${DESTDIR}${MANDIR}/man1
