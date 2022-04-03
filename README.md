@@ -32,9 +32,9 @@ for just about any purpose.
 
 ## Status
 
-The current version is the culmination of a few days work starting
-from a blank slate, so gauge your expectations accordingly.  Mature tools
-like cutadapt and trimmomatic will be more robust and feature-rich.
+The current version is a work-in-progress that has been extensively tested
+only on RNA-Seq and ATAC-Seq data.  More mature tools
+like cutadapt and trimmomatic may prove more robust and feature-rich.
 
 However, the results so far are encouraging, with significantly better
 speed than cutadapt or trimmomatic and nearly identical results (diffing
