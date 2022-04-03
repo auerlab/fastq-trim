@@ -7,6 +7,7 @@ Near-optimal read trimmer based on [biolibc](https://github.com/auerlab/biolibc)
 This is a back-burner project to explore the possibility of developing a
 significantly faster read trimmer.
 The ultimate goal is a trimmer that runs in a fraction of the time of
+existing trimmers while producing comparable results.
 
 There is no sense of urgency since there are multiple highly-evolved trimmers
 available that are fast enough for most purposes.  However, trimming can
@@ -17,21 +18,16 @@ popular trimmers and produces comparable results.
 At present, fastq-trim uses simple alignment algorithms suitable for
 typical analyses such as RNA-Seq or ATAC-Seq, where some residual adapter
 content will not impact the downstream analysis.
-The default is a simple function with two parameters, a minimum number of bases matched
-and a maximum percentage of mismatches:
 
-```
-size_t bl_align_map_seq_sub(const bl_align_t *params,
-    const char *big, size_t big_len, const char *little, size_t little_len);
-```
+Fastq-trim is designed to allow dropping in a variety of alignment functions.
+The default is a simple function with two parameters, a minimum number of
+bases matched and a maximum percentage of mismatches.
 An exact-match function is also currently available, which runs slightly
 faster and misses slightly more adapters.
 
 These algorithms are not suitable for analyses that are highly sensitive to
-adapter content. However, fastq-trim is designed for dropping in alternative
-alignment functions using the same API as the function above.  The
-bl_align_t structure can be extended to provide additional parameters for
-new algorithms.  Hence, fastq-trim can be easily adapted to perform trimming
+adapter content. However, more sophisticated functions can easily be added,
+so fastq-trim can be easily adapted to perform trimming
 for just about any purpose.
 
 ## Status
