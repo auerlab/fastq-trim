@@ -4,16 +4,8 @@
 
 Near-optimal read trimmer based on [biolibc](https://github.com/auerlab/biolibc)
 
-This is a back-burner project to explore the possibility of developing a
-significantly faster read trimmer.
-The ultimate goal is a trimmer that runs in a fraction of the time of
-popular trimmers and produces comparable results.
-
-There is no sense of urgency since there are multiple highly-evolved trimmers
-available that are fast enough for most purposes.  However, trimming can
-take long enough to discourage experimenting with trim parameters,
-especially for those who don't have access to an HPC cluster.
-
+The goal of fastq-trim is a read trimmer that runs in a fraction of the time
+of popular trimmers and produces comparable results.
 At present, fastq-trim uses simple alignment algorithms suitable for
 typical analyses such as RNA-Seq or ATAC-Seq, where a small amount of
 residual adapter content will not impact the downstream analysis.
@@ -32,10 +24,8 @@ for just about any purpose.
 ## Status
 
 The current version is a work-in-progress that has been extensively tested
-only on RNA-Seq and ATAC-Seq data.  More mature tools
-like cutadapt and trimmomatic may prove more robust and feature-rich.
-
-However, the results so far are encouraging, with significantly better
+only on RNA-Seq and ATAC-Seq data.
+The results so far are encouraging, with significantly better
 speed than cutadapt or trimmomatic and nearly identical results (diffing
 fastq-trim and cutadapt results revealed only a few differences after
 trimming 250k reads).  More functionality will be added at a later date as
