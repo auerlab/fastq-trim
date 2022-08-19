@@ -23,16 +23,20 @@ case $(uname) in
 	export CFLAGS="-Wall -g -O2"
     fi
     LIBDIR=$(realpath $PREFIX/lib)
-    export LDFLAGS="-L. -L$LIBDIR -Wl,-rpath,$LIBDIR:/usr/lib:/lib"
+    LDFLAGS="-L. -L$LIBDIR -Wl,-rpath,$LIBDIR:/usr/lib:/lib"
     for pkgsrc in /usr/pkg /opt/pkg ~/Pkgsrc/pkg; do
 	if [ -e $pkgsrc ]; then
 	    echo "Using $pkgsrc..."
-	    export LOCALBASE=$pkgsrc
+	    LOCALBASE=$pkgsrc
 	fi
     done
     ;;
 
 esac
 
+if [ $(uname) = SunOS ]; then
+    LDFLAGS="$LDFLAGS -lresolv  -lsocket   -lnsl"
+fi
+export LDFLAGS LOCALBASE LIBDIR
 make clean
 make install
