@@ -33,10 +33,6 @@ case $(uname) in
     ;;
 
 esac
-
-if [ $(uname) = SunOS ]; then
-    LDFLAGS="$LDFLAGS -lresolv  -lsocket   -lnsl"
-fi
 export LDFLAGS LOCALBASE LIBDIR
 make clean
 make install
