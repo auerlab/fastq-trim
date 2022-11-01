@@ -17,7 +17,7 @@ An exact-match function is also currently available, which runs slightly
 faster and misses slightly more adapters.
 
 These algorithms are not suitable for analyses that are highly sensitive to
-adapter content. However, more sophisticated functions can easily be added,
+adapter contamination. However, more sophisticated functions can easily be added,
 so fastq-trim can be easily adapted to perform trimming
 for just about any purpose.
 
