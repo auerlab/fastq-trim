@@ -302,7 +302,7 @@ Community support for pkgsrc is available through the
 
 ### Building Fastq-trim locally
 
-Below are cave man install instructions for development purposes, not
+Below are caveman install instructions for development purposes, not
 recommended for regular use.
 Fastq-trim depends on [biolibc](https://github.com/auerlab/biolibc).
 Install biolibc before attempting to build Fastq-trim.
