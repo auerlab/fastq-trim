@@ -214,3 +214,4 @@ if which trimmomatic > /dev/null 2>&1; then
     printf "Trimmomatic output %-12s:    " $rand
     gzcat $outfile1_trimmo | fgrep $rand | wc -l
 fi
+
