@@ -113,7 +113,7 @@ time ../fastq-trim "$@" \
 printf "\nCutadapt 2 core uncompressed input and output...\n"
 time cutadapt --report=minimal \
    --cores=2 --quality-cutoff=20 --minimum-length=30 -a $adapter \
-   -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
+   -o $outfile1_cutadapt $infile1_uc 2>&1 | fgrep -v reads/min
 
 printf "\nTrimming with compressed input and uncompressed output...\n"
 time ../fastq-trim "$@" \
@@ -140,11 +140,14 @@ time ../fastq-trim "$@" \
     --max-mismatch-percent $strict_percent \
     $infile1 $outfile1_smart_strict
 
-# FIXME: This is not yet verified for comparison to other tools
-printf "\nfastp 1 thread...\n"
-time xzcat $infile1 \
-    | fastp -q 20 -l 30 --adapter_sequence CTGTCTCTTATA \
-	--thread 1 --stdin -o $outfile1_fastp
+# More than 1 core doesn't seem to help
+for cores in 1; do
+    # FIXME: This is not yet verified for comparison to other tools
+    printf "\nfastp $cores thread...\n"
+    time xzcat $infile1 \
+	| fastp -q 20 -l 30 --adapter_sequence CTGTCTCTTATA \
+	    --thread $cores --stdin -o $outfile1_fastp
+done
 
 for cores in 1 2; do
     printf "\nCutadapt $cores core...\n"
