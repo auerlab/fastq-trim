@@ -89,6 +89,7 @@ outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.gz
 outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
 outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
+outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.gz
 
 printf "\ngzip flags = $GZIP\n"
 
@@ -139,6 +140,12 @@ time ../fastq-trim "$@" \
     --max-mismatch-percent $strict_percent \
     $infile1 $outfile1_smart_strict
 
+# FIXME: This is not yet verified for comparison to other tools
+printf "\nfastp 1 thread...\n"
+time xzcat $infile1 \
+    | fastp -q 20 -l 30 --adapter_sequence CTGTCTCTTATA \
+	--thread 1 --stdin -o $outfile1_fastp
+
 for cores in 1 2; do
     printf "\nCutadapt $cores core...\n"
     time cutadapt --report=minimal \
@@ -159,9 +166,6 @@ if which trimmomatic > /dev/null 2>&1; then
 	--3p-adapter1 $adapter \
 	$infile2 $outfile2_smart10
 fi
-
-# xzcat SRR1972918_1.fastq.xz \
-#    | fastp -q 20 -l 30 --thread 1 --stdin -o temp.fastq.gz
 
 printf "\nCutadapt 2 core reverse read...\n"
 time cutadapt --report=minimal \
