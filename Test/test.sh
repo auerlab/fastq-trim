@@ -78,18 +78,18 @@ strict_percent=20
 
 
 # Use gzip -1 for output to avoid bottleneck
-outfile1_raw=${sample}_1$suffix-trimmed-raw.fastq.gz
-outfile2_raw=${sample}_2$suffix-trimmed-raw.fastq.gz
-outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.gz
-outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.gz
-outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.gz
-outfile1_smart_strict=${sample}_1$suffix-trimmed-smart$strict_percent.fastq.gz
-outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.gz
-outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.gz
-outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
-outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
-outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
-outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.gz
+outfile1_raw=${sample}_1$suffix-trimmed-raw.fastq.zstd
+outfile2_raw=${sample}_2$suffix-trimmed-raw.fastq.zstd
+outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.zstd
+outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.zstd
+outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.zstd
+outfile1_smart_strict=${sample}_1$suffix-trimmed-smart$strict_percent.fastq.zstd
+outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.zstd
+outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.zstd
+outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.zstd
+outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.zstd
+outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.zstd
+outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.zstd
 
 printf "\ngzip flags = $GZIP\n"
 
