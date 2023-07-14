@@ -36,9 +36,10 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 		    adapter_count,
 		    polya_count,
 		    short_count,
-		    low_qual_count,
+		    low_qual_read_count,
+		    low_qual_base_count,
 		    adapter_pos_sum,
-		    read_len_sum;
+		    base_count;
     size_t          index, adapter_len;
     bl_fastq_t      rec;
     bl_align_t      align_params;
@@ -53,17 +54,19 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
     bl_align_set_max_mismatch_percent(&align_params, tp->max_mismatch_percent);
     
     read_count = adapter_count = polya_count = short_count = 
-    low_qual_count = adapter_pos_sum = read_len_sum = 0;
+    low_qual_read_count = low_qual_base_count =
+    adapter_pos_sum = base_count = 0;
     while ( bl_fastq_read(&rec, tp->instream1) == BL_READ_OK )
     {
 	// Before trimming
-	read_len_sum += BL_FASTQ_SEQ_LEN(&rec);
+	base_count += BL_FASTQ_SEQ_LEN(&rec);
 	
 	// Trim low-quality bases before adapters
 	index = bl_fastq_find_3p_low_qual(&rec, tp->min_qual, tp->phred_base);
 	if ( index != BL_FASTQ_QUAL_LEN(&rec) )
 	{
-	    ++low_qual_count;
+	    low_qual_base_count += BL_FASTQ_QUAL_LEN(&rec) - index;
+	    ++low_qual_read_count;
 	    if ( tp->verbose )
 		fprintf(stderr, "Low qual %s %s\n",
 		    BL_FASTQ_SEQ(&rec) + index, BL_FASTQ_QUAL(&rec) + index);
@@ -115,16 +118,27 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	    fprintf(stderr,
 		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
 		    read_count, adapter_count, polya_count,
-		    tp->min_qual, low_qual_count, tp->min_length, short_count);
+		    tp->min_qual, low_qual_read_count, tp->min_length, short_count);
 	}
     }
+
+    // Final results
     fprintf(stderr,
-	    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\n",
-	    read_count, adapter_count, polya_count,
-	    tp->min_qual, low_qual_count, tp->min_length, short_count);
-    fprintf(stderr,
-	    "Average adapter position: %lu  Average read length: %lu\n",
-	    adapter_pos_sum / adapter_count, read_len_sum / read_count);
+	"\n\nReads:                             %10lu\n"
+	"Reads with adapters:               %10lu (%lu%%)\n"
+	"Reads with Poly-As:                %10lu (%lu%%)\n"
+	"Bases with Q < %u:                 %10lu (%lu%%)\n"
+	"Reads with low Q bases removed:    %10lu (%lu%%)\n"
+	"Reads < %zu bases after trimming:   %10lu (%lu%%)\n"
+	"Mean adapter position:             %10lu\n"
+	"Mean read length:                  %10lu\n",
+	read_count,
+	adapter_count, (adapter_count * 100 / read_count),
+	polya_count, (polya_count * 100 / read_count),
+	tp->min_qual, low_qual_base_count, (low_qual_base_count * 100 / base_count),
+	low_qual_read_count, (low_qual_read_count * 100 / read_count),
+	tp->min_length, short_count, (short_count * 100) / read_count,
+	adapter_pos_sum / adapter_count, base_count / read_count);
     bl_fastq_free(&rec);
     return EX_OK;
 }
@@ -143,9 +157,10 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		    adapter_count,
 		    polya_count,
 		    short_count,
-		    low_qual_count,
+		    low_qual_read_count,
+		    low_qual_base_count,
 		    adapter_pos_sum,
-		    read_len_sum;
+		    base_count;
     size_t          index, adapter_len[2];
     bl_fastq_t      rec[2];
     bl_align_t      align_params;
@@ -164,8 +179,9 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
     adapter_len[0] = strlen(adapter[0]);
     adapter_len[1] = strlen(adapter[1]);
     
-    read_count = adapter_count = polya_count = short_count = low_qual_count =
-    adapter_pos_sum = read_len_sum = 0;
+    read_count = adapter_count = polya_count = short_count =
+    low_qual_read_count = low_qual_base_count =
+    adapter_pos_sum = base_count = 0;
 
     bl_align_set_min_match(&align_params, tp->min_match);
     bl_align_set_max_mismatch_percent(&align_params, tp->max_mismatch_percent);
@@ -191,14 +207,14 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 	for (c = 0; c <= 1; ++c)
 	{
 	    // Before trimming
-	    read_len_sum += BL_FASTQ_SEQ_LEN(&rec[c]);
+	    base_count += BL_FASTQ_SEQ_LEN(&rec[c]);
 	    
 	    // Trim low quality bases before adapters
 	    index = bl_fastq_find_3p_low_qual(&rec[c], tp->min_qual,
 					  tp->phred_base);
 	    if ( index != BL_FASTQ_QUAL_LEN(&rec[c]) )
 	    {
-		++low_qual_count;
+		++low_qual_read_count;
 		if ( tp->verbose )
 		    fprintf(stderr, "Low qual %s %s\n",
 			BL_FASTQ_SEQ(&rec[c]) + index,
@@ -264,16 +280,27 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 	    fprintf(stderr,
 		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
 		    read_count, adapter_count, polya_count,
-		    tp->min_qual, low_qual_count, tp->min_length, short_count);
+		    tp->min_qual, low_qual_read_count, tp->min_length, short_count);
 	}
     }
+    
+    // Final results
     fprintf(stderr,
-	    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\n",
-	    read_count, adapter_count, polya_count,
-	    tp->min_qual, low_qual_count, tp->min_length, short_count);
-    fprintf(stderr,
-	    "Average adapter position: %lu  Average read length: %lu\n",
-	    adapter_pos_sum / adapter_count, read_len_sum / read_count);
+	"\n\nReads:                             %10lu\n"
+	"Reads with adapters:               %10lu (%lu%%)\n"
+	"Reads with Poly-As:                %10lu (%lu%%)\n"
+	"Bases with Q < %u:                 %10lu (%lu%%)\n"
+	"Reads with low Q bases removed:    %10lu (%lu%%)\n"
+	"Reads < %zu bases after trimming:   %10lu (%lu%%)\n"
+	"Mean adapter position:             %10lu\n"
+	"Mean read length:                  %10lu\n",
+	read_count,
+	adapter_count, (adapter_count * 100 / read_count),
+	polya_count, (polya_count * 100 / read_count),
+	tp->min_qual, low_qual_base_count, (low_qual_base_count * 100 / base_count),
+	low_qual_read_count, (low_qual_read_count * 100 / read_count),
+	tp->min_length, short_count, (short_count * 100) / read_count,
+	adapter_pos_sum / adapter_count, base_count / read_count);
 
     bl_fastq_free(&rec[0]);
     bl_fastq_free(&rec[1]);
