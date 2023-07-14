@@ -214,6 +214,7 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 					  tp->phred_base);
 	    if ( index != BL_FASTQ_QUAL_LEN(&rec[c]) )
 	    {
+		low_qual_base_count += BL_FASTQ_QUAL_LEN(&rec[c]) - index;
 		++low_qual_read_count;
 		if ( tp->verbose )
 		    fprintf(stderr, "Low qual %s %s\n",
