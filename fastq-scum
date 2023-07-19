@@ -30,7 +30,7 @@
 
 usage()
 {
-    printf "Usage: $0 file.fastq[.xz|.bz2|.gz]\n"
+    printf "Usage: $0 file.fastq[.bz2|.gz|.lz4|.xz|.zst]\n"
     exit 1
 }
 
