@@ -49,12 +49,24 @@ case $ext in
 xz)
     co=xzcat
     ;;
+
 bz2)
     co=bzcat
     ;;
+
 gz)
-    co=gzcat
+    # zcat vs gzcat not standardized
+    co="gunzip -c"
     ;;
+
+zst)
+    co=zstdcat
+    ;;
+
+lz4)
+    co=lz4cat
+    ;;
+
 fastq|fq)
     co=cat
     ;;
