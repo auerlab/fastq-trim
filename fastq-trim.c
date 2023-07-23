@@ -90,8 +90,8 @@ int     main(int argc,char *argv[])
     }
     strupper(FASTQ_TRIM_ADAPTER1(&tp));
     
-    fprintf(stderr, "\n*** FASTQ TRIM ***\n\n");
-    fprintf(stderr, "  Minimum match:     %zu\n"
+    fprintf(stdout, "\n*** FASTQ TRIM ***\n\n");
+    fprintf(stdout, "  Minimum match:     %zu\n"
 		    "  Minimum quality:   %u\n"
 		    "  Minimum length:    %zu\n"
 		    "  Phred base:        %u\n",
@@ -101,16 +101,16 @@ int     main(int argc,char *argv[])
 		    FASTQ_TRIM_PHRED_BASE(&tp));
     
     if ( FASTQ_TRIM_ADAPTER_MATCH_FUNCTION(&tp) == bl_align_map_seq_exact )
-	fprintf(stderr, "  Adapter matching:  Exact\n");
+	fprintf(stdout, "  Adapter matching:  Exact\n");
     else
-	fprintf(stderr, "  Adapter matching:  Smart\n"
+	fprintf(stdout, "  Adapter matching:  Smart\n"
 			"  Maximum mismatch:  %u%%\n", FASTQ_TRIM_MAX_MISMATCH_PERCENT(&tp));
     if ( arg == argc )
-	fprintf(stderr, "  Filename:          Standard input");
+	fprintf(stdout, "  Filename:          Standard input");
     else
-	fprintf(stderr, "  Filename:          %s\n", argv[arg]);
+	fprintf(stdout, "  Filename:          %s\n", argv[arg]);
     if ( arg + 2 < argc )
-	fprintf(stderr, "  Filename:          %s\n", argv[arg+2]);
+	fprintf(stdout, "  Filename:          %s\n", argv[arg+2]);
 
     if ( (status = fastq_trim_open_files(&tp, arg, argc, argv)) == EX_OK )
     {

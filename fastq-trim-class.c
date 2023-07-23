@@ -44,8 +44,8 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
     bl_fastq_t      rec;
     bl_align_t      align_params;
     
-    fputs("  Mode:              Single\n", stderr);
-    fprintf(stderr,
+    fputs("  Read-type:         Single\n", stdout);
+    fprintf(stdout,
 	  "  Adapter:           %s\n\n", FASTQ_TRIM_ADAPTER1(tp));
     bl_fastq_init(&rec);
 
@@ -68,7 +68,7 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	    low_qual_base_count += BL_FASTQ_QUAL_LEN(&rec) - index;
 	    ++low_qual_read_count;
 	    if ( tp->verbose )
-		fprintf(stderr, "Low qual %s %s\n",
+		fprintf(stdout, "Low qual %s %s\n",
 		    BL_FASTQ_SEQ(&rec) + index, BL_FASTQ_QUAL(&rec) + index);
 	    bl_fastq_3p_trim(&rec, index);
 	}
@@ -81,7 +81,7 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	    adapter_pos_sum += index;
 	    ++adapter_count;
 	    if ( tp->verbose )
-		fprintf(stderr, "Adapter  %s\n", BL_FASTQ_SEQ(&rec) + index);
+		fprintf(stdout, "Adapter  %s\n", BL_FASTQ_SEQ(&rec) + index);
 	    bl_fastq_3p_trim(&rec, index);
 	}
 
@@ -93,7 +93,7 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	    {
 		++polya_count;
 		if ( tp->verbose )
-		    fprintf(stderr, "Poly-A   %s\n",
+		    fprintf(stdout, "Poly-A   %s\n",
 			BL_FASTQ_SEQ(&rec) + index);
 		bl_fastq_3p_trim(&rec, index);
 	    }
@@ -104,7 +104,7 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	else
 	{
 	    if ( tp->verbose )
-		fprintf(stderr, "Short    %zu %s\n",
+		fprintf(stdout, "Short    %zu %s\n",
 			BL_FASTQ_SEQ_LEN(&rec), BL_FASTQ_SEQ(&rec));
 	    ++short_count;
 	}
@@ -113,9 +113,9 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	
 	// Display periodic progress only if running interactively
 	if ( ! tp->verbose && (read_count % 100000 == 0) &&
-	     isatty(fileno(stderr)) )
+	     isatty(fileno(stdout)) )
 	{
-	    fprintf(stderr,
+	    fprintf(stdout,
 		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
 		    read_count, adapter_count, polya_count,
 		    tp->min_qual, low_qual_read_count, tp->min_length, short_count);
@@ -123,7 +123,7 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
     }
 
     // Final results
-    fprintf(stderr,
+    fprintf(stdout,
 	"\n\nReads:                             %10lu\n"
 	"Reads with adapters:               %10lu (%lu%%)\n"
 	"Reads with Poly-As:                %10lu (%lu%%)\n"
@@ -167,8 +167,8 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
     int             s1, s2, c;
     char            *adapter[2];
     
-    fputs("  Mode:              Paired\n", stderr);
-    fprintf(stderr,
+    fputs("  Read-type:         Paired\n", stdout);
+    fprintf(stdout,
 	  "  Adapters:          %s %s\n\n", tp->adapter1, tp->adapter2);
     bl_fastq_init(&rec[0]);
     bl_fastq_init(&rec[1]);
@@ -217,7 +217,7 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		low_qual_base_count += BL_FASTQ_QUAL_LEN(&rec[c]) - index;
 		++low_qual_read_count;
 		if ( tp->verbose )
-		    fprintf(stderr, "Low qual %s %s\n",
+		    fprintf(stdout, "Low qual %s %s\n",
 			BL_FASTQ_SEQ(&rec[c]) + index,
 			BL_FASTQ_QUAL(&rec[c]) + index);
 		bl_fastq_3p_trim(&rec[c], index);
@@ -231,7 +231,7 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		++adapter_count;
 		adapter_pos_sum += index;
 		if ( tp->verbose )
-		    fprintf(stderr, "Adapter  %s\n",
+		    fprintf(stdout, "Adapter  %s\n",
 			BL_FASTQ_SEQ(&rec[c]) + index);
 		bl_fastq_3p_trim(&rec[c], index);
 	    }
@@ -244,7 +244,7 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		{
 		    ++polya_count;
 		    if ( tp->verbose )
-			fprintf(stderr, "Poly-A   %s\n",
+			fprintf(stdout, "Poly-A   %s\n",
 			    BL_FASTQ_SEQ(&rec[c]) + index);
 		    bl_fastq_3p_trim(&rec[c], index);
 		}
@@ -265,7 +265,7 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 	else
 	{
 	    if ( tp->verbose )
-		fprintf(stderr, "Short    %zu %s\n"
+		fprintf(stdout, "Short    %zu %s\n"
 				"         %zu %s\n",
 			BL_FASTQ_SEQ_LEN(&rec[0]),
 			BL_FASTQ_SEQ(&rec[1]),
@@ -276,9 +276,9 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 	
 	// Display periodic progress only if running interactively
 	if ( ! tp->verbose && (read_count % 100000 == 0) &&
-	     isatty(fileno(stderr)) )
+	     isatty(fileno(stdout)) )
 	{
-	    fprintf(stderr,
+	    fprintf(stdout,
 		    "Read: %lu  Adapter: %lu  Poly-A: %lu  Q < %u: %lu  Len < %zu: %lu\r",
 		    read_count, adapter_count, polya_count,
 		    tp->min_qual, low_qual_read_count, tp->min_length, short_count);
@@ -286,7 +286,7 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
     }
     
     // Final results
-    fprintf(stderr,
+    fprintf(stdout,
 	"\n\nReads:                             %10lu\n"
 	"Reads with adapters:               %10lu (%lu%%)\n"
 	"Reads with Poly-As:                %10lu (%lu%%)\n"
