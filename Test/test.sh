@@ -78,18 +78,18 @@ strict_percent=20
 
 
 # Use gzip -1 for output to avoid bottleneck
-outfile1_raw=${sample}_1$suffix-trimmed-raw.fastq.zstd
-outfile2_raw=${sample}_2$suffix-trimmed-raw.fastq.zstd
-outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.zstd
-outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.zstd
-outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.zstd
-outfile1_smart_strict=${sample}_1$suffix-trimmed-smart$strict_percent.fastq.zstd
-outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.zstd
-outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.zstd
-outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.zstd
-outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.zstd
-outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.zstd
-outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.zstd
+outfile1_raw=${sample}_1$suffix-trimmed-raw.fastq.zst
+outfile2_raw=${sample}_2$suffix-trimmed-raw.fastq.zst
+outfile1_exact=${sample}_1$suffix-trimmed-exact.fastq.zst
+outfile1_smart10=${sample}_1$suffix-trimmed-smart10.fastq.zst
+outfile2_smart10=${sample}_2$suffix-trimmed-smart10.fastq.zst
+outfile1_smart_strict=${sample}_1$suffix-trimmed-smart$strict_percent.fastq.zst
+outfile1_cutadapt=${sample}_1$suffix-trimmed-cutadapt.fastq.zst
+outfile2_cutadapt=${sample}_2$suffix-trimmed-cutadapt.fastq.zst
+outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.zst
+outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.zst
+outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.zst
+outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.zst
 
 printf "\ngzip flags = $GZIP\n"
 
@@ -196,29 +196,29 @@ printf "Raw data %-12s:              " $rand
 xzcat $infile1 | fgrep $rand | wc -l
 
 printf "Exact match output %-12s:    " $part
-gzcat $outfile1_exact | fgrep $part | wc -l
+zstdcat $outfile1_exact | fgrep $part | wc -l
 printf "Exact match output %-12s:    " $rand
-gzcat $outfile1_exact | fgrep $rand | wc -l
+zstdcat $outfile1_exact | fgrep $rand | wc -l
 
 printf "Smart match 10 output %-12s: " $part
-gzcat $outfile1_smart10 | fgrep $part | wc -l
+zstdcat $outfile1_smart10 | fgrep $part | wc -l
 printf "Smart match 10 output %-12s: " $rand
-gzcat $outfile1_smart10 | fgrep $rand | wc -l
+zstdcat $outfile1_smart10 | fgrep $rand | wc -l
 
 printf "Smart match $strict_percent output %-12s: " $part
-gzcat $outfile1_smart_strict | fgrep $part | wc -l
+zstdcat $outfile1_smart_strict | fgrep $part | wc -l
 printf "Smart match $strict_percent output %-12s: " $rand
-gzcat $outfile1_smart_strict | fgrep $rand | wc -l
+zstdcat $outfile1_smart_strict | fgrep $rand | wc -l
 
 printf "Cutadapt output %-12s:       " $part
-gzcat $outfile1_cutadapt | fgrep $part | wc -l
+zstdcat $outfile1_cutadapt | fgrep $part | wc -l
 printf "Cutadapt output %-12s:       " $rand
-gzcat $outfile1_cutadapt | fgrep $rand | wc -l
+zstdcat $outfile1_cutadapt | fgrep $rand | wc -l
 
 if which trimmomatic > /dev/null 2>&1; then
     printf "Trimmomatic output %-12s:    " $part
-    gzcat $outfile1_trimmo | fgrep $part | wc -l
+    zstdcat $outfile1_trimmo | fgrep $part | wc -l
     printf "Trimmomatic output %-12s:    " $rand
-    gzcat $outfile1_trimmo | fgrep $rand | wc -l
+    zstdcat $outfile1_trimmo | fgrep $rand | wc -l
 fi
 
