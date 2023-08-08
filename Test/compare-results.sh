@@ -9,6 +9,10 @@ for file in $fqt $cutadapt $trimmomatic; do
 done
 wc -l *-seqs.txt
 
+echo CTGTCTCTTATA
+diff $fqt-seqs.txt $cutadapt-seqs.txt | more
+echo CTGTCTCTTATA
+
 printf "\nFastQ-Trim vs cutadapt:\n\n"
 printf "Sequences in both files that differ:  "
 diff -y $fqt-seqs.txt $cutadapt-seqs.txt | fgrep '|' | wc -l

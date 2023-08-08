@@ -10,32 +10,73 @@ At present, fastq-trim uses simple alignment algorithms suitable for
 typical analyses such as RNA-Seq or ATAC-Seq, where a small amount of
 residual adapter content will not impact the downstream analysis.
 
-Fastq-trim is designed to allow dropping in a variety of alignment functions.
 The default is a simple function with two parameters, a minimum number of
 bases matched and a maximum percentage of mismatches.
 An exact-match function is also currently available, which runs slightly
 faster and misses slightly more adapters.
 
 These algorithms are not suitable for analyses that are highly sensitive to
-adapter contamination. However, more sophisticated functions can easily be added,
+adapter contamination.
+However, fastq-trim is designed to allow dropping in a variety of alignment
+functions.  More sophisticated functions can easily be added,
 so fastq-trim can be easily adapted to perform trimming
 for just about any purpose.
 
 ## Status
 
-The current version is a work-in-progress that has been extensively tested
-only on RNA-Seq and ATAC-Seq data.
+The current version has been tested on RNA-Seq and ATAC-Seq data.
 The results so far are encouraging, with significantly better
-speed than cutadapt or trimmomatic and nearly identical results (diffing
-fastq-trim and cutadapt results revealed only a few differences after
-trimming 250k reads).  More functionality will be added at a later date as
-time permits.  Feel free to open an issue to request a new feature.
+performance than cutadapt or trimmomatic and results nearly identical to
+cutadapt.  The default "smart" algorithm is the same one used by
+cutadapt, except that it does not look for insertions and deletions (indels).
 
-Resident memory peaks at around 2 MiB, which means fastq-trim will run
-almost entirely in cache RAM.
+Diffing fastq-trim and cutadapt results reveals only
+84 differences after trimming 1,000,000 reads.
+
+Output from Test/compare-results.sh:
+
+FastQ-Trim vs cutadapt:
+
+```
+Sequences in both files that differ:        68
+Sequences only in fastq-trim output:        12
+Sequences only in cutadapt output:           4
+```
+
+The differences are due mainly to cutadapt matching sequences with
+indels (insertions
+or deletions), while fastq-trim's default algorithm does not.  E.g.,
+using an adapter sequence of CTGTCTCTTATA, one of the differences in
+the trimmed reads is as follows:
+
+```
+fastq-trim: CCCCT ... CGCC CTGTCTCTTTATA CACATCTCC
+cutadapt:   CCCCT ... CGCC
+```
+
+In this case, cutadapt assumed that CTGTCTCTTTATA was an adapter with
+an inserted T, while fastq-trim assumed it is a natural sequence.
+Whether this is more likely an adapter with an insertion or a natural
+sequence similar to the adapter is up for debate.  With only 84 such
+instances in 1,000,000 reads, it won't make any discernable difference
+to a downstream RNA-Seq or ATAC-Seq analysis, where trimming isn't
+even technically necessary (Liao, 2020, doi: 10.1093/nargab/lqaa068).
+
+More functionality such as additional alignment algorithms and
+command-line options will be added at a later date as time permits
+and needs dictate.  Feel free to open an issue to request a new feature.
+
+Resident memory (actual RAM) use peaks at around 2 MiB, which means
+fastq-trim runs
+almost entirely in cache RAM.  This is likely part of the reason
+for its performance advantage over other tools.
 
 Fastq-trim is currently single-threaded, as using additional cores will
-not improve performance of the basic features.
+not improve performance of the basic features.  Additional cores, if
+available. may
+be used by compression and decompression tools reading input files and
+writing output files.
+
 Run time with default parameters is only slightly longer than
 ```xzcat infile.xz | gzip > outfile.gz```, and fastq-trim on uncompressed
 input and output actually outruns xzcat and gzip -1.  Multi-threading will
