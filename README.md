@@ -73,7 +73,7 @@ for its performance advantage over other tools.
 
 Fastq-trim is currently single-threaded, as using additional cores will
 not improve performance of the basic features.  Additional cores, if
-available. may
+available, may
 be used by compression and decompression tools reading input files and
 writing output files.
 
