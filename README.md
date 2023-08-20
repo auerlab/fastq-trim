@@ -93,9 +93,9 @@ and peak memory (MiB, application only):
 
 		CPU     Wall    Virtual Resident
 Fastq-trim      260%    5.42    13      2
-Cutadapt 1-core 140%    22.37   46      30
 Cutadapt 2-core 310%    13.30   174     120
 Trimmomatic     150%    21.03   3473    740
+Cutadapt 1-core 140%    22.37   46      30
 
 Detailed output:
 
