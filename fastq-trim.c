@@ -88,7 +88,7 @@ int     main(int argc,char *argv[])
 	else
 	    usage(argv);
     }
-    strupper(FASTQ_TRIM_ADAPTER1(&tp));
+    xt_strupper(FASTQ_TRIM_ADAPTER1(&tp));
     
     fprintf(stdout, "\n*** FASTQ TRIM ***\n\n");
     fprintf(stdout, "  Minimum match:     %zu\n"
