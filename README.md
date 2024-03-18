@@ -91,11 +91,12 @@ Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 Peak CPU (including xzcat, gzip -1, pigz), wall time,
 and peak memory (MiB, application only):
 
-		CPU     Wall    Virtual Resident
-Fastq-trim      260%    5.42    13      2
-Cutadapt 2-core 310%    13.30   174     120
-Trimmomatic     150%    21.03   3473    740
-Cutadapt 1-core 140%    22.37   46      30
+		Time                    Memory
+		CPU     Wall    CPU*sec Virtual Resident
+Fastq-trim      260%    5.42    13.0    13      2
+Cutadapt 2-core 310%    13.30   41.23   174     120
+Trimmomatic     150%    21.03   31.55   3473    740
+Cutadapt 1-core 140%    22.37   31.32   46      30
 
 Detailed output:
 
