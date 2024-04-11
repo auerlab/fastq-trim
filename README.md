@@ -337,7 +337,7 @@ Then, assuming you selected current packages and the default prefix
 
 ```
 source ~/Pkgsrc/pkg/etc/pkgsrc.sh   # Or pkgsrc.csh for csh or tcsh
-cd ~/Pkgsrc/biology/fastq-trim
+cd ~/Pkgsrc/pkgsrc/biology/fastq-trim
 sbmake install clean clean-depends
 ```
 
