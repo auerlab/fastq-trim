@@ -90,6 +90,7 @@ outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.zst
 outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.zst
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.zst
 outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.zst
+outfile1_trimadap=${sample}_1$suffix-trimmed-fastp.trimadap.zst
 
 printf "\ngzip flags = $GZIP\n"
 
@@ -156,6 +157,13 @@ for cores in 1 2; do
        -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
 done
 
+for cores in 1 2; do
+    printf "\nTrimadap $cores core...\n"
+    time xzcat $infile1 \
+	| trimadap-mt -p $cores -s 20 -l 30 -3 $adapter \
+	| zstd > $outfile1_trimadap
+done
+
 if which trimmomatic > /dev/null 2>&1; then
     # Last number after .fa file is simple clip threshold.  A perfect match of
     # 12 bases give a score of about 7 according to docs.  5 was chosen by trial
@@ -175,6 +183,7 @@ time cutadapt --report=minimal \
    --cores=2 --quality-cutoff=20 --minimum-length=30 -a $adapter \
    -o $outfile2_cutadapt $infile2 2>&1 | fgrep -v reads/min
 
+printf "\nfastq-trim paired reads...\n"
 time ../fastq-trim "$@" \
     --3p-adapter1 $adapter \
     $infile1 $outfile1_paired $infile2 $outfile2_paired
@@ -221,4 +230,14 @@ if which trimmomatic > /dev/null 2>&1; then
     printf "Trimmomatic output %-12s:    " $rand
     zstdcat $outfile1_trimmo | fgrep $rand | wc -l
 fi
+
+printf "Fastp output %-12s:          " $part
+zstdcat $outfile1_fastp | fgrep $part | wc -l
+printf "Fastp output %-12s:          " $rand
+zstdcat $outfile1_fastp | fgrep $rand | wc -l
+
+printf "Trimadap output %-12s:       " $part
+zstdcat $outfile1_trimadap | fgrep $part | wc -l
+printf "Trimadap output %-12s:       " $rand
+zstdcat $outfile1_trimadap | fgrep $rand | wc -l
 
