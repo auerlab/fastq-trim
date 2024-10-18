@@ -157,6 +157,7 @@ for cores in 1 2; do
        -o $outfile1_cutadapt $infile1 2>&1 | fgrep -v reads/min
 done
 
+# FIXME: trimadap does not appear to remove anything
 for cores in 1 2; do
     printf "\nTrimadap $cores core...\n"
     time xzcat $infile1 \
@@ -199,10 +200,11 @@ EOM
 
 set +e  # Don't terminate when fgrep finds no matches
 
-printf "Raw data %-12s:              " $part
+printf "Raw data %-12s (adapter):    " $part
 xzcat $infile1 | fgrep $part | wc -l
-printf "Raw data %-12s:              " $rand
+printf "Raw data %-12s (random):     " $rand
 xzcat $infile1 | fgrep $rand | wc -l
+printf '\n'
 
 printf "Exact match output %-12s:    " $part
 zstdcat $outfile1_exact | fgrep $part | wc -l
