@@ -30,8 +30,8 @@ int     main(int argc,char *argv[])
 	usage(argv);
     else if ( strcmp(argv[1], "--version") == 0 )
     {
-	  fprintf(stderr, "fastq-trim %s\n", VERSION);
-	  return EX_OK;
+	printf("%s %s\n", argv[0], VERSION);
+	return EX_OK;
     }
     for (arg = 1; (arg < argc) && (*argv[arg] == '-'); ++arg)
     {
