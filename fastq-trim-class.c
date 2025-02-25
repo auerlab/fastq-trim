@@ -123,22 +123,25 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
     }
 
     // Final results
-    fprintf(stdout,
-	"\n\nReads:                             %10lu\n"
-	"Reads with adapters:               %10lu (%lu%%)\n"
-	"Reads with Poly-As:                %10lu (%lu%%)\n"
-	"Bases with Q < %u:                 %10lu (%lu%%)\n"
-	"Reads with low Q bases removed:    %10lu (%lu%%)\n"
-	"Reads < %zu bases after trimming:   %10lu (%lu%%)\n"
-	"Mean adapter position:             %10lu\n"
-	"Mean read length:                  %10lu\n",
-	read_count,
-	adapter_count, (adapter_count * 100 / read_count),
-	polya_count, (polya_count * 100 / read_count),
-	tp->min_qual, low_qual_base_count, (low_qual_base_count * 100 / base_count),
-	low_qual_read_count, (low_qual_read_count * 100 / read_count),
-	tp->min_length, short_count, (short_count * 100) / read_count,
-	adapter_pos_sum / adapter_count, base_count / read_count);
+    if ( read_count == 0 )
+	printf("Input stream was empty.\n");
+    else
+	printf(
+	    "\n\nReads:                             %10lu\n"
+	    "Reads with adapters:               %10lu (%lu%%)\n"
+	    "Reads with Poly-As:                %10lu (%lu%%)\n"
+	    "Bases with Q < %u:                 %10lu (%lu%%)\n"
+	    "Reads with low Q bases removed:    %10lu (%lu%%)\n"
+	    "Reads < %zu bases after trimming:   %10lu (%lu%%)\n"
+	    "Mean adapter position:             %10lu\n"
+	    "Mean read length:                  %10lu\n",
+	    read_count,
+	    adapter_count, (adapter_count * 100 / read_count),
+	    polya_count, (polya_count * 100 / read_count),
+	    tp->min_qual, low_qual_base_count, (low_qual_base_count * 100 / base_count),
+	    low_qual_read_count, (low_qual_read_count * 100 / read_count),
+	    tp->min_length, short_count, (short_count * 100) / read_count,
+	    adapter_pos_sum / adapter_count, base_count / read_count);
     bl_fastq_free(&rec);
     return EX_OK;
 }
