@@ -58,7 +58,7 @@ In this case, cutadapt assumed that CTGTCTCTTTATA was an adapter with
 an inserted T, while fastq-trim assumed it is a natural sequence.
 Whether this is more likely an adapter with an insertion or a natural
 sequence similar to the adapter is up for debate.  With only 84 such
-instances in 1,000,000 reads, it won't make any discernable difference
+instances in 1,000,000 reads, it won't make any discernible difference
 to a downstream RNA-Seq or ATAC-Seq analysis, where trimming isn't
 even technically necessary (Liao, 2020, doi: 10.1093/nargab/lqaa068).
 
@@ -66,8 +66,8 @@ More functionality such as additional alignment algorithms and
 command-line options will be added at a later date as time permits
 and needs dictate.  Feel free to open an issue to request a new feature.
 
-Resident memory (actual RAM) use peaks at around 2 MiB, which means
-fastq-trim runs
+Resident memory (actual RAM) use peaks at around 2 MiB (yes, MiB not GiB),
+which means fastq-trim runs
 almost entirely in cache RAM.  This is likely part of the reason
 for its performance advantage over other tools.
 
@@ -91,12 +91,13 @@ Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 Peak CPU (including xzcat, gzip -1, pigz), wall time,
 and peak memory (MiB, application only):
 
-		Time                    Memory
-		CPU     Wall    CPU*sec Virtual Resident
-Fastq-trim      260%    5.42    13.0    13      2
-Cutadapt 2-core 310%    13.30   41.23   174     120
-Trimmomatic     150%    21.03   31.55   3473    740
-Cutadapt 1-core 140%    22.37   31.32   46      30
+			Time                  Memory, MiB
+		--------------------------------------------
+		CPU     Wall    CPU*sec     Virtual Resident
+Fastq-trim      260%    5.42    13.0        13      2
+Cutadapt 2-core 310%    13.30   41.23       174     120
+Trimmomatic     150%    21.03   31.55       3473    740
+Cutadapt 1-core 140%    22.37   31.32       46      30
 
 Detailed output:
 
