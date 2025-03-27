@@ -73,6 +73,22 @@ int     fastq_trim_single_reads(fastq_trim_t *tp)
 	    bl_fastq_3p_trim(&rec, index);
 	}
 
+	index = bl_fastq_find_5p_low_qual(&rec, tp->min_qual, tp->phred_base);
+	if ( index != -1 )
+	{
+	    low_qual_base_count += index + 1;
+	    ++low_qual_read_count;
+	    if ( tp->verbose )
+	    {
+		char    seq[index + 2], qual[index + 2];
+		memcpy(seq, BL_FASTQ_SEQ(&rec), index + 1);
+		memcpy(qual, BL_FASTQ_QUAL(&rec), index + 1);
+		seq[index + 1] = qual[index + 1] = '\0';
+		fprintf(stdout, "Low qual 5' %s %s\n", seq, qual);
+	    }
+	    bl_fastq_5p_trim(&rec, index);
+	}
+
 	index = tp->adapter_match_function(&align_params,
 		    BL_FASTQ_SEQ(&rec), BL_FASTQ_SEQ_LEN(&rec),
 		    tp->adapter1, adapter_len);
@@ -220,10 +236,27 @@ int     fastq_trim_paired_reads(fastq_trim_t *tp)
 		low_qual_base_count += BL_FASTQ_QUAL_LEN(&rec[c]) - index;
 		++low_qual_read_count;
 		if ( tp->verbose )
-		    fprintf(stdout, "Low qual %s %s\n",
+		    fprintf(stdout, "Low qual 3' %s %s\n",
 			BL_FASTQ_SEQ(&rec[c]) + index,
 			BL_FASTQ_QUAL(&rec[c]) + index);
 		bl_fastq_3p_trim(&rec[c], index);
+	    }
+
+	    index = bl_fastq_find_5p_low_qual(&rec[c], tp->min_qual,
+					  tp->phred_base);
+	    if ( index != -1 )
+	    {
+		low_qual_base_count += index + 1;
+		++low_qual_read_count;
+		if ( tp->verbose )
+		{
+		    char    seq[index + 2], qual[index + 2];
+		    memcpy(seq, BL_FASTQ_SEQ(&rec[c]), index + 1);
+		    memcpy(qual, BL_FASTQ_QUAL(&rec[c]), index + 1);
+		    seq[index + 1] = qual[index + 1] = '\0';
+		    fprintf(stdout, "Low qual 5' %s %s\n", seq, qual);
+		}
+		bl_fastq_5p_trim(&rec[c], index);
 	    }
     
 	    index = tp->adapter_match_function(&align_params,
