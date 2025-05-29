@@ -10,6 +10,9 @@ At present, fastq-trim uses simple alignment algorithms suitable for
 typical analyses such as RNA-Seq or ATAC-Seq, where a small amount of
 residual adapter content will not impact the downstream analysis.
 
+For a complete description of an RNA-Seq differential expression analysis
+using Fastq-trim, see [RNA-Seq Differential Expression Analysis for Non-programmers](https://www.barnesandnoble.com/w/rna-seq-differential-expression-analysis-for-non-programmers-jason-bacon/1147330944).
+
 The default is a simple function with two parameters, a minimum number of
 bases matched and a maximum percentage of mismatches.
 An exact-match function is also currently available, which runs slightly
