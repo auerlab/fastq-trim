@@ -31,48 +31,24 @@ The current version has been tested on RNA-Seq and ATAC-Seq data.
 The results so far are encouraging, with significantly better
 performance than cutadapt or trimmomatic and results nearly identical to
 cutadapt.  The default "smart" algorithm is the same one used by
-cutadapt, except that it does not look for insertions and deletions (indels).
-
-Diffing fastq-trim and cutadapt results reveals only
-84 differences after trimming 1,000,000 reads.
-
-Output from Test/compare-results.sh:
-
-FastQ-Trim vs cutadapt:
-
-```
-Sequences in both files that differ:        68
-Sequences only in fastq-trim output:        12
-Sequences only in cutadapt output:           4
-```
-
-The differences are due mainly to cutadapt matching sequences with
-indels (insertions
-or deletions), while fastq-trim's default algorithm does not.  E.g.,
-using an adapter sequence of CTGTCTCTTATA, one of the differences in
-the trimmed reads is as follows:
-
-```
-fastq-trim: CCCCT ... CGCC CTGTCTCTTTATA CACATCTCC
-cutadapt:   CCCCT ... CGCC
-```
-
-In this case, cutadapt assumed that CTGTCTCTTTATA was an adapter with
-an inserted T, while fastq-trim assumed it is a natural sequence.
-Whether this is more likely an adapter with an insertion or a natural
-sequence similar to the adapter is up for debate.  With only 84 such
-instances in 1,000,000 reads, it won't make any discernible difference
-to a downstream RNA-Seq or ATAC-Seq analysis, where trimming isn't
-even technically necessary (Liao, 2020, doi: 10.1093/nargab/lqaa068).
+cutadapt, except that it does not look for insertions and deletions (indels),
+and it performs 5' quality trimming whereas cutadapt only does 3'.
 
 More functionality such as additional alignment algorithms and
 command-line options will be added at a later date as time permits
 and needs dictate.  Feel free to open an issue to request a new feature.
 
-Resident memory (actual RAM) use peaks at around 2 MiB (yes, MiB not GiB),
-which means fastq-trim runs
-almost entirely in cache RAM.  This is likely part of the reason
-for its performance advantage over other tools.
+Resident memory (actual RAM) use peaks at around 2 MiB (yes, MiB not GiB).
+Benefits of low RAM use:
+
+1. Fastq-trim runs almost entirely in cache RAM, so average memory access
+   is much faster.
+2. Less competition for memory with other running processes leads
+   to less cache incoherence and less swapping, which means better
+   performance for all processes.
+3. On a busy HPC cluster, jobs with lower memory requirements are likely
+   to start sooner, as they don't have to wait until more memory
+   resources become available.
 
 Fastq-trim is currently single-threaded, as using additional cores will
 not improve performance of the basic features.  Additional cores, if
@@ -91,18 +67,22 @@ are shown below.
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 
-Peak CPU (including xzcat to uncompress input and zstd to compress
-output), wall time, and peak memory (MiB, application only):
+Peak CPU (including xzcat to uncompress input and gzip/pigz to compress
+output), wall time, and peak memory (MiB, application only, since some
+applications use the compression API and others use separate processes):
 
-			Time                  Memory, MiB
-		--------------------------------------------
+		Time (include compression)  Memory, MiB, tool only
+		--------------------------------------------------
 		CPU     Wall    CPU*sec     Virtual Resident
-Fastq-trim      260%    5.42    13.0        13      2
-Fastp 2-core    311%    7.29    22.69       1369    1075
-Fastp 1-core    215%    8.44    18.11       1353    1067
-Cutadapt 2-core 310%    13.30   41.23       174     120
-Trimmomatic     150%    21.03   31.55       3473    740
-Cutadapt 1-core 140%    22.37   31.32       46      30
+xzcat | gzip -1 171%    4.51    7.71        41*     14*
+Fastq-trim      256%    5.59    14.31       14      2
+Cutadapt 2-core 242%    7.21    17.43       181     111
+Fastp 2-core    333%    7.49    24.93       1369    1075
+Fastp 1-core    223%    8.97    20.00       1353    1067
+Cutadapt 1-core 100%    15.26   15.26       50      32
+Trimmomatic     159%    20.67   32.84       5826    322
+
+* = sum of compression tools
 
 Detailed output:
 
