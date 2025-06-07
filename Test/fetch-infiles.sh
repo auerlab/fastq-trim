@@ -6,30 +6,30 @@
 # SRR1553607 has only 203445 reads
 sample=SRR1972918
 
-long1=${sample}_1$suffix.fastq.xz
-long2=${sample}_2.fastq.xz
+long1=${sample}_1$suffix.fastq.gz
+long2=${sample}_2.fastq.gz
 
 if [ ! -e $long1 ]; then
     printf "Downloading FASTQ files...\n"
     stty intr undef
     fastq-dump --maxSpotId 1000000 --split-files $sample
     printf "Compressing $long1 and $long2...\n"
-    xz ${long1%.xz} &
-    xz ${long2%.xz}
+    gzip ${long1%.gz} &
+    gzip ${long2%.gz}
     wait
     stty intr ^C
 else
     printf "Using existing $long1 and $long2.\n"
 fi
 
-short1=${sample}_1-250k.fastq.xz
-short2=${sample}_2-250k.fastq.xz
+short1=${sample}_1-250k.fastq.gz
+short2=${sample}_2-250k.fastq.gz
 
 if [ ! -e $short1 ]; then
     printf "Compressing $short1 and $short2...\n"
     stty intr undef
-    xzcat -3 $long1 | head -1000000 | xz > $short1 &
-    xzcat -3 $long2 | head -1000000 | xz > $short2
+    gunzip -c -3 $long1 | head -1000000 | gzip > $short1 &
+    gunzip -c -3 $long2 | head -1000000 | gzip > $short2
     wait
     stty intr ^C
 else
