@@ -71,7 +71,7 @@ Peak CPU (including xzcat to uncompress input and gzip/pigz to compress
 output), wall time, and peak memory (MiB, application only, since some
 applications use the compression API and others use separate processes):
 
-		Time (include compression)  Memory, MiB, tool only
+		Time (includes compression) Memory, MiB, tool only
 		--------------------------------------------------
 		CPU     Wall    CPU*sec     Virtual Resident
 xzcat | gzip -1 171%    4.51    7.71        41*     14*
