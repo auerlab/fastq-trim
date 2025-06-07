@@ -91,8 +91,8 @@ are shown below.
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
 
-Peak CPU (including xzcat, gzip -1, pigz), wall time,
-and peak memory (MiB, application only):
+Peak CPU (including xzcat to uncompress input and zstd to compress
+output), wall time, and peak memory (MiB, application only):
 
 			Time                  Memory, MiB
 		--------------------------------------------
