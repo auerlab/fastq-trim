@@ -61,6 +61,7 @@ cd Test
 # Minimize CPU time which generating trimmed files
 export GZIP=-1
 
+# Source this, as it sets shell variables like $long1
 . ./fetch-infiles.sh
 
 # After fetch-files.sh
@@ -104,7 +105,7 @@ outfile1_trimmo=${sample}_1$suffix-trimmed-trimmomatic.fastq.gz
 outfile1_paired=${sample}_1$suffix-trimmed-paired.fastq.gz
 outfile2_paired=${sample}_2$suffix-trimmed-paired.fastq.gz
 outfile1_fastp=${sample}_1$suffix-trimmed-fastp.fastq.gz
-outfile1_trimadap=${sample}_1$suffix-trimmed-fastp.trimadap.gz
+outfile1_trimadap=${sample}_1$suffix-trimmed-trimadap.fastq.gz
 
 printf "\ngzip flags = $GZIP\n"
 
@@ -112,9 +113,9 @@ printf "\ngzip flags = $GZIP\n"
 printf "\nBuffering inputs...\n"
 cat $infile1 $infile2 > /dev/null
 
-infile1_uc=${infile1%.gz}
+infile1_uc=${infile1%.xz}
 outfile1_uc=${sample}_1-out.fastq
-gunzip -c $infile1 > $infile1_uc
+xzcat $infile1 > $infile1_uc
 
 printf "\ncat $infile1_uc > $outfile1_uc\n"
 time cat $infile1_uc > $outfile1_uc
@@ -138,8 +139,8 @@ time ../fastq-trim "$@" \
 printf "\nAll remaining tests use compressed input and output...\n"
 
 printf "\nTiming compressed read and write without trimming...\n"
-time gunzip -c $infile1 | gzip > $outfile1_raw
-time gunzip -c $infile2 | gzip > $outfile2_raw
+time unxz -c $infile1 | gzip > $outfile1_raw
+time unxz -c $infile2 | gzip > $outfile2_raw
 
 printf "\nFastq-trim exact match...\n"
 time ../fastq-trim "$@" \
@@ -163,15 +164,15 @@ time ../fastq-trim "$@" \
 for cores in 1 2; do
     # FIXME: This is not yet verified for comparison to other tools
     printf "\nfastp $cores thread...\n"
-    time fastp -q 20 -l 30 --adapter_sequence CTGTCTCTTATA \
-	    --thread $cores -i $infile1 -o $outfile1_fastp
+    time xzcat $infile1 | fastp -q 20 -l 30 --adapter_sequence CTGTCTCTTATA \
+	    --thread $cores --stdin -o $outfile1_fastp
     gunzip -c $outfile1_fastp | head -2
     pause
 done
 
 for cores in 1 2; do
     printf "\nCutadapt $cores core...\n"
-    # gunzip -c $infile1 | head -2
+    # cutadapt can read xz files directly now
     time cutadapt --report=minimal \
        --cores=$cores --quality-cutoff=20 --minimum-length=30 -a $adapter \
        $infile1 -o $outfile1_cutadapt
@@ -183,7 +184,7 @@ done
 if false; then
 for cores in 1 2; do
     printf "\nTrimadap $cores core...\n"
-    time gunzip -c $infile1 \
+    time xzcat $infile1 \
 	| trimadap-mt -p $cores -s 20 -l 30 -3 $adapter \
 	| gzip > $outfile1_trimadap
     gunzip -c $outfile1_trimadap | head -2
@@ -197,9 +198,9 @@ if which trimmomatic > /dev/null 2>&1; then
     # and error to bring the missed partial adapters to a level similar to
     # fastq-trim and cutadapt.
     printf "\n"
-    args="SE $infile1 $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30"
+    args="SE /dev/stdin $outfile1_trimmo ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30"
     set -x
-    time sh -c "trimmomatic $args"
+    time sh -c "xzcat $infile1 | trimmomatic $args"
     set +x
     gunzip -c $outfile1_trimmo | head -2
     pause
@@ -232,9 +233,9 @@ EOM
 set +e  # Don't terminate when fgrep finds no matches
 
 printf "Raw data %-12s (adapter):    " $part
-gunzip -c $infile1 | fgrep $part | wc -l
+xzcat $infile1 | fgrep $part | wc -l
 printf "Raw data %-12s (random):     " $rand
-gunzip -c $infile1 | fgrep $rand | wc -l
+xzcat $infile1 | fgrep $rand | wc -l
 printf '\n'
 
 printf "Exact match output %-12s:    " $part
@@ -269,8 +270,8 @@ gunzip -c $outfile1_fastp | fgrep $part | wc -l
 printf "Fastp output %-12s:          " $rand
 gunzip -c $outfile1_fastp | fgrep $rand | wc -l
 
-printf "Trimadap output %-12s:       " $part
-gunzip -c $outfile1_trimadap | fgrep $part | wc -l
-printf "Trimadap output %-12s:       " $rand
-gunzip -c $outfile1_trimadap | fgrep $rand | wc -l
+#printf "Trimadap output %-12s:       " $part
+#gunzip -c $outfile1_trimadap | fgrep $part | wc -l
+#printf "Trimadap output %-12s:       " $rand
+#gunzip -c $outfile1_trimadap | fgrep $rand | wc -l
 
