@@ -98,6 +98,8 @@ and peak memory (MiB, application only):
 		--------------------------------------------
 		CPU     Wall    CPU*sec     Virtual Resident
 Fastq-trim      260%    5.42    13.0        13      2
+Fastp 2-core    311%    7.29    22.69       1369    1075
+Fastp 1-core    215%    8.44    18.11       1353    1067
 Cutadapt 2-core 310%    13.30   41.23       174     120
 Trimmomatic     150%    21.03   31.55       3473    740
 Cutadapt 1-core 140%    22.37   31.32       46      30
@@ -171,6 +173,40 @@ Read: 1000000  Adapter: 86768  Q < 20: 572761  Len < 30: 13012
 Read: 1000000  Adapter: 108722  Q < 20: 572761  Len < 30: 13346
 	5.63 real        14.42 user         0.31 sys
 
+==============================================================================
+fastp 1 thread...
+Streaming uncompressed  reads to STDOUT...
+Read1 before filtering:
+total reads: 1000000
+total bases: 101000000
+Q20 bases: 88737275(87.8587%)
+Q30 bases: 79596978(78.8089%)
+
+Read1 after filtering:
+total reads: 887935
+total bases: 87794104
+Q20 bases: 82090043(93.5029%)
+Q30 bases: 73912322(84.1883%)
+
+Filtering result:
+reads passed filter: 887935
+reads failed due to low quality: 111959
+reads failed due to too many N: 54
+reads failed due to too short: 52
+reads with adapter trimmed: 73678
+bases trimmed due to adapters: 1914263
+
+Duplication rate (may be overestimated since this is SE data): 45.2987%
+
+JSON report: fastp.json
+HTML report: fastp.html
+
+fastp -q 20 -l 30 --adapter_sequence CTGTCTCTTATA --thread 1 --stdin --stdout 
+fastp v0.26.0, time used: 9 seconds
+
+	8.89 real         5.61 user         0.08 sys
+
+==============================================================================
 Cutadapt 1 core...
 status  in_reads        in_bp   too_short       too_long        too_many_n     out_reads        w/adapters      qualtrim_bp     out_bp
 OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
@@ -181,6 +217,7 @@ status  in_reads        in_bp   too_short       too_long        too_many_n     o
 OK      1000000 101000000       13020   0       0       986980  86845   1005881388836129
        13.70 real        41.51 user         0.41 sys
 
+==============================================================================
 TrimmomaticSE: Started with arguments:
  /dev/stdin SRR1972918_1-trimmed-trimmomatic.fastq.gz ILLUMINACLIP:nextera.fa:2:30:5 TRAILING:20 MINLEN:30
 Automatically using 4 threads
