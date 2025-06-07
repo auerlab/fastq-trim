@@ -39,7 +39,10 @@ command-line options will be added at a later date as time permits
 and needs dictate.  Feel free to open an issue to request a new feature.
 
 Resident memory (actual RAM) use peaks at around 2 MiB (yes, MiB not GiB).
-Benefits of low RAM use:
+This is the same as a "Hello, world!" program written in C, so basically
+the minimum memory use for any Unix program.
+
+Benefits of minimizing memory use:
 
 1. Fastq-trim runs almost entirely in cache RAM, so average memory access
    is much faster.
