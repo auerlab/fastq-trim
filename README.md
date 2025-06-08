@@ -4,8 +4,8 @@
 
 Near-optimal read trimmer based on [biolibc](https://github.com/auerlab/biolibc)
 
-The goal of fastq-trim is a read trimmer that runs in a fraction of the time
-of popular trimmers and produces comparable results.
+The goal of fastq-trim is a read trimmer that is faster than
+popular trimmers and produces comparable results.
 At present, fastq-trim uses simple alignment algorithms suitable for
 typical analyses such as RNA-Seq or ATAC-Seq, where a small amount of
 residual adapter content will not impact the downstream analysis.
@@ -29,10 +29,11 @@ for just about any purpose.
 
 The current version has been tested on RNA-Seq and ATAC-Seq data.
 The results so far are encouraging, with significantly better
-performance than cutadapt or trimmomatic and results nearly identical to
+performance than other trimmers and results nearly identical to
 cutadapt.  The default "smart" algorithm is the same one used by
 cutadapt, except that it does not look for insertions and deletions (indels),
-and it performs 5' quality trimming whereas cutadapt only does 3'.
+and it performs both 5' and 3' quality trimming whereas cutadapt only
+does 3'.
 
 More functionality such as additional alignment algorithms and
 command-line options will be added at a later date as time permits
@@ -50,25 +51,27 @@ Benefits of minimizing memory use:
    to less cache incoherence and less swapping, which means better
    performance for all processes.
 3. On a busy HPC cluster, jobs with lower memory requirements are likely
-   to start sooner, as they don't have to wait until more memory
-   resources become available.
+   to start sooner, as they can utilize available cores on nodes with
+   less available memory.
 
-Fastq-trim is currently single-threaded, as using additional cores will
-not improve performance of the basic features.  Additional cores, if
-available, may
-be used by compression and decompression tools reading input files and
-writing output files.
+Fastq-trim is single-threaded, as using additional cores will
+not improve performance of the basic features.  Decompression of input
+and compression of output is performed by separate processes via
+pipes, so they may use additional cores.
 
 Run time with default parameters is only slightly longer than
-```xzcat infile.xz | gzip > outfile.gz```, and fastq-trim on uncompressed
-input and output actually outruns xzcat and gzip -1.  Multi-threading will
-be considered if and when more computationally expensive features are added.
+```xzcat infile.xz | gzip -1 > outfile.gz```, and fastq-trim on uncompressed
+input and output actually outruns xzcat and gzip -1.
 
-Results from running "./test.sh big" (in the Test directory) on a 2.9 GHz i5
+Results from running "./test.sh big" (in the Test directory)
 are shown below.
 
 ```
 Stats collected on an i5 2.9GHz 2-core, 4-hyperthread.
+
+CPU % and memory use gathered from "top".
+
+Wall time reported by "time".
 
 Peak CPU (including xzcat to uncompress input and gzip/pigz to compress
 output), wall time, and peak memory (MiB, application only, since some
